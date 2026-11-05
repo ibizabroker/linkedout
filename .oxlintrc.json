@@ -1,6 +1,10 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "react"],
+  "jsPlugins": ["./lint/no-comments.js"],
+  "rules": {
+    "local/no-comments": "error"
+  },
   "env": {
     "browser": true,
     "webextensions": true

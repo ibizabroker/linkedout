@@ -1,8 +1,4 @@
 #!/usr/bin/env bun
-/**
- * Verification scaffolding for LinkedOut.
- * Drives a disposable Chromium profile with the built MV3 extension loaded.
- */
 import { spawn } from 'node:child_process';
 import {
   createServer,
@@ -336,7 +332,6 @@ async function cmdLaunch(flags: Map<string, string | boolean>) {
       : runIdFromEnv();
   process.env.LINKEDOUT_VERIFY_RUN_ID = runId;
 
-  // Rebuild unless --no-build
   if (!flags.get('no-build')) {
     const build = spawn('bun', ['run', 'build'], {
       cwd: ROOT,
@@ -350,7 +345,6 @@ async function cmdLaunch(flags: Map<string, string | boolean>) {
 
   const logPath = path.join(runDir(runId), 'daemon.log');
   await mkdir(runDir(runId), { recursive: true });
-  // File stdio so the parent does not keep pipes open (which prevents exit).
   const logFd = openSync(logPath, 'a');
 
   const child = spawn(
@@ -495,14 +489,9 @@ async function cmdCleanup(flags: Map<string, string | boolean>) {
     try {
       process.kill(state.pid, 0);
       process.kill(state.pid, 'SIGTERM');
-    } catch {
-      // already gone
-    }
-  } catch {
-    // no state file
-  }
+    } catch {}
+  } catch {}
 
-  // Remove disposable profile/run dir, keep artifacts/
   await rm(runDir(runId), { recursive: true, force: true });
   console.log(
     JSON.stringify(
