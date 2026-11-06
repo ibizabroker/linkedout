@@ -14,7 +14,7 @@
     "compile": "tsc --noEmit",
     "lint": "oxlint . && bun lint/no-yaml-comments.js",
     "lint:fix": "oxlint --fix .",
-    "format": "oxfmt .",
+    "format": "oxlint --fix . && oxfmt .",
     "format:check": "oxfmt --check .",
     "verify:control": "bun .cursor/skills/verify-linkedout/bin/control-linkedout.ts",
     "postinstall": "wxt prepare"

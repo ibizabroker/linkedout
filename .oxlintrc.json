@@ -3,17 +3,12 @@
   "plugins": ["typescript", "react"],
   "jsPlugins": ["./lint/no-comments.js"],
   "rules": {
+    "curly": ["error", "all"],
     "local/no-comments": "error"
   },
   "env": {
     "browser": true,
     "webextensions": true
   },
-  "ignorePatterns": [
-    ".output/**",
-    ".wxt/**",
-    "node_modules/**",
-    ".cursor/**",
-    ".tmp/**"
-  ]
+  "ignorePatterns": [".output/**", ".wxt/**", "node_modules/**", ".cursor/**", ".tmp/**"]
 }

@@ -6,9 +6,13 @@ const names = await readdir(workflows);
 let failed = false;
 
 for (const name of names) {
-  if (!name.endsWith('.yml') && !name.endsWith('.yaml')) continue;
+  if (!name.endsWith('.yml') && !name.endsWith('.yaml')) {
+    continue;
+  }
+
   const file = path.join(workflows, name);
   const lines = (await readFile(file, 'utf8')).split('\n');
+
   for (let index = 0; index < lines.length; index++) {
     if (/^\s*#/.test(lines[index])) {
       console.error(
@@ -19,4 +23,6 @@ for (const name of names) {
   }
 }
 
-if (failed) process.exit(1);
+if (failed) {
+  process.exit(1);
+}

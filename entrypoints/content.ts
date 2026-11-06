@@ -5,19 +5,24 @@ const HIDDEN_ATTR = 'data-linkedout-applied';
 const STYLE_ID = 'linkedout-applied-style';
 
 function isSearchResults(path: string): boolean {
-  return SEARCH_PATHS.some(
-    (prefix) => path === prefix || path.startsWith(`${prefix}/`),
-  );
+  return SEARCH_PATHS.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 }
 
 function isApplied(card: Element): boolean {
   for (const node of card.querySelectorAll('*')) {
-    if (node.textContent?.trim() !== APPLIED_LABEL) continue;
+    if (node.textContent?.trim() !== APPLIED_LABEL) {
+      continue;
+    }
+
     const childMatches = [...node.children].some(
       (child) => child.textContent?.trim() === APPLIED_LABEL,
     );
-    if (!childMatches) return true;
+
+    if (!childMatches) {
+      return true;
+    }
   }
+
   return false;
 }
 
@@ -40,7 +45,10 @@ function release(doc: Document): void {
 
 function hiddenStyle(doc: Document): HTMLStyleElement {
   const existing = doc.getElementById(STYLE_ID);
-  if (existing instanceof HTMLStyleElement) return existing;
+  if (existing instanceof HTMLStyleElement) {
+    return existing;
+  }
+
   const style = doc.createElement('style');
   style.id = STYLE_ID;
   style.textContent = `[${HIDDEN_ATTR}]{display:none !important}`;
@@ -53,12 +61,14 @@ export default defineContentScript({
     const style = hiddenStyle(document);
     document.head.append(style);
     reconcile(document);
+
     const observer = new MutationObserver(() => reconcile(document));
     observer.observe(document.body, {
       childList: true,
       subtree: true,
       characterData: true,
     });
+
     ctx.onInvalidated(() => {
       observer.disconnect();
       style.remove();
