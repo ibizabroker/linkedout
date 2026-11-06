@@ -37,5 +37,6 @@ Preconditions:
 - Reloading the popup does not reset a saved choice. A fresh profile starts at Applied and Viewed.
 - Match the closed trigger by its accessible name. That name is `Hide from results: Applied, Viewed`, `Hide from results: Applied`, `Hide from results: Viewed`, or `Hide from results: Nothing hidden`, and it changes after each checkbox click.
 - A checkbox click leaves the menu open. Escape closes it.
+- `open-popup` loads the popup in a full-size tab, so it cannot show a menu that does not fit. To check the fit, size the viewport to the popup body and confirm that the open menu is below the trigger.
 - A save error shows in the status line above the trigger as `Your choice could not be saved. Try again.`
 - A stored choice that cannot be read shows `Could not load your choice. Choose again.`, the trigger reads `Hide from results: Nothing hidden`, and choosing an option saves over the bad value.

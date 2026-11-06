@@ -161,13 +161,13 @@ A strictly achromatic palette, zero chroma on every neutral, with one red held b
 
 The panel is one column, 20rem wide on `html`, `body`, and the root, with 1rem inline padding, leaving an 18rem measure. Top padding is 1.25rem and bottom padding 1rem. The name and status stack 0.25rem apart; 1.25rem separates that block from the field; the field label sits 0.375rem above its trigger.
 
-Width is fixed. Height is a floor: `body` carries a 13rem `min-height`, and content may push past it. The status line keeps a 1.25rem minimum height, so an empty line while the page report is pending does not move the field below it.
+Width is fixed. Height is a floor: `body` carries a 14.75rem `min-height`, and content may push past it. The status line keeps a 1.25rem minimum height, so an empty line while the page report is pending does not move the field below it.
 
 There are no breakpoints. The popup has one width.
 
 ### Named Rules
 
-**The Reserved Room Rule.** The menu is portalled, so it adds nothing to the document's height, and a popup window sized to its content would clip it. The body's height floor exists to hold the open menu. The closed content ends at 10.375rem including bottom padding; the trigger's bottom edge is at 9.375rem, and the menu begins 0.25rem below it. A menu of n rows ends at 9.625rem + 0.5rem + (n × 1.75rem). The 13rem floor holds one row. When rows are added, raise the floor with them.
+**The Reserved Room Rule.** The menu is portalled, so it adds nothing to the document's height, and a popup window sized to its content would clip it. The body's height floor exists to hold the open menu. The closed content ends at 10.375rem including bottom padding; the trigger's bottom edge is at 9.375rem, and the menu begins 0.25rem below it. A menu of n rows ends at 9.625rem + 0.5rem + (n × 1.75rem). The 14.75rem floor holds two rows and leaves 1.125rem below the menu. Below 13.625rem the menu flips above the trigger and covers the status line and label. When a row is added, raise the floor by 1.75rem.
 
 **The Shared Edge Rule.** Menu rows align to the trigger above them. Row text starts 11px from the shared left edge, as the trigger's text does (trigger: 1px border + 10px padding; row: 4px menu padding + 7px). The check centers on the trigger's chevron, both 16px and both ending 9px from the right edge (trigger: 1px + 8px; row: 4px + 5px). The menu takes the trigger's exact width. Those offsets are set where the menu is used, not in the vendored component.
 
@@ -228,7 +228,7 @@ Only the outline variant at large size is rendered, as the Hide Field trigger. T
 
 - **Do** read every color from the shadcn custom properties in `entrypoints/popup/style.css`, so both schemes follow without extra work.
 - **Do** use the Three Tones as the only status treatments: plain for this list's state, muted for idle guidance, destructive for any failure.
-- **Do** add a hideable status as another row in the Hide Menu, then raise the 13rem floor per the Reserved Room Rule.
+- **Do** add a hideable status as another row in the Hide Menu, then raise the 14.75rem floor per the Reserved Room Rule.
 - **Do** keep status text to one line of the 18rem measure at 0.875rem. "Could not load your choice. Choose again." is near the limit.
 - **Do** keep menu rows on the trigger's text and chevron edges, per the Shared Edge Rule.
 - **Do** keep browser surfaces on the palette: selection inverts ink and sheet, and the scrollbar thumb uses Hairline on a transparent track.
@@ -242,4 +242,4 @@ Only the outline variant at large size is rendered, as the Hide Field trigger. T
 - **Don't** write raw color values at a call site, or override a token per scheme outside the stylesheet.
 - **Don't** add a theme switch or class-based dark mode. The operating system decides.
 - **Don't** lift the panel, the trigger, or anything else in the panel's flow with a shadow.
-- **Don't** assume the 13rem floor is enough for a longer menu. It holds one row.
+- **Don't** assume the 14.75rem floor is enough for a longer menu. It holds two rows.
