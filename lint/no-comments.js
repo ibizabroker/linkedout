@@ -1,19 +1,19 @@
 const plugin = {
-  meta: { name: "local" },
+  meta: { name: 'local' },
   rules: {
-    "no-comments": {
+    'no-comments': {
       meta: {
-        type: "problem",
-        docs: { description: "Disallow comments." },
+        type: 'problem',
+        docs: { description: 'Disallow comments.' },
       },
       create(context) {
         return {
           Program(node) {
             for (const comment of node.comments) {
-              if (comment.type === "Shebang") continue;
+              if (comment.type === 'Shebang') continue;
               context.report({
                 node: comment,
-                message: "Remove this comment.",
+                message: 'Remove this comment.',
               });
             }
           },

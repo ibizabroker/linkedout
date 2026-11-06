@@ -5,13 +5,17 @@ const HIDDEN_ATTR = 'data-linkedout-applied';
 const STYLE_ID = 'linkedout-applied-style';
 
 function isSearchResults(path: string): boolean {
-  return SEARCH_PATHS.some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+  return SEARCH_PATHS.some(
+    (prefix) => path === prefix || path.startsWith(`${prefix}/`),
+  );
 }
 
 function isApplied(card: Element): boolean {
   for (const node of card.querySelectorAll('*')) {
     if (node.textContent?.trim() !== APPLIED_LABEL) continue;
-    const childMatches = [...node.children].some((child) => child.textContent?.trim() === APPLIED_LABEL);
+    const childMatches = [...node.children].some(
+      (child) => child.textContent?.trim() === APPLIED_LABEL,
+    );
     if (!childMatches) return true;
   }
   return false;
@@ -29,7 +33,9 @@ function reconcile(doc: Document): void {
 }
 
 function release(doc: Document): void {
-  for (const card of doc.querySelectorAll(`[${HIDDEN_ATTR}]`)) setHidden(card, false);
+  for (const card of doc.querySelectorAll(`[${HIDDEN_ATTR}]`)) {
+    setHidden(card, false);
+  }
 }
 
 function hiddenStyle(doc: Document): HTMLStyleElement {

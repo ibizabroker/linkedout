@@ -11,6 +11,7 @@ bun install
 bun run dev          # default browser target, hot reload
 bun run build        # → .output/<browser-mv…>
 bun run lint         # oxlint
+bun run format       # oxfmt
 bun run compile      # tsc --noEmit
 ```
 
