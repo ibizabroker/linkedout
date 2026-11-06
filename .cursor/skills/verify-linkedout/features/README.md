@@ -38,5 +38,5 @@ Keep implementation details out of the map. Name only user paths, stable handles
 
 ## Features
 
-- [Hide menu](./hide-menu.md) covers opening the popup and turning Applied and Viewed hiding on and off.
+- [Hide menu](./hide-menu.md) covers opening the popup and turning Applied, Viewed, and Saved hiding on and off.
 - [Extension identity](./extension-identity.md) covers confirming the built extension name and popup title surface.

@@ -9,7 +9,7 @@ related_targets: []
 
 Mode: Operate
 
-The seeker is mid-search. The popup sets which statuses disappear and shows whether this Jobs list changed. This slice ships Applied and Viewed.
+The seeker is mid-search. The popup sets which statuses disappear and shows whether this Jobs list changed. This slice ships Applied, Viewed, and Saved.
 
 ## Direction contract
 
@@ -17,9 +17,9 @@ THESIS: This popup is the hide control for the current Jobs list. It refuses the
 
 OWN-WORLD: shadcn. A neutral extension panel, the name, one status line, and one dropdown of checkable items.
 
-STORY: The seeker reads whether this list is hiding cards, then turns Applied and Viewed on or off. The choice persists.
+STORY: The seeker reads whether this list is hiding cards, then turns Applied, Viewed, and Saved on or off. Saved starts off. The choice persists.
 
-FIRST VIEWPORT: The name LinkedOut, then the status line, then the label Hide from results above a closed dropdown that reads the selected options, such as Applied, Viewed, or Nothing hidden. The label is there because the options alone have no verb. The menu is two checkboxes, Applied and Viewed. Those checkboxes are the action.
+FIRST VIEWPORT: The name LinkedOut, then the status line, then the label Hide from results above a closed dropdown that reads the selected options, such as Applied, Viewed, or Nothing hidden. The label is there because the options alone have no verb. The menu is three checkboxes, Applied, Viewed, and Saved. Those checkboxes are the action.
 
 FORM: User-pinned shadcn. It was not a rolled candidate. seed:a1b4443e5c9341af (hand dealt, unused; form pinned by the user)
 
