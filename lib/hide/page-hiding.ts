@@ -12,7 +12,8 @@ import {
 import { PAGE_REPORT_PORT, serializePageReport } from '@/lib/hide/page-report';
 import { watchHideSet } from '@/lib/hide/store';
 
-const JOB_CARD = 'li[data-occludable-job-id]';
+const JOB_CARD =
+  'li[data-occludable-job-id], div[role="button"][componentkey^="job-card-component-ref-"]';
 const HIDDEN_ATTR = 'data-linkedout-applied';
 const STYLE_ID = 'linkedout-applied-style';
 const HIDDEN_CSS = '[data-linkedout-applied]{display:none !important}';
