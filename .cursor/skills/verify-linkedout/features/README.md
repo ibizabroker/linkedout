@@ -38,5 +38,5 @@ Keep implementation details out of the map. Name only user paths, stable handles
 
 ## Features
 
-- [Popup counter](./popup-counter.md) covers opening the popup and incrementing the starter counter.
+- [Applied toggle](./applied-toggle.md) covers opening the popup and turning Applied hiding on and off.
 - [Extension identity](./extension-identity.md) covers confirming the built extension name and popup title surface.
