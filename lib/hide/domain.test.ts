@@ -22,6 +22,34 @@ describe('parseStoredHideSet', () => {
     expect(hasKind(parsed.set, 'viewed')).toBe(true);
   });
 
+  test('a missing value does not include saved', () => {
+    const parsed = parseStoredHideSet(undefined);
+    expect(parsed.status).toBe('ready');
+    if (parsed.status !== 'ready') {
+      return;
+    }
+    expect(hasKind(parsed.set, 'saved')).toBe(false);
+  });
+
+  test('a stored applied and viewed choice stays without saved', () => {
+    const parsed = parseStoredHideSet({ version: 1, kinds: ['applied', 'viewed'] });
+    expect(parsed.status).toBe('ready');
+    if (parsed.status !== 'ready') {
+      return;
+    }
+    expect(parsed.set.kinds).toEqual(['applied', 'viewed']);
+    expect(hasKind(parsed.set, 'saved')).toBe(false);
+  });
+
+  test('a stored choice with saved keeps it', () => {
+    const parsed = parseStoredHideSet({ version: 1, kinds: ['applied', 'saved'] });
+    expect(parsed.status).toBe('ready');
+    if (parsed.status !== 'ready') {
+      return;
+    }
+    expect(parsed.set.kinds).toEqual(['applied', 'saved']);
+  });
+
   test('a saved applied-only choice stays applied-only', () => {
     const parsed = parseStoredHideSet({ version: 1, kinds: ['applied'] });
     expect(parsed.status).toBe('ready');
@@ -66,7 +94,7 @@ describe('parseStoredHideSet', () => {
 
 describe('parseReplaceDocument', () => {
   test('rejects a document that contains a string outside the catalog', () => {
-    expect(parseReplaceDocument({ version: 1, kinds: ['saved'] })).toBeUndefined();
+    expect(parseReplaceDocument({ version: 1, kinds: ['dismissed'] })).toBeUndefined();
     expect(parseReplaceDocument({ version: 1, kinds: ['applied', 'dismissed'] })).toBeUndefined();
   });
 
@@ -142,12 +170,22 @@ describe('readyPopup', () => {
     expect(ready.triggerLabel).toBe('Viewed');
   });
 
-  test('an empty set reads Nothing hidden with both rows unchecked', () => {
+  test('a default set trigger still reads Applied, Viewed', () => {
+    expect(readyPopup(defaultHideSet(), undefined).triggerLabel).toBe('Applied, Viewed');
+  });
+
+  test('the trigger lists Saved last when every row is on', () => {
+    const all = withKind(defaultHideSet(), 'saved', true);
+    expect(readyPopup(all, undefined).triggerLabel).toBe('Applied, Viewed, Saved');
+  });
+
+  test('an empty set reads Nothing hidden with all rows unchecked', () => {
     const ready = readyPopup(emptyHideSet(), undefined);
     expect(ready.triggerLabel).toBe('Nothing hidden');
     expect(ready.menu).toEqual([
       { kind: 'applied', label: 'Applied', checked: false },
       { kind: 'viewed', label: 'Viewed', checked: false },
+      { kind: 'saved', label: 'Saved', checked: false },
     ]);
   });
 });
@@ -156,8 +194,10 @@ describe('shouldMarkHidden', () => {
   const both = defaultHideSet();
   const appliedOnly = withKind(both, 'viewed', false);
   const viewedOnly = withKind(both, 'applied', false);
-  const applied = { applied: true, viewed: false };
-  const viewed = { applied: false, viewed: true };
+  const savedOnly = withKind(emptyHideSet(), 'saved', true);
+  const applied = { applied: true, viewed: false, saved: false };
+  const viewed = { applied: false, viewed: true, saved: false };
+  const saved = { applied: false, viewed: false, saved: true };
 
   test('is false off a jobs list', () => {
     expect(shouldMarkHidden(false, both, applied)).toBe(false);
@@ -176,6 +216,16 @@ describe('shouldMarkHidden', () => {
     expect(shouldMarkHidden(true, appliedOnly, viewed)).toBe(false);
   });
 
+  test('hides a saved card only when saved is selected', () => {
+    expect(shouldMarkHidden(true, both, saved)).toBe(false);
+    expect(shouldMarkHidden(true, savedOnly, saved)).toBe(true);
+  });
+
+  test('keeps viewed and applied cards when only saved is selected', () => {
+    expect(shouldMarkHidden(true, savedOnly, viewed)).toBe(false);
+    expect(shouldMarkHidden(true, savedOnly, applied)).toBe(false);
+  });
+
   test('keeps an applied card when only viewed is selected', () => {
     expect(shouldMarkHidden(true, viewedOnly, applied)).toBe(false);
   });
@@ -191,6 +241,13 @@ describe('textIsLeafBadge', () => {
     expect(textIsLeafBadge('viewed', [], 'Viewed')).toBe(false);
     expect(textIsLeafBadge('Viewed 2 days ago', [], 'Viewed')).toBe(false);
     expect(textIsLeafBadge('Visto', [], 'Viewed')).toBe(false);
+  });
+
+  test('rejects other forms of Saved', () => {
+    expect(textIsLeafBadge('saved', [], 'Saved')).toBe(false);
+    expect(textIsLeafBadge('Save', [], 'Saved')).toBe(false);
+    expect(textIsLeafBadge('Saved 2 days ago', [], 'Saved')).toBe(false);
+    expect(textIsLeafBadge('Guardado', [], 'Saved')).toBe(false);
   });
 
   test('rejects a wrapper whose child already carries the badge', () => {

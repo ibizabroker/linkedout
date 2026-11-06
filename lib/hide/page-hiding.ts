@@ -105,7 +105,7 @@ function onJobsResultsList(pathname: string): boolean {
 }
 
 function cardFacts(card: Element): CardFacts {
-  const facts = { applied: false, viewed: false };
+  const facts = { applied: false, viewed: false, saved: false };
 
   for (const node of card.querySelectorAll('*')) {
     const childTextContents = [...node.children].map((child) => child.textContent ?? '');
