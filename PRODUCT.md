@@ -30,15 +30,15 @@ v1 excludes Firefox, on-page controls, other filters, apply tracking, other Jobs
 
 Anything beyond that hide behavior is undecided for now.
 
-The shipped UI is still the WXT starter popup.
+The shipped UI is the popup hide control: the name, one status line, and one dropdown. This slice offers Applied only.
 
 ## Brand Commitments
 
-The product name is LinkedOut. No voice, logo, or visual system is binding.
+The product name is LinkedOut. The popup uses the shadcn neutral system recorded in DESIGN.md. No voice or logo is binding.
 
 ## Evidence on Hand
 
-The extension scaffold is a popup counter, a content script that runs on Google, and an empty background script. No LinkedIn hiding behavior exists in the product yet. The implementation plan is GitHub issues #1–#5 on `ibizabroker/linkedout`.
+The extension hides Applied cards on the main Jobs results list, and the popup turns that on and off. Viewed and Saved are not built yet. The `/jobs/` home feed still shows Applied cards, as v1 excludes other Jobs surfaces. The implementation plan is GitHub issues #1–#5 on `ibizabroker/linkedout`.
 
 Do not fabricate testimonials, usage numbers, or demonstrations of the hide behavior.
 
