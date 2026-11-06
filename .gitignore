@@ -14,6 +14,8 @@ stats-*.json
 .wxt
 web-ext.config.ts
 .tmp/
+.claude/settings.local.json
+.claude/skills/impeccable/scripts/bin/
 .cursor/skills/verify-linkedout/artifacts/
 
 # Editor directories and files
