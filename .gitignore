@@ -15,7 +15,11 @@ stats-*.json
 web-ext.config.ts
 .tmp/
 .claude/settings.local.json
-.claude/skills/impeccable/scripts/bin/
+.claude/skills/impeccable/
+.claude/agents/impeccable-*
+.cursor/skills/impeccable/
+.cursor/agents/impeccable-*
+.cursor/hooks.json
 .cursor/skills/verify-linkedout/artifacts/
 
 # Editor directories and files
