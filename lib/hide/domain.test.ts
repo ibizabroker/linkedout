@@ -7,17 +7,29 @@ import {
   parseStoredHideSet,
   readyPopup,
   shouldMarkHidden,
+  textIsLeafBadge,
   withKind,
 } from './domain.ts';
 
 describe('parseStoredHideSet', () => {
-  test('a missing value includes applied', () => {
+  test('a missing value includes applied and viewed', () => {
     const parsed = parseStoredHideSet(undefined);
     expect(parsed.status).toBe('ready');
     if (parsed.status !== 'ready') {
       return;
     }
     expect(hasKind(parsed.set, 'applied')).toBe(true);
+    expect(hasKind(parsed.set, 'viewed')).toBe(true);
+  });
+
+  test('a saved applied-only choice stays applied-only', () => {
+    const parsed = parseStoredHideSet({ version: 1, kinds: ['applied'] });
+    expect(parsed.status).toBe('ready');
+    if (parsed.status !== 'ready') {
+      return;
+    }
+    expect(parsed.set.kinds).toEqual(['applied']);
+    expect(hasKind(parsed.set, 'viewed')).toBe(false);
   });
 
   test('an empty kind list stays empty', () => {
@@ -54,8 +66,8 @@ describe('parseStoredHideSet', () => {
 
 describe('parseReplaceDocument', () => {
   test('rejects a document that contains a string outside the catalog', () => {
-    expect(parseReplaceDocument({ version: 1, kinds: ['viewed'] })).toBeUndefined();
-    expect(parseReplaceDocument({ version: 1, kinds: ['applied', 'saved'] })).toBeUndefined();
+    expect(parseReplaceDocument({ version: 1, kinds: ['saved'] })).toBeUndefined();
+    expect(parseReplaceDocument({ version: 1, kinds: ['applied', 'dismissed'] })).toBeUndefined();
   });
 
   test('accepts an empty kind list as a clear', () => {
@@ -66,20 +78,24 @@ describe('parseReplaceDocument', () => {
 describe('withKind', () => {
   test('is idempotent', () => {
     const selected = defaultHideSet();
-    expect(withKind(selected, 'applied', true).kinds).toEqual(['applied']);
-    expect(selected.kinds).toEqual(['applied']);
+    expect(withKind(selected, 'applied', true).kinds).toEqual(['applied', 'viewed']);
+    expect(selected.kinds).toEqual(['applied', 'viewed']);
 
-    const cleared = withKind(selected, 'applied', false);
+    const cleared = withKind(withKind(selected, 'applied', false), 'viewed', false);
     expect(cleared.kinds).toEqual([]);
     expect(withKind(cleared, 'applied', false).kinds).toEqual([]);
-    expect(withKind(cleared, 'applied', true).kinds).toEqual(['applied']);
+    expect(withKind(cleared, 'viewed', true).kinds).toEqual(['viewed']);
+    expect(withKind(withKind(cleared, 'viewed', true), 'applied', true).kinds).toEqual([
+      'applied',
+      'viewed',
+    ]);
   });
 });
 
 describe('readyPopup', () => {
   test('names the trigger, the hiding sentence, and the count', () => {
     const ready = readyPopup(defaultHideSet(), { kind: 'jobs-list', hiddenCount: 2 });
-    expect(ready.triggerLabel).toBe('Applied');
+    expect(ready.triggerLabel).toBe('Applied, Viewed');
     expect(ready.status).toEqual({ kind: 'hiding', text: '2 cards hidden on this list' });
   });
 
@@ -94,8 +110,7 @@ describe('readyPopup', () => {
   });
 
   test('an empty set on a jobs list says every card is showing', () => {
-    const empty = withKind(defaultHideSet(), 'applied', false);
-    const ready = readyPopup(empty, { kind: 'jobs-list', hiddenCount: 4 });
+    const ready = readyPopup(emptyHideSet(), { kind: 'jobs-list', hiddenCount: 4 });
     expect(ready.triggerLabel).toBe('Nothing hidden');
     expect(ready.status).toEqual({ kind: 'showing', text: 'Showing every card' });
   });
@@ -122,21 +137,63 @@ describe('readyPopup', () => {
     expect('text' in ready.status).toBe(false);
   });
 
-  test('an empty set reads Nothing hidden with Applied unchecked', () => {
+  test('clearing only Applied leaves Viewed in the trigger', () => {
+    const ready = readyPopup(withKind(defaultHideSet(), 'applied', false), undefined);
+    expect(ready.triggerLabel).toBe('Viewed');
+  });
+
+  test('an empty set reads Nothing hidden with both rows unchecked', () => {
     const ready = readyPopup(emptyHideSet(), undefined);
     expect(ready.triggerLabel).toBe('Nothing hidden');
-    expect(ready.menu).toEqual([{ kind: 'applied', label: 'Applied', checked: false }]);
+    expect(ready.menu).toEqual([
+      { kind: 'applied', label: 'Applied', checked: false },
+      { kind: 'viewed', label: 'Viewed', checked: false },
+    ]);
   });
 });
 
 describe('shouldMarkHidden', () => {
-  test('is false off a jobs list, true for a selected applied card, and false when the set is empty', () => {
-    const selected = defaultHideSet();
-    const empty = withKind(selected, 'applied', false);
-    const applied = { applied: true };
+  const both = defaultHideSet();
+  const appliedOnly = withKind(both, 'viewed', false);
+  const viewedOnly = withKind(both, 'applied', false);
+  const applied = { applied: true, viewed: false };
+  const viewed = { applied: false, viewed: true };
 
-    expect(shouldMarkHidden(false, selected, applied)).toBe(false);
-    expect(shouldMarkHidden(true, selected, applied)).toBe(true);
-    expect(shouldMarkHidden(true, empty, applied)).toBe(false);
+  test('is false off a jobs list', () => {
+    expect(shouldMarkHidden(false, both, applied)).toBe(false);
+    expect(shouldMarkHidden(false, both, viewed)).toBe(false);
+  });
+
+  test('hides a selected applied card and not one when the set is empty', () => {
+    expect(shouldMarkHidden(true, both, applied)).toBe(true);
+    expect(shouldMarkHidden(true, appliedOnly, applied)).toBe(true);
+    expect(shouldMarkHidden(true, emptyHideSet(), applied)).toBe(false);
+  });
+
+  test('hides a viewed card only when viewed is selected', () => {
+    expect(shouldMarkHidden(true, both, viewed)).toBe(true);
+    expect(shouldMarkHidden(true, viewedOnly, viewed)).toBe(true);
+    expect(shouldMarkHidden(true, appliedOnly, viewed)).toBe(false);
+  });
+
+  test('keeps an applied card when only viewed is selected', () => {
+    expect(shouldMarkHidden(true, viewedOnly, applied)).toBe(false);
+  });
+});
+
+describe('textIsLeafBadge', () => {
+  test('accepts exactly Viewed after trimming', () => {
+    expect(textIsLeafBadge('Viewed', [], 'Viewed')).toBe(true);
+    expect(textIsLeafBadge('  Viewed\n', [], 'Viewed')).toBe(true);
+  });
+
+  test('rejects other casing, longer text, and localized labels', () => {
+    expect(textIsLeafBadge('viewed', [], 'Viewed')).toBe(false);
+    expect(textIsLeafBadge('Viewed 2 days ago', [], 'Viewed')).toBe(false);
+    expect(textIsLeafBadge('Visto', [], 'Viewed')).toBe(false);
+  });
+
+  test('rejects a wrapper whose child already carries the badge', () => {
+    expect(textIsLeafBadge('Viewed', ['Viewed'], 'Viewed')).toBe(false);
   });
 });

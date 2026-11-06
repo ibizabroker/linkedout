@@ -14,9 +14,9 @@ import { watchHideSet } from '@/lib/hide/store';
 
 const JOB_CARD =
   'li[data-occludable-job-id], div[role="button"][componentkey^="job-card-component-ref-"]';
-const HIDDEN_ATTR = 'data-linkedout-applied';
-const STYLE_ID = 'linkedout-applied-style';
-const HIDDEN_CSS = '[data-linkedout-applied]{display:none !important}';
+const HIDDEN_ATTR = 'data-linkedout-hidden';
+const STYLE_ID = 'linkedout-hidden-style';
+const HIDDEN_CSS = '[data-linkedout-hidden]{display:none !important}';
 const SEARCH_PREFIXES = ['/jobs/search', '/jobs/search-results'] as const;
 
 export function startJobListHiding(
@@ -105,7 +105,7 @@ function onJobsResultsList(pathname: string): boolean {
 }
 
 function cardFacts(card: Element): CardFacts {
-  const facts = { applied: false };
+  const facts = { applied: false, viewed: false };
 
   for (const node of card.querySelectorAll('*')) {
     const childTextContents = [...node.children].map((child) => child.textContent ?? '');

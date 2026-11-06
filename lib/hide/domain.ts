@@ -1,5 +1,6 @@
 export const HIDE_CATALOG = [
   { kind: 'applied', menuLabel: 'Applied', badgeText: 'Applied', defaultOn: true },
+  { kind: 'viewed', menuLabel: 'Viewed', badgeText: 'Viewed', defaultOn: true },
 ] as const;
 
 export type HideKind = (typeof HIDE_CATALOG)[number]['kind'];
