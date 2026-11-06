@@ -1,3 +1,5 @@
+import { startHideSetOwner } from '@/lib/hide/store';
+
 export default defineBackground(() => {
-  console.log('Hello background!', { id: browser.runtime.id });
+  startHideSetOwner();
 });
