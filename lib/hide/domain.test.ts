@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   defaultHideSet,
+  emptyHideSet,
   hasKind,
   parseReplaceDocument,
   parseStoredHideSet,
@@ -79,11 +80,17 @@ describe('readyPopup', () => {
   test('names the trigger, the hiding sentence, and the count', () => {
     const ready = readyPopup(defaultHideSet(), { kind: 'jobs-list', hiddenCount: 2 });
     expect(ready.triggerLabel).toBe('Applied');
-    expect(ready.status).toEqual({
-      kind: 'hiding',
-      text: 'Hiding on this list',
-      countLine: '2 cards hidden',
-    });
+    expect(ready.status).toEqual({ kind: 'hiding', text: '2 cards hidden on this list' });
+  });
+
+  test('a single hidden card is singular', () => {
+    const ready = readyPopup(defaultHideSet(), { kind: 'jobs-list', hiddenCount: 1 });
+    expect(ready.status).toEqual({ kind: 'hiding', text: '1 card hidden on this list' });
+  });
+
+  test('no hidden cards says there is nothing to hide', () => {
+    const ready = readyPopup(defaultHideSet(), { kind: 'jobs-list', hiddenCount: 0 });
+    expect(ready.status).toEqual({ kind: 'hiding', text: 'No cards to hide on this list' });
   });
 
   test('an empty set on a jobs list says every card is showing', () => {
@@ -103,13 +110,22 @@ describe('readyPopup', () => {
 
   test('a failed report says the list could not be checked', () => {
     const ready = readyPopup(defaultHideSet(), { kind: 'failed' });
-    expect(ready.status).toEqual({ kind: 'failed', text: 'The list could not be checked' });
+    expect(ready.status).toEqual({
+      kind: 'failed',
+      text: 'Could not check this list. Reload the tab.',
+    });
   });
 
   test('a missing report has no status sentence', () => {
     const ready = readyPopup(defaultHideSet(), undefined);
     expect(ready.status).toEqual({ kind: 'pending' });
     expect('text' in ready.status).toBe(false);
+  });
+
+  test('an empty set reads Nothing hidden with Applied unchecked', () => {
+    const ready = readyPopup(emptyHideSet(), undefined);
+    expect(ready.triggerLabel).toBe('Nothing hidden');
+    expect(ready.menu).toEqual([{ kind: 'applied', label: 'Applied', checked: false }]);
   });
 });
 

@@ -28,14 +28,10 @@ export type MenuRow = {
 
 export type StatusLine =
   | { readonly kind: 'pending' }
-  | { readonly kind: 'failed'; readonly text: 'The list could not be checked' }
+  | { readonly kind: 'failed'; readonly text: 'Could not check this list. Reload the tab.' }
   | { readonly kind: 'elsewhere'; readonly text: 'Open a Jobs search to hide cards' }
   | { readonly kind: 'showing'; readonly text: 'Showing every card' }
-  | {
-      readonly kind: 'hiding';
-      readonly text: 'Hiding on this list';
-      readonly countLine: string;
-    };
+  | { readonly kind: 'hiding'; readonly text: string };
 
 export type ReadyPopup = {
   readonly triggerLabel: string;
@@ -43,11 +39,14 @@ export type ReadyPopup = {
   readonly status: StatusLine;
 };
 
-export const UNREADABLE_CHOICE_TEXT = 'The choice could not be loaded';
+export const UNREADABLE_CHOICE_TEXT = 'Could not load your choice. Choose again.';
 
 export type PopupModel =
   | { readonly phase: 'loading' }
-  | { readonly phase: 'unreadable'; readonly text: typeof UNREADABLE_CHOICE_TEXT }
+  | ({
+      readonly phase: 'unreadable';
+      readonly text: typeof UNREADABLE_CHOICE_TEXT;
+    } & Pick<ReadyPopup, 'triggerLabel' | 'menu'>)
   | ({ readonly phase: 'ready' } & ReadyPopup);
 
 export type StoredHideRead =
@@ -56,6 +55,10 @@ export type StoredHideRead =
 
 export function defaultHideSet(): HideSet {
   return hideSet(HIDE_CATALOG.flatMap((row) => (row.defaultOn ? [row.kind] : [])));
+}
+
+export function emptyHideSet(): HideSet {
+  return hideSet([]);
 }
 
 export function withKind(set: HideSet, kind: HideKind, on: boolean): HideSet {
@@ -172,21 +175,27 @@ function statusLine(set: HideSet, report: PageReport | undefined): StatusLine {
 
   switch (report.kind) {
     case 'failed':
-      return { kind: 'failed', text: 'The list could not be checked' };
+      return { kind: 'failed', text: 'Could not check this list. Reload the tab.' };
     case 'not-jobs-list':
       return { kind: 'elsewhere', text: 'Open a Jobs search to hide cards' };
     case 'jobs-list':
       if (set.kinds.length === 0) {
         return { kind: 'showing', text: 'Showing every card' };
       }
-      return {
-        kind: 'hiding',
-        text: 'Hiding on this list',
-        countLine: `${report.hiddenCount} cards hidden`,
-      };
+      return { kind: 'hiding', text: hidingText(report.hiddenCount) };
     default:
       return unexpected(report);
   }
+}
+
+function hidingText(hiddenCount: number): string {
+  if (hiddenCount === 0) {
+    return 'No cards to hide on this list';
+  }
+  if (hiddenCount === 1) {
+    return '1 card hidden on this list';
+  }
+  return `${hiddenCount} cards hidden on this list`;
 }
 
 function unexpected(value: never): never {

@@ -21,7 +21,9 @@ export function watchHideSet(onRead: (read: StoredHideRead) => void): () => void
       onRead(parseStoredHideSet(stored[HIDE_SET_STORAGE_KEY]));
     },
     () => {
-      return undefined;
+      if (!stopped) {
+        onRead({ status: 'unreadable' });
+      }
     },
   );
 

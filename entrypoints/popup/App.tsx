@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ReactElement } from 'react';
 import { browser, type Browser } from 'wxt/browser';
+import { ChevronDownIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -8,6 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
   UNREADABLE_CHOICE_TEXT,
+  emptyHideSet,
   failedPageReport,
   notJobsListReport,
   readyPopup,
@@ -17,7 +20,6 @@ import {
   type MenuRow,
   type PageReport,
   type PopupModel,
-  type StatusLine,
 } from '@/lib/hide/domain';
 import {
   PAGE_REPORT_PORT,
@@ -30,52 +32,75 @@ export default function App() {
 }
 
 export function PopupApp(): ReactElement {
-  const { model, setKind } = useHideSetSession();
+  const { model, setKind, saveFailed } = useHideSetSession();
+
+  const status = statusLine(model, saveFailed);
 
   return (
-    <main className="flex flex-col px-4 pt-5 pb-14">
-      <div className="flex flex-col gap-2">
+    <main className="flex flex-col px-4 pt-5 pb-4">
+      <div className="flex flex-col gap-1">
         <h1 className="text-base font-semibold tracking-tight text-balance">
           LinkedOut
         </h1>
-        {model.phase === 'unreadable' ? (
-          <p role="status">{model.text}</p>
-        ) : null}
-        {model.phase === 'ready' ? <StatusText status={model.status} /> : null}
+        <p
+          role="status"
+          className={`min-h-5 text-sm ${TONE_CLASS[status.tone]}`}
+        >
+          {status.text}
+        </p>
       </div>
-      {model.phase === 'ready' ? (
+      {model.phase === 'loading' ? null : (
         <HideMenu
           triggerLabel={model.triggerLabel}
           rows={model.menu}
           onSetKind={setKind}
         />
-      ) : null}
+      )}
     </main>
   );
 }
 
-function StatusText(props: {
-  readonly status: StatusLine;
-}): ReactElement | null {
-  const { status } = props;
-  if (status.kind === 'pending') {
-    return null;
-  }
+type Tone = 'plain' | 'muted' | 'failure';
 
-  if (status.kind === 'hiding') {
-    return (
-      <div role="status" className="flex flex-col gap-0.5 text-sm">
-        <p>{status.text}</p>
-        <p className="tabular-nums">{status.countLine}</p>
-      </div>
-    );
-  }
+const TONE_CLASS: Record<Tone, string> = {
+  plain: 'text-foreground',
+  muted: 'text-muted-foreground',
+  failure: 'text-destructive',
+};
 
-  return (
-    <p role="status" className="text-sm">
-      {status.text}
-    </p>
-  );
+const SAVE_FAILED_TEXT = 'Your choice could not be saved. Try again.';
+
+function statusLine(
+  model: PopupModel,
+  saveFailed: boolean,
+): { readonly text: string; readonly tone: Tone } {
+  if (saveFailed) {
+    return { text: SAVE_FAILED_TEXT, tone: 'failure' };
+  }
+  if (model.phase === 'loading') {
+    return { text: '', tone: 'muted' };
+  }
+  if (model.phase === 'unreadable') {
+    return { text: model.text, tone: 'failure' };
+  }
+  const { status } = model;
+  switch (status.kind) {
+    case 'pending':
+      return { text: '', tone: 'muted' };
+    case 'failed':
+      return { text: status.text, tone: 'failure' };
+    case 'hiding':
+    case 'showing':
+      return { text: status.text, tone: 'plain' };
+    case 'elsewhere':
+      return { text: status.text, tone: 'muted' };
+    default:
+      return unexpectedStatus(status);
+  }
+}
+
+function unexpectedStatus(value: never): never {
+  throw new Error(`Unexpected status: ${JSON.stringify(value)}`);
 }
 
 function HideMenu(props: {
@@ -84,45 +109,60 @@ function HideMenu(props: {
   readonly onSetKind: (kind: HideKind, on: boolean) => void;
 }): ReactElement {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        type="button"
-        className="mt-4 flex h-9 w-full cursor-pointer items-center justify-between rounded-md bg-background px-3 text-sm font-medium ring-1 ring-foreground/10 outline-none hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        {props.triggerLabel}
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        {props.rows.map((row) => (
-          <DropdownMenuCheckboxItem
-            key={row.kind}
-            checked={row.checked}
-            onSelect={(event) => {
-              event.preventDefault();
-            }}
-            onCheckedChange={(checked) => {
-              if (typeof checked !== 'boolean') {
-                return;
-              }
-              props.onSetKind(row.kind, checked);
-            }}
+    <div className="mt-5 flex flex-col gap-1.5">
+      <p className="text-sm font-medium">Hide from results</p>
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="w-full justify-between font-normal"
+            aria-label={`Hide from results: ${props.triggerLabel}`}
           >
-            {row.label}
-          </DropdownMenuCheckboxItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+            {props.triggerLabel}
+            <ChevronDownIcon
+              data-icon="inline-end"
+              className="text-muted-foreground transition-transform duration-150 group-aria-expanded/button:rotate-180"
+            />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="ring-inset">
+          {props.rows.map((row) => (
+            <DropdownMenuCheckboxItem
+              key={row.kind}
+              className="pl-[7px] **:data-[slot=dropdown-menu-checkbox-item-indicator]:right-[5px]"
+              checked={row.checked}
+              onSelect={(event) => {
+                event.preventDefault();
+              }}
+              onCheckedChange={(checked) => {
+                if (typeof checked !== 'boolean') {
+                  return;
+                }
+                props.onSetKind(row.kind, checked);
+              }}
+            >
+              {row.label}
+            </DropdownMenuCheckboxItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }
 
 function useHideSetSession(): {
   readonly model: PopupModel;
   readonly setKind: (kind: HideKind, on: boolean) => void;
+  readonly saveFailed: boolean;
 } {
   const [phase, setPhase] = useState<'loading' | 'ready' | 'unreadable'>(
     'loading',
   );
   const [hideSet, setHideSet] = useState<HideSet | null>(null);
   const [report, setReport] = useState<PageReport | undefined>(undefined);
+  const [saveFailed, setSaveFailed] = useState(false);
   const hideSetRef = useRef<HideSet | null>(null);
   const resolvedRef = useRef<HideSet | null>(null);
   const epoch = useRef(0);
@@ -135,9 +175,10 @@ function useHideSetSession(): {
       }
 
       if (read.status !== 'ready') {
-        resolvedRef.current = null;
-        hideSetRef.current = null;
-        setHideSet(null);
+        const empty = emptyHideSet();
+        resolvedRef.current = empty;
+        hideSetRef.current = empty;
+        setHideSet(empty);
         setPhase('unreadable');
         return;
       }
@@ -222,6 +263,7 @@ function useHideSetSession(): {
       return;
     }
 
+    setSaveFailed(false);
     const next = withKind(current, kind, on);
     hideSetRef.current = next;
     setHideSet(next);
@@ -238,12 +280,14 @@ function useHideSetSession(): {
         resolvedRef.current = stored;
         hideSetRef.current = stored;
         setHideSet(stored);
+        setPhase('ready');
       },
       () => {
         inflight.current -= 1;
         if (epoch.current !== ticket) {
           return;
         }
+        setSaveFailed(true);
         const last = resolvedRef.current;
         if (last === null) {
           return;
@@ -254,7 +298,7 @@ function useHideSetSession(): {
     );
   }
 
-  return { model: popupModel(phase, hideSet, report), setKind };
+  return { model: popupModel(phase, hideSet, report), setKind, saveFailed };
 }
 
 function popupModel(
@@ -262,12 +306,18 @@ function popupModel(
   hideSet: HideSet | null,
   report: PageReport | undefined,
 ): PopupModel {
-  if (phase === 'unreadable') {
-    return { phase: 'unreadable', text: UNREADABLE_CHOICE_TEXT };
-  }
-
   if (phase === 'loading' || hideSet === null) {
     return { phase: 'loading' };
+  }
+
+  if (phase === 'unreadable') {
+    const { triggerLabel, menu } = readyPopup(hideSet, report);
+    return {
+      phase: 'unreadable',
+      text: UNREADABLE_CHOICE_TEXT,
+      triggerLabel,
+      menu,
+    };
   }
 
   return { phase: 'ready', ...readyPopup(hideSet, report) };
