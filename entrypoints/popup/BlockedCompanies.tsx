@@ -9,8 +9,7 @@ export type BlockedCompanyRow = { readonly name: string };
 const EMPTY_TEXT =
   'No blocked companies. Block one from a job card or the job details.';
 
-export const BLOCKLIST_UNREADABLE_TEXT =
-  'Could not load your blocked companies. Reopen the popup.';
+export const BLOCKLIST_UNREADABLE_TEXT = 'Could not load blocked companies.';
 
 export function useBlocklistSession(): {
   readonly companies: readonly BlockedCompanyRow[] | null | undefined;
@@ -27,7 +26,7 @@ export function useBlocklistSession(): {
   function unblock(name: string): void {
     setUnblockFailure(undefined);
     requestUnblock(name).catch(() => {
-      setUnblockFailure(`Could not unblock ${name}. Try again.`);
+      setUnblockFailure('Could not unblock that company. Try again.');
     });
   }
 
