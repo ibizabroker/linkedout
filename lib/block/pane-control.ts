@@ -1,5 +1,5 @@
-import { findTopCardCompany, paneButtonView } from '@/lib/blocklist/pane-company';
-import { closeBlockConfirmation, openBlockConfirmation } from '@/lib/blocklist/confirm-panel';
+import { findTopCardCompany, paneButtonView } from '@/lib/block/pane-company';
+import { closeBlockConfirmation, openBlockConfirmation } from '@/lib/block/confirm-panel';
 
 const PANE = '[data-sdui-screen$="SemanticJobDetails"]';
 const CONTROL_ATTR = 'data-linkedout-pane-block';

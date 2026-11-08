@@ -1,4 +1,4 @@
-import { startPaneBlockControl } from '@/lib/blocklist/pane-control';
+import { startPaneBlockControl } from '@/lib/block/pane-control';
 import { startJobListHiding } from '@/lib/hide/page-hiding';
 
 export default defineContentScript({

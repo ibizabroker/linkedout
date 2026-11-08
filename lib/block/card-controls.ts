@@ -1,5 +1,5 @@
-import { pickCompanyName } from '@/lib/blocklist/company-name';
-import { openBlockConfirmation } from '@/lib/blocklist/confirm-panel';
+import { pickCompanyName } from '@/lib/block/company-name';
+import { openBlockConfirmation } from '@/lib/block/confirm-panel';
 
 const DISMISS = 'button[aria-label^="Dismiss "][aria-label$=" job"]';
 const CONTROL_ATTR = 'data-linkedout-block';

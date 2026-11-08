@@ -13,8 +13,8 @@ import {
   BLOCK_CONTROL_CSS,
   removeBlockControls,
   syncBlockControl,
-} from '@/lib/blocklist/card-controls';
-import { closeBlockConfirmation } from '@/lib/blocklist/confirm-panel';
+} from '@/lib/block/card-controls';
+import { closeBlockConfirmation } from '@/lib/block/confirm-panel';
 import { PAGE_REPORT_PORT, serializePageReport } from '@/lib/hide/page-report';
 import { watchHideSet } from '@/lib/hide/store';
 
