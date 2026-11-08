@@ -159,7 +159,7 @@ A strictly achromatic palette, zero chroma on every neutral, with one red held b
 
 ## Layout
 
-The panel is one column, 20rem wide on `html`, `body`, and the root, with 1rem inline padding, leaving an 18rem measure. Top padding is 1.25rem and bottom padding 1rem. The name and status stack 0.25rem apart; 1.25rem separates that block from the field; the field label sits 0.375rem above its trigger.
+The panel is one column, 20rem wide on `html`, `body`, and the root, with 1rem inline padding, leaving an 18rem measure. Top padding is 1.25rem and bottom padding 1rem. The name and status stack 0.25rem apart; 1.25rem separates that block from the field; the field label sits 0.375rem above its trigger. The Blocked Companies section follows the field 1.25rem below the trigger, and its list sits 0.375rem below its header.
 
 Width is fixed. Height is a floor: `body` carries a 16.5rem `min-height`, and content may push past it. The status line keeps a 1.25rem minimum height, so an empty line while the page report is pending does not move the field below it.
 
@@ -167,7 +167,7 @@ There are no breakpoints. The popup has one width.
 
 ### Named Rules
 
-**The Reserved Room Rule.** The menu is portalled, so it adds nothing to the document's height, and a popup window sized to its content would clip it. The body's height floor exists to hold the open menu. The closed content ends at 10.375rem including bottom padding; the trigger's bottom edge is at 9.375rem, and the menu begins 0.25rem below it. A menu of n rows ends at 9.625rem + 0.5rem + (n × 1.75rem). The 16.5rem floor holds three rows and leaves 1.125rem below the menu. Below 15.375rem the menu flips above the trigger and covers the status line and label. When a row is added, raise the floor by 1.75rem.
+**The Reserved Room Rule.** The menu is portalled, so it adds nothing to the document's height, and a popup window sized to its content would clip it. The body's height floor exists to hold the open menu. The closed content ends at 10.375rem including bottom padding; the trigger's bottom edge is at 9.375rem, and the menu begins 0.25rem below it. A menu of n rows ends at 9.625rem + 0.5rem + (n × 1.75rem). The 16.5rem floor holds three rows and leaves 1.125rem below the menu. The Blocked Companies section is in the panel's flow below the trigger, so the open menu covers it and does not move. With the section expanded and empty, the content ends just inside the 16.5rem floor, so the floor still sets the popup height. A longer list grows the panel past the floor, which only adds room below the menu. Below 15.375rem the menu flips above the trigger and covers the status line and label. When a row is added, raise the floor by 1.75rem.
 
 **The Shared Edge Rule.** Menu rows align to the trigger above them. Row text starts 11px from the shared left edge, as the trigger's text does (trigger: 1px border + 10px padding; row: 4px menu padding + 7px). The check centers on the trigger's chevron, both 16px and both ending 9px from the right edge (trigger: 1px + 8px; row: 4px + 5px). The menu takes the trigger's exact width. Those offsets are set where the menu is used, not in the vendored component.
 
@@ -218,9 +218,18 @@ One line directly under the name; the panel's main message.
 - **Pending:** Empty, at its reserved height, in the muted tone. The control does not appear until the stored choice has loaded.
 - **Announcement:** A live status region, so the change reaches assistive technology.
 
+### Blocked Companies
+
+A collapsible section below the Hide Field. It lists the companies the seeker blocked.
+
+- **Header:** A full-width ghost button that reads `Blocked companies (N)` in Label type, with the chevron in Faded Ink at the far end, on the trigger's chevron edge. It has no fill at rest, on hover, or when open, so it reads as a section label and not a field. Open turns the chevron 180° over 150ms, as the trigger does. It carries `aria-expanded` and controls the list region.
+- **Collapsed:** The default each time the popup opens. The list region is hidden.
+- **Empty:** The region shows "No blocked companies. Block one from a job card or the job details." in Body type and the muted tone. It wraps to two lines.
+- **Rows:** One per company, newest first. The name is on the left in Body type and truncates. A 1.75rem ghost icon button with a 16px Lucide `X` is on the right, named `Unblock <Company>`. Rows stack 0.25rem apart. They render only once blocking ships.
+
 ### Buttons
 
-Only the outline variant at large size is rendered, as the Hide Field trigger. The vendored `components/ui/button.tsx` keeps shadcn's other variants, which are not part of this record until a surface renders one.
+The outline variant at large size is rendered as the Hide Field trigger. The ghost variant is rendered as the Blocked Companies header and the row unblock buttons. The vendored `components/ui/button.tsx` keeps shadcn's other variants, which are not part of this record until a surface renders one.
 
 ## Do's and Don'ts
 
@@ -243,3 +252,4 @@ Only the outline variant at large size is rendered, as the Hide Field trigger. T
 - **Don't** add a theme switch or class-based dark mode. The operating system decides.
 - **Don't** lift the panel, the trigger, or anything else in the panel's flow with a shadow.
 - **Don't** assume the 16.5rem floor is enough for a longer menu. It holds three rows.
+- **Don't** give the Blocked Companies header a fill or border. It is a section label that opens, not a field.
