@@ -8,7 +8,7 @@ const SEARCH_PREFIXES = ['/jobs/search', '/jobs/search-results'] as const;
 const BAN_ICON =
   '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>';
 const CSS =
-  `[${CONTROL_ATTR}]{display:inline-flex;align-items:center;gap:4px;height:24px;margin-left:8px;padding:0 8px;border:1px solid color-mix(in srgb,currentColor 25%,transparent);border-radius:6px;background:transparent;color:inherit;font:500 12px/1 system-ui,sans-serif;white-space:nowrap;cursor:pointer}` +
+  `[${CONTROL_ATTR}]{display:inline-flex;align-items:center;gap:4px;height:24px;margin-left:8px;margin-right:auto;padding:0 8px;border:1px solid color-mix(in srgb,currentColor 25%,transparent);border-radius:6px;background:transparent;color:inherit;font:500 12px/1 system-ui,sans-serif;white-space:nowrap;cursor:pointer}` +
   `[${CONTROL_ATTR}]:hover:not(:disabled){background:color-mix(in srgb,currentColor 10%,transparent)}` +
   `[${CONTROL_ATTR}]:disabled{cursor:default;opacity:0.6}`;
 
