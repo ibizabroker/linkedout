@@ -26,7 +26,10 @@ import {
   parsePageReportMessage,
 } from '@/lib/hide/page-report';
 import { requestHideSet, watchHideSet } from '@/lib/hide/store';
-import { BlockedCompaniesSection } from './BlockedCompanies';
+import {
+  BlockedCompaniesSection,
+  useBlocklistSession,
+} from './BlockedCompanies';
 
 export default function App() {
   return <PopupApp />;
@@ -35,7 +38,8 @@ export default function App() {
 export function PopupApp(): ReactElement {
   const { model, setKind, saveFailed } = useHideSetSession();
 
-  const status = statusLine(model, saveFailed);
+  const blocklist = useBlocklistSession();
+  const status = statusLine(model, saveFailed, blocklist.failureText);
 
   return (
     <main className="flex flex-col px-4 pt-5 pb-4">
@@ -57,7 +61,12 @@ export function PopupApp(): ReactElement {
             rows={model.menu}
             onSetKind={setKind}
           />
-          <BlockedCompaniesSection companies={[]} />
+          {blocklist.companies === undefined ? null : (
+            <BlockedCompaniesSection
+              companies={blocklist.companies}
+              onUnblock={blocklist.unblock}
+            />
+          )}
         </>
       )}
     </main>
@@ -77,9 +86,13 @@ const SAVE_FAILED_TEXT = 'Your choice could not be saved. Try again.';
 function statusLine(
   model: PopupModel,
   saveFailed: boolean,
+  blocklistFailure: string | undefined,
 ): { readonly text: string; readonly tone: Tone } {
   if (saveFailed) {
     return { text: SAVE_FAILED_TEXT, tone: 'failure' };
+  }
+  if (blocklistFailure !== undefined) {
+    return { text: blocklistFailure, tone: 'failure' };
   }
   if (model.phase === 'loading') {
     return { text: '', tone: 'muted' };
