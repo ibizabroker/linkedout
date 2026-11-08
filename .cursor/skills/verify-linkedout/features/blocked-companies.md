@@ -1,6 +1,6 @@
 # Blocked companies
 
-The popup shows a `Blocked companies (N)` section below `Hide from results`. Its header expands and collapses the list. With nothing blocked, the expanded list shows `No blocked companies. Block one from a job card or the job details.` With companies blocked, the list shows them newest first, and `Unblock <Company>` removes one at once with no confirmation. If the stored list is unreadable, the header drops its count and the status line shows `Could not load your blocked companies. Reopen the popup.`
+The popup shows a `Blocked companies (N)` section below `Hide from results`. Its header expands and collapses the list. With nothing blocked, the expanded list shows `No blocked companies. Block one from a job card or the job details.` With companies blocked, the list shows them newest first, and `Unblock <Company>` removes one at once with no confirmation. If the stored list is unreadable, the header drops its count and the status line shows `Could not load blocked companies.`
 
 ## Sub-features
 
@@ -10,7 +10,7 @@ The popup shows a `Blocked companies (N)` section below `Hide from results`. Its
 - `blocked-seeded` lists seeded companies newest first and the header count matches.
 - `blocked-unblock` clicks `Unblock <Company>`; the row and count update and storage no longer holds it. The empty state returns after the last one.
 - `blocked-unreadable` shows the failure status line and no empty state.
-- `blocked-fit` keeps the open `Hide from results` menu below its trigger and inside the popup, with the section collapsed or expanded.
+- `blocked-fit` keeps the open `Hide from results` menu below its trigger and inside the popup, with the section collapsed or expanded, and with the list unreadable (write `blocklist: 'garbage'` from the extension page, reload, size the viewport to the body, open `Hide from results`, and confirm the menu opens below the trigger because the status line stays one line).
 
 ## How to get to it (user POV)
 

@@ -214,7 +214,7 @@ Each status is a checkable row in one menu; the checkbox is the action.
 One line directly under the name; the panel's main message.
 
 - **Tones:** Plain for this list's state ("12 cards hidden on this list", "No cards to hide on this list", "Showing every card"). Muted for idle guidance ("Open a Jobs search to hide cards"). Destructive for any failure.
-- **Failures:** The line replaces its text rather than adding a surface. A save failure takes precedence over everything else, then a blocklist failure (unblock failed or list unreadable), then an unreadable stored choice, then a failed page check. Every failure line says what failed and then the recovery, in two short sentences ("Could not check this list. Reload the tab.").
+- **Failures:** The line replaces its text rather than adding a surface. A save failure takes precedence over everything else, then a blocklist failure (unblock failed or list unreadable), then an unreadable stored choice, then a failed page check. Every failure line says what failed and then the recovery, in two short sentences ("Could not check this list. Reload the tab."), except an unreadable blocklist, which has no recovery in the popup and says only what failed. Each failure line must fit one line at the 18rem measure, so the Hide trigger does not move and its menu keeps opening below it.
 - **Pending:** Empty, at its reserved height, in the muted tone. The control does not appear until the stored choice has loaded.
 - **Announcement:** A live status region, so the change reaches assistive technology.
 
@@ -226,8 +226,9 @@ A collapsible section below the Hide Field. It lists the companies the seeker bl
 - **Collapsed:** The default each time the popup opens. The list region is hidden.
 - **Empty:** The region shows "No blocked companies. Block one from a job card or the job details." in Body type and the muted tone. It wraps to two lines.
 - **Rows:** One per company, newest first. The name is on the left in Body type and truncates. A 1.75rem ghost icon button with a 16px Lucide `X` is on the right, named `Unblock <Company>`. Rows stack 0.25rem apart. Unblocking is immediate, with no confirmation, and the row leaves when storage changes. A failed unblock keeps the row.
+- **Long lists:** Chrome caps the popup at 600px tall. Past about 12 rows the whole popup scrolls; the Hide menu is unaffected.
 - **Live:** The count and rows follow storage, so a block made on the page while the popup is open appears.
-- **Unreadable:** The header reads `Blocked companies` with no count, and the region is empty, not the empty state. The status line shows the failure: "Could not load your blocked companies. Reopen the popup." A failed unblock shows "Could not unblock <Company>. Try again." These take precedence over an unreadable hide choice and a failed page check, below a failed save.
+- **Unreadable:** The header reads `Blocked companies` with no count, and the region is empty, not the empty state. The status line shows the failure: "Could not load blocked companies." Reopening the popup does not help, so this line carries no recovery. A failed unblock shows "Could not unblock that company. Try again." and the row stays, so the name is not repeated. These take precedence over an unreadable hide choice and a failed page check, below a failed save.
 
 ### Block Control and Confirmation Panel
 
