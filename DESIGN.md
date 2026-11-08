@@ -234,7 +234,7 @@ A collapsible section below the Hide Field. It lists the companies the seeker bl
 
 These render on the LinkedIn page, not in the popup.
 
-- **Control:** A 40px round ghost icon button with a 16px Lucide `Ban`, inserted before LinkedIn's `Dismiss` button on each job card. It is named `Block <Company>` with a matching tooltip. It shows only while the card is hovered or has focus inside it, and stays shown while its panel is open.
+- **Control:** A 40px round ghost icon button with a 16px Lucide `Ban`, inserted before LinkedIn's `Dismiss` button on each job card and positioned out of flow, centered directly below the `Dismiss` button, so showing it never changes the card's height, title wrap, or the `Dismiss` position. It is named `Block <Company>` with a matching tooltip. It is hidden with `visibility`, and shows only while the card is hovered or has focus inside it, and stays shown while its panel is open.
 - **Panel:** Fixed 16px above the bottom of the viewport, centered, at most 448px wide, in a shadow root so LinkedIn CSS cannot reach it. It uses the neutral tokens as pixel and oklch values, with a hairline border and a soft shadow, and follows the color scheme. Title `Block <Company>?`, a muted body, then Cancel and a primary Block. Focus moves to the panel on open and returns to the trigger on close. Esc cancels. It never dismisses itself, and only one is open at a time.
 
 ### Buttons
