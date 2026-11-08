@@ -9,7 +9,7 @@ related_targets: []
 
 Mode: Operate
 
-The seeker is mid-search. The popup sets which statuses disappear and shows whether this Jobs list changed. It ships Applied, Viewed, and Saved, and a collapsible list of blocked companies, read live from storage, with an × on each row to unblock it.
+The seeker is mid-search. The popup sets which statuses disappear and shows whether this Jobs list changed, with one count for cards hidden by a status or a blocked company. It ships Applied, Viewed, and Saved, and a collapsible list of blocked companies, read live from storage, with an × on each row to unblock it.
 
 ## Direction contract
 

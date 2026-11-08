@@ -12,7 +12,7 @@ Active job seekers who use LinkedIn Jobs as a regular apply workflow.
 
 ## Product Purpose
 
-Already-touched job cards (Applied, Viewed, and Saved) reappear in results and bury fresh roles. LinkedOut hides the statuses the seeker selects so those cards stop occupying the list. Success means toggling the options hides and restores the matching cards on a real Jobs search in the same session. Spam companies, staffing agencies, and recruiting agencies also crowd the list, so the seeker can block a company to remove its cards. Blocking is in progress.
+Already-touched job cards (Applied, Viewed, and Saved) reappear in results and bury fresh roles. LinkedOut hides the statuses the seeker selects so those cards stop occupying the list. Success means toggling the options hides and restores the matching cards on a real Jobs search in the same session. Spam companies, staffing agencies, and recruiting agencies also crowd the list, so the seeker can block a company to remove its cards.
 
 ## Positioning
 
@@ -24,9 +24,9 @@ The seeker browses LinkedIn’s main Jobs search results in Chrome while activel
 
 ## Capabilities and Constraints
 
-A popup multi-select hides the selected English badges on the main Jobs results list, including cards that load later. Defaults: Applied and Viewed on, Saved off. Nothing selected shows every card.
+A popup multi-select hides the selected English badges on the main Jobs results list, including cards that load later. Defaults: Applied and Viewed on, Saved off. Nothing selected and nothing blocked shows every card.
 
-Company blocking is in progress. A seeker will block a company from a job card or the job details, and its cards will disappear from the results list. The popup lists blocked companies and unblocks them. The popup section reads the stored list live, newest first, and each row's × unblocks that company at once. Each job card on a Jobs results list shows a `Block <Company>` control on hover or focus that opens a confirmation panel. The job details pane shows an always visible `Block <Company>` button next to the top-card company name, which opens the same panel and follows the selected job. Confirming only closes the panel. Storing the block and hiding the cards are not built yet. If the stored list cannot be read, the status line says so and the section shows no count and no empty state.
+A seeker blocks a company from a job card or the job details, and its cards disappear from the results list the same way Applied, Viewed, and Saved cards do, including cards that load later, on open tabs at once and after a reload. Each job card on a Jobs results list shows a `Block <Company>` control on hover or focus that opens a confirmation panel. The job details pane shows an always visible `Block <Company>` button next to the top-card company name, which opens the same panel and follows the selected job. After a block the pane button becomes a disabled `Blocked` label and the pane stays on the same job. Confirming stores the block; if the store rejects it, the panel stays open and shows a failure line. The status line counts cards hidden for a badge or a blocked company together. The popup lists blocked companies, newest first, and each row's × unblocks that company at once, so its cards return on open tabs without a reload. Blocking is always on and does not depend on the hide choice being readable. If the stored list cannot be read, the status line says so, the section shows no count and no empty state, and no cards are hidden for the blocklist while badge hiding keeps working.
 
 Firefox, other filters, apply tracking, other Jobs surfaces, and any backend are out of scope. Ghost-job signals, such as Promoted and Reposted, are a later, separate slice.
 
@@ -38,7 +38,7 @@ The product name is LinkedOut. The popup uses the shadcn neutral system recorded
 
 ## Evidence on Hand
 
-The extension hides Applied cards on the main Jobs results list, and the popup turns that on and off. The extension also offers Viewed and Saved, and Saved is off by default. Badge matching for Viewed and Saved is tested against a local fixture only. The `/jobs/` home feed still shows Applied cards, because other Jobs surfaces are out of scope. The popup lists blocked companies and unblocks them, verified against the extension's own storage. The card control opens the confirmation panel, but confirming does not block a company yet, and the on-page unblock effect is untested until card hiding ships. The hide plan was GitHub issues #1–#5, and the company blocklist plan is #11–#16, on `ibizabroker/linkedout`.
+The extension hides Applied cards on the main Jobs results list, and the popup turns that on and off. The extension also offers Viewed and Saved, and Saved is off by default. Badge matching for Viewed and Saved is tested against a local fixture only. The `/jobs/` home feed still shows Applied cards, because other Jobs surfaces are out of scope. The popup lists blocked companies and unblocks them, verified against the extension's own storage. Blocking from a card and from the pane, the cards disappearing and returning on unblock without a reload, persistence across a reload, and the hidden count on the popup's report channel were verified on a live logged-in Jobs search. The toolbar popup itself was not opened over that page, so the combined status text rests on the unit tests. The hide plan was GitHub issues #1–#5, and the company blocklist plan is #11–#16, on `ibizabroker/linkedout`.
 
 Do not fabricate testimonials, usage numbers, or demonstrations of the hide behavior.
 
@@ -46,7 +46,7 @@ Do not fabricate testimonials, usage numbers, or demonstrations of the hide beha
 
 - Fresh roles stay reachable by removing already-touched cards from the results list.
 - The seeker chooses which of Applied, Viewed, and Saved disappear.
-- Hide choices live in the popup. Blocking a company will happen on the page, where the company is in view. Hiding runs on the main Jobs results list.
+- Hide choices live in the popup. Blocking a company happens on the page, where the company is in view. Hiding runs on the main Jobs results list.
 - English LinkedIn badge labels are the match rule until a later decision.
 - A company is blocked one at a time by its exact name. There is no built-in list of agencies.
 - Scope past hiding and blocking stays undecided until it is explicitly chosen.

@@ -35,7 +35,7 @@ Preconditions:
 
 ## Gotchas
 
-- This profile is not a Jobs search, so the status stays `Open a Jobs search to hide cards` even after all options are cleared. `Showing every card` appears only on a Jobs results list.
+- This profile is not a Jobs search, so the status stays `Open a Jobs search to hide cards` even after all options are cleared. `Showing every card` appears only on a Jobs results list with no card hidden; a blocked company's cards keep the count in the status line even with every option cleared.
 - Reloading the popup does not reset a saved choice. A fresh profile starts at Applied and Viewed, with Saved unchecked.
 - Match the closed trigger by its accessible name. That name is `Hide from results: Applied, Viewed`, `Hide from results: Applied`, `Hide from results: Viewed`, `Hide from results: Applied, Viewed, Saved`, or `Hide from results: Nothing hidden`, among other combinations, and it changes after each checkbox click.
 - A checkbox click leaves the menu open. Escape closes it.
