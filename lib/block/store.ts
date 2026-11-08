@@ -1,6 +1,5 @@
 import { browser } from 'wxt/browser';
 import {
-  emptyBlocklist,
   parseStoredBlocklist,
   serializeBlocklist,
   withBlocked,
@@ -85,9 +84,13 @@ function send(type: Change, name: string): Promise<void> {
 async function applyChange(type: Change, name: string): Promise<true> {
   const stored = await browser.storage.local.get(BLOCKLIST_STORAGE_KEY);
   const read = parseStoredBlocklist(stored[BLOCKLIST_STORAGE_KEY]);
-  const current = read.status === 'ready' ? read.list : emptyBlocklist();
+  if (read.status === 'unreadable') {
+    throw new Error('Stored blocklist is unreadable');
+  }
   const next =
-    type === BLOCK_COMPANY ? withBlocked(current, name, Date.now()) : withoutBlocked(current, name);
+    type === BLOCK_COMPANY
+      ? withBlocked(read.list, name, Date.now())
+      : withoutBlocked(read.list, name);
   await browser.storage.local.set({ [BLOCKLIST_STORAGE_KEY]: serializeBlocklist(next) });
   return true;
 }
