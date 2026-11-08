@@ -9,6 +9,12 @@ import {
   type HideSet,
   type PageReport,
 } from '@/lib/hide/domain';
+import {
+  BLOCK_CONTROL_CSS,
+  removeBlockControls,
+  syncBlockControl,
+} from '@/lib/blocklist/card-controls';
+import { closeBlockConfirmation } from '@/lib/blocklist/confirm-panel';
 import { PAGE_REPORT_PORT, serializePageReport } from '@/lib/hide/page-report';
 import { watchHideSet } from '@/lib/hide/store';
 
@@ -16,7 +22,7 @@ const JOB_CARD =
   'li[data-occludable-job-id], div[role="button"][componentkey^="job-card-component-ref-"]';
 const HIDDEN_ATTR = 'data-linkedout-hidden';
 const STYLE_ID = 'linkedout-hidden-style';
-const HIDDEN_CSS = '[data-linkedout-hidden]{display:none !important}';
+const HIDDEN_CSS = `[data-linkedout-hidden]{display:none !important}${BLOCK_CONTROL_CSS}`;
 const SEARCH_PREFIXES = ['/jobs/search', '/jobs/search-results'] as const;
 
 export function startJobListHiding(
@@ -72,6 +78,7 @@ export function startJobListHiding(
     observer.disconnect();
     style.remove();
     clearMarks(doc);
+    closeBlockConfirmation();
     stopWatch();
     browser.runtime.onConnect.removeListener(onConnect);
     for (const port of ports) {
@@ -133,6 +140,7 @@ function reconcile(doc: Document, set: HideSet): PageReport {
   for (const card of doc.querySelectorAll(JOB_CARD)) {
     const hidden = shouldMarkHidden(true, set, cardFacts(card));
     card.toggleAttribute(HIDDEN_ATTR, hidden);
+    syncBlockControl(card);
     if (hidden) {
       marked += 1;
     }
@@ -142,6 +150,7 @@ function reconcile(doc: Document, set: HideSet): PageReport {
 }
 
 function clearMarks(doc: Document): void {
+  removeBlockControls(doc);
   for (const card of doc.querySelectorAll(`[${HIDDEN_ATTR}]`)) {
     card.toggleAttribute(HIDDEN_ATTR, false);
   }
