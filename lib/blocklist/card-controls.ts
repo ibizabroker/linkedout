@@ -9,8 +9,9 @@ const BAN_ICON =
   '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>';
 
 export const BLOCK_CONTROL_CSS =
-  `[${CARD_ATTR}]:not([${OPEN_ATTR}]):not(:hover):not(:focus-within) [${CONTROL_ATTR}]{display:none !important}` +
-  `[${CONTROL_ATTR}]{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer}` +
+  `:has(> [${CONTROL_ATTR}]){position:relative}` +
+  `[${CARD_ATTR}]:not([${OPEN_ATTR}]):not(:hover):not(:focus-within) [${CONTROL_ATTR}]{visibility:hidden !important}` +
+  `[${CONTROL_ATTR}]{position:absolute;top:100%;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer}` +
   `[${CONTROL_ATTR}]:hover{background:rgba(0,0,0,0.08)}`;
 
 export function syncBlockControl(card: Element): void {
