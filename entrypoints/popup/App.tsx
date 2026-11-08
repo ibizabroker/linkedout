@@ -26,6 +26,7 @@ import {
   parsePageReportMessage,
 } from '@/lib/hide/page-report';
 import { requestHideSet, watchHideSet } from '@/lib/hide/store';
+import { BlockedCompaniesSection } from './BlockedCompanies';
 
 export default function App() {
   return <PopupApp />;
@@ -50,11 +51,14 @@ export function PopupApp(): ReactElement {
         </p>
       </div>
       {model.phase === 'loading' ? null : (
-        <HideMenu
-          triggerLabel={model.triggerLabel}
-          rows={model.menu}
-          onSetKind={setKind}
-        />
+        <>
+          <HideMenu
+            triggerLabel={model.triggerLabel}
+            rows={model.menu}
+            onSetKind={setKind}
+          />
+          <BlockedCompaniesSection companies={[]} />
+        </>
       )}
     </main>
   );
