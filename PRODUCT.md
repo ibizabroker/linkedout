@@ -26,7 +26,7 @@ The seeker browses LinkedIn’s main Jobs search results in Chrome while activel
 
 A popup multi-select hides the selected English badges on the main Jobs results list, including cards that load later. Defaults: Applied and Viewed on, Saved off. Nothing selected shows every card.
 
-Company blocking is in progress. A seeker will block a company from a job card or the job details, and its cards will disappear from the results list. The popup lists blocked companies and unblocks them. Today the popup shows the `Blocked companies (0)` section and its empty state only. Blocking, the on-page controls, and unblocking are not built yet.
+Company blocking is in progress. A seeker will block a company from a job card or the job details, and its cards will disappear from the results list. The popup lists blocked companies and unblocks them. Today the popup shows the `Blocked companies (0)` section and its empty state, and each job card on a Jobs results list shows a `Block <Company>` control on hover or focus that opens a confirmation panel. Confirming only closes the panel. Storing the block, hiding the cards, the job details button, and unblocking are not built yet.
 
 Firefox, other filters, apply tracking, other Jobs surfaces, and any backend are out of scope. Ghost-job signals, such as Promoted and Reposted, are a later, separate slice.
 
@@ -38,7 +38,7 @@ The product name is LinkedOut. The popup uses the shadcn neutral system recorded
 
 ## Evidence on Hand
 
-The extension hides Applied cards on the main Jobs results list, and the popup turns that on and off. The extension also offers Viewed and Saved, and Saved is off by default. Badge matching for Viewed and Saved is tested against a local fixture only. The `/jobs/` home feed still shows Applied cards, because other Jobs surfaces are out of scope. The popup shows the empty `Blocked companies (0)` section, and no company can be blocked yet. The hide plan was GitHub issues #1–#5, and the company blocklist plan is #11–#16, on `ibizabroker/linkedout`.
+The extension hides Applied cards on the main Jobs results list, and the popup turns that on and off. The extension also offers Viewed and Saved, and Saved is off by default. Badge matching for Viewed and Saved is tested against a local fixture only. The `/jobs/` home feed still shows Applied cards, because other Jobs surfaces are out of scope. The popup shows the empty `Blocked companies (0)` section, and the card control opens the confirmation panel, but no company can be blocked yet. The hide plan was GitHub issues #1–#5, and the company blocklist plan is #11–#16, on `ibizabroker/linkedout`.
 
 Do not fabricate testimonials, usage numbers, or demonstrations of the hide behavior.
 

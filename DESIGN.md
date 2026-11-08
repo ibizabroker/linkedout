@@ -227,6 +227,13 @@ A collapsible section below the Hide Field. It lists the companies the seeker bl
 - **Empty:** The region shows "No blocked companies. Block one from a job card or the job details." in Body type and the muted tone. It wraps to two lines.
 - **Rows:** One per company, newest first. The name is on the left in Body type and truncates. A 1.75rem ghost icon button with a 16px Lucide `X` is on the right, named `Unblock <Company>`. Rows stack 0.25rem apart. They render only once blocking ships.
 
+### Block Control and Confirmation Panel
+
+These render on the LinkedIn page, not in the popup.
+
+- **Control:** A 40px round ghost icon button with a 16px Lucide `Ban`, inserted before LinkedIn's `Dismiss` button on each job card. It is named `Block <Company>` with a matching tooltip. It shows only while the card is hovered or has focus inside it, and stays shown while its panel is open.
+- **Panel:** Fixed 16px above the bottom of the viewport, centered, at most 448px wide, in a shadow root so LinkedIn CSS cannot reach it. It uses the neutral tokens as pixel and oklch values, with a hairline border and a soft shadow, and follows the color scheme. Title `Block <Company>?`, a muted body, then Cancel and a primary Block. Focus moves to the panel on open and returns to the trigger on close. Esc cancels. It never dismisses itself, and only one is open at a time.
+
 ### Buttons
 
 The outline variant at large size is rendered as the Hide Field trigger. The ghost variant is rendered as the Blocked Companies header and the row unblock buttons. The vendored `components/ui/button.tsx` keeps shadcn's other variants, which are not part of this record until a surface renders one.
