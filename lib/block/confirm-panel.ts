@@ -58,6 +58,7 @@ export function openBlockConfirmation(
 
   const error = document.createElement('p');
   error.className = 'error';
+  error.setAttribute('role', 'alert');
   error.textContent = 'Could not block this company. Try again.';
 
   const actions = document.createElement('div');
@@ -67,8 +68,12 @@ export function openBlockConfirmation(
     error.remove();
     confirm.disabled = true;
     onConfirm().then(dismiss, () => {
+      if (dismissed) {
+        return;
+      }
       confirm.disabled = false;
       body.after(error);
+      confirm.focus();
     });
   });
   actions.append(cancel, confirm);
@@ -87,11 +92,18 @@ export function openBlockConfirmation(
   document.addEventListener('keydown', onKeydown, true);
 
   close = dismiss;
+  let dismissed = false;
 
   function dismiss(): void {
+    if (dismissed) {
+      return;
+    }
+    dismissed = true;
     document.removeEventListener('keydown', onKeydown, true);
     host.remove();
-    close = undefined;
+    if (close === dismiss) {
+      close = undefined;
+    }
     if (trigger instanceof HTMLElement && trigger.isConnected) {
       trigger.focus();
     }
