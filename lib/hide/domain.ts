@@ -1,3 +1,10 @@
+import {
+  emptyBlocklist,
+  isBlocked,
+  type Blocklist,
+  type StoredBlocklistRead,
+} from '@/lib/block/domain';
+
 export const HIDE_CATALOG = [
   { kind: 'applied', menuLabel: 'Applied', badgeText: 'Applied', defaultOn: true },
   { kind: 'viewed', menuLabel: 'Viewed', badgeText: 'Viewed', defaultOn: true },
@@ -15,6 +22,16 @@ export type HideSet = {
 
 export type CardFacts = {
   readonly [Kind in HideKind]: boolean;
+};
+
+export type HideRules = {
+  readonly set: HideSet;
+  readonly blocklist: Blocklist;
+};
+
+export type Card = {
+  readonly badges: CardFacts;
+  readonly company: string | undefined;
 };
 
 export type PageReport =
@@ -126,16 +143,26 @@ export function textIsLeafBadge(
   return !childTextContents.some((child) => child.trim() === badgeText);
 }
 
+export function hideRules(hide: StoredHideRead, block: StoredBlocklistRead): HideRules {
+  return {
+    set: hide.status === 'ready' ? hide.set : emptyHideSet(),
+    blocklist: block.status === 'ready' ? block.list : emptyBlocklist(),
+  };
+}
+
 export function shouldMarkHidden(
   onJobsResultsList: boolean,
-  set: HideSet,
-  facts: CardFacts,
+  rules: HideRules,
+  card: Card,
 ): boolean {
   if (!onJobsResultsList) {
     return false;
   }
 
-  return set.kinds.some((kind) => facts[kind]);
+  return (
+    rules.set.kinds.some((kind) => card.badges[kind]) ||
+    (card.company !== undefined && isBlocked(rules.blocklist, card.company))
+  );
 }
 
 export function readyPopup(set: HideSet, report: PageReport | undefined): ReadyPopup {
@@ -181,7 +208,7 @@ function statusLine(set: HideSet, report: PageReport | undefined): StatusLine {
     case 'not-jobs-list':
       return { kind: 'elsewhere', text: 'Open a Jobs search to hide cards' };
     case 'jobs-list':
-      if (set.kinds.length === 0) {
+      if (report.hiddenCount === 0 && set.kinds.length === 0) {
         return { kind: 'showing', text: 'Showing every card' };
       }
       return { kind: 'hiding', text: hidingText(report.hiddenCount) };

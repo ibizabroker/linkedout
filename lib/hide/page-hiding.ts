@@ -1,22 +1,27 @@
 import { browser, type Browser } from 'wxt/browser';
 import {
   HIDE_CATALOG,
+  hideRules,
   jobsListReport,
   notJobsListReport,
   shouldMarkHidden,
   textIsLeafBadge,
   type CardFacts,
-  type HideSet,
+  type HideRules,
   type PageReport,
+  type StoredHideRead,
 } from '@/lib/hide/domain';
 import {
   BLOCK_CONTROL_CSS,
+  cardCompany,
   removeBlockControls,
   syncBlockControl,
 } from '@/lib/block/card-controls';
 import { closeBlockConfirmation } from '@/lib/block/confirm-panel';
 import { PAGE_REPORT_PORT, serializePageReport } from '@/lib/hide/page-report';
 import { watchHideSet } from '@/lib/hide/store';
+import { watchBlocklist } from '@/lib/block/store';
+import type { StoredBlocklistRead } from '@/lib/block/domain';
 
 const JOB_CARD =
   'li[data-occludable-job-id], div[role="button"][componentkey^="job-card-component-ref-"]';
@@ -30,7 +35,9 @@ export function startJobListHiding(
   ctx: { onInvalidated(callback: () => void): void },
 ): void {
   const ports = new Set<Browser.runtime.Port>();
-  let latest: HideSet | undefined;
+  let hideRead: StoredHideRead | undefined;
+  let blockRead: StoredBlocklistRead | undefined;
+  let latest: HideRules | undefined;
   let lastReport: PageReport | undefined;
 
   const onConnect = (port: Browser.runtime.Port): void => {
@@ -63,15 +70,13 @@ export function startJobListHiding(
     characterData: true,
   });
 
-  const stopWatch = watchHideSet((read) => {
-    if (read.status !== 'ready') {
-      latest = undefined;
-      clearMarks(doc);
-      return;
-    }
-
-    latest = read.set;
-    publish(reconcile(doc, read.set));
+  const stopHideWatch = watchHideSet((read) => {
+    hideRead = read;
+    applyRules();
+  });
+  const stopBlockWatch = watchBlocklist((read) => {
+    blockRead = read;
+    applyRules();
   });
 
   ctx.onInvalidated(() => {
@@ -79,13 +84,22 @@ export function startJobListHiding(
     style.remove();
     clearMarks(doc);
     closeBlockConfirmation();
-    stopWatch();
+    stopHideWatch();
+    stopBlockWatch();
     browser.runtime.onConnect.removeListener(onConnect);
     for (const port of ports) {
       port.disconnect();
     }
     ports.clear();
   });
+
+  function applyRules(): void {
+    if (hideRead === undefined || blockRead === undefined) {
+      return;
+    }
+    latest = hideRules(hideRead, blockRead);
+    publish(reconcile(doc, latest));
+  }
 
   function publish(report: PageReport): void {
     if (reportsMatch(lastReport, report)) {
@@ -129,7 +143,7 @@ function cardFacts(card: Element): CardFacts {
   return facts;
 }
 
-function reconcile(doc: Document, set: HideSet): PageReport {
+function reconcile(doc: Document, rules: HideRules): PageReport {
   const pathname = doc.location?.pathname ?? '';
   if (!onJobsResultsList(pathname)) {
     clearMarks(doc);
@@ -138,9 +152,10 @@ function reconcile(doc: Document, set: HideSet): PageReport {
 
   let marked = 0;
   for (const card of doc.querySelectorAll(JOB_CARD)) {
-    const hidden = shouldMarkHidden(true, set, cardFacts(card));
+    const company = cardCompany(card);
+    const hidden = shouldMarkHidden(true, rules, { badges: cardFacts(card), company });
     card.toggleAttribute(HIDDEN_ATTR, hidden);
-    syncBlockControl(card);
+    syncBlockControl(card, company);
     if (hidden) {
       marked += 1;
     }

@@ -1,4 +1,6 @@
 import { findTopCardCompany, paneButtonView } from '@/lib/block/pane-company';
+import { emptyBlocklist, isBlocked, type Blocklist } from '@/lib/block/domain';
+import { requestBlock, watchBlocklist } from '@/lib/block/store';
 import { closeBlockConfirmation, openBlockConfirmation } from '@/lib/block/confirm-panel';
 
 const PANE = '[data-sdui-screen$="SemanticJobDetails"]';
@@ -21,19 +23,25 @@ export function startPaneBlockControl(
   style.textContent = CSS;
   doc.head.append(style);
 
-  const observer = new MutationObserver(() => syncPaneControl(doc));
+  let blocklist: Blocklist = emptyBlocklist();
+  const observer = new MutationObserver(() => syncPaneControl(doc, blocklist));
   observer.observe(doc.body, { childList: true, subtree: true, characterData: true });
-  syncPaneControl(doc);
+  const stopWatch = watchBlocklist((read) => {
+    blocklist = read.status === 'ready' ? read.list : emptyBlocklist();
+    syncPaneControl(doc, blocklist);
+  });
+  syncPaneControl(doc, blocklist);
 
   ctx.onInvalidated(() => {
     observer.disconnect();
     style.remove();
     removeControls(doc);
     closeBlockConfirmation();
+    stopWatch();
   });
 }
 
-export function syncPaneControl(doc: Document, blocked = false): void {
+export function syncPaneControl(doc: Document, blocklist: Blocklist): void {
   const pathname = doc.location?.pathname ?? '';
   const onList = SEARCH_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   const anchors = onList ? [...(doc.querySelector(PANE)?.querySelectorAll('a[href]') ?? [])] : [];
@@ -57,7 +65,7 @@ export function syncPaneControl(doc: Document, blocked = false): void {
   }
 
   const button = keep ?? createButton(doc);
-  applyView(button, found.name, blocked);
+  applyView(button, found.name, isBlocked(blocklist, found.name));
   if (keep === undefined) {
     target.after(button);
   }
@@ -83,7 +91,8 @@ function createButton(doc: Document): HTMLButtonElement {
   button.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
-    openBlockConfirmation(button.dataset.name ?? '', () => {});
+    const name = button.dataset.name ?? '';
+    openBlockConfirmation(name, () => requestBlock(name));
   });
   for (const type of ['keydown', 'keyup', 'mousedown', 'pointerdown']) {
     button.addEventListener(type, (event) => event.stopPropagation());

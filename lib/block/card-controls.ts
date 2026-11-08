@@ -1,5 +1,6 @@
 import { pickCompanyName } from '@/lib/block/company-name';
 import { openBlockConfirmation } from '@/lib/block/confirm-panel';
+import { requestBlock } from '@/lib/block/store';
 
 const DISMISS = 'button[aria-label^="Dismiss "][aria-label$=" job"]';
 const CONTROL_ATTR = 'data-linkedout-block';
@@ -14,9 +15,11 @@ export const BLOCK_CONTROL_CSS =
   `[${CONTROL_ATTR}]{position:absolute;top:100%;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;padding:0;border:0;border-radius:50%;background:transparent;color:inherit;cursor:pointer}` +
   `[${CONTROL_ATTR}]:hover{background:rgba(0,0,0,0.08)}`;
 
-export function syncBlockControl(card: Element): void {
-  const paragraphs = [...card.querySelectorAll('p')].map((p) => p.textContent ?? '');
-  const name = pickCompanyName(paragraphs);
+export function cardCompany(card: Element): string | undefined {
+  return pickCompanyName([...card.querySelectorAll('p')].map((p) => p.textContent ?? ''));
+}
+
+export function syncBlockControl(card: Element, name: string | undefined): void {
   const dismiss = card.querySelector(DISMISS);
   const existing = card.querySelector(`[${CONTROL_ATTR}]`);
 
@@ -48,7 +51,7 @@ export function syncBlockControl(card: Element): void {
     card.setAttribute(OPEN_ATTR, '');
     openBlockConfirmation(
       current,
-      () => {},
+      () => requestBlock(current),
       () => card.removeAttribute(OPEN_ATTR),
     );
   });

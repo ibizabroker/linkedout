@@ -1,14 +1,18 @@
 import { describe, expect, test } from 'bun:test';
+import { emptyBlocklist, withBlocked } from '@/lib/block/domain';
 import {
   defaultHideSet,
   emptyHideSet,
   hasKind,
+  hideRules,
+  jobsListReport,
   parseReplaceDocument,
   parseStoredHideSet,
   readyPopup,
   shouldMarkHidden,
   textIsLeafBadge,
   withKind,
+  type HideSet,
 } from './domain.ts';
 
 describe('parseStoredHideSet', () => {
@@ -138,9 +142,14 @@ describe('readyPopup', () => {
   });
 
   test('an empty set on a jobs list says every card is showing', () => {
-    const ready = readyPopup(emptyHideSet(), { kind: 'jobs-list', hiddenCount: 4 });
+    const ready = readyPopup(emptyHideSet(), { kind: 'jobs-list', hiddenCount: 0 });
     expect(ready.triggerLabel).toBe('Nothing hidden');
     expect(ready.status).toEqual({ kind: 'showing', text: 'Showing every card' });
+  });
+
+  test('an empty set with blocked cards hidden reports the count', () => {
+    const ready = readyPopup(emptyHideSet(), jobsListReport(3));
+    expect(ready.status).toEqual({ kind: 'hiding', text: '3 cards hidden on this list' });
   });
 
   test('a page that is not a jobs list asks for a jobs search', () => {
@@ -199,35 +208,79 @@ describe('shouldMarkHidden', () => {
   const viewed = { applied: false, viewed: true, saved: false };
   const saved = { applied: false, viewed: false, saved: true };
 
+  const rules = (set: HideSet) => ({ set, blocklist: emptyBlocklist() });
+  const card = (badges: typeof applied, company?: string) => ({ badges, company });
+  const none = { applied: false, viewed: false, saved: false };
+  const cbre = withBlocked(emptyBlocklist(), 'CBRE', 1);
+  const blockedRules = (set = emptyHideSet()) => ({ set, blocklist: cbre });
+
+  test('hides a blocked company with an empty hide set', () => {
+    expect(shouldMarkHidden(true, blockedRules(), card(none, 'CBRE'))).toBe(true);
+  });
+
+  test('hides a blocked company when the set is non-empty and no badge matches', () => {
+    expect(shouldMarkHidden(true, blockedRules(both), card(none, 'CBRE'))).toBe(true);
+  });
+
+  test('blocking Amazon leaves Amazon Web Services visible', () => {
+    const amazon = { set: emptyHideSet(), blocklist: withBlocked(emptyBlocklist(), 'Amazon', 1) };
+    expect(shouldMarkHidden(true, amazon, card(none, 'Amazon Web Services (AWS)'))).toBe(false);
+    expect(shouldMarkHidden(true, amazon, card(none, 'Amazon'))).toBe(true);
+  });
+
+  test('the company match ignores case and surrounding whitespace', () => {
+    expect(shouldMarkHidden(true, blockedRules(), card(none, '  cbre '))).toBe(true);
+  });
+
+  test('a card with no company and no matching badge stays visible', () => {
+    expect(shouldMarkHidden(true, blockedRules(both), card(none))).toBe(false);
+  });
+
+  test('a blocked company stays visible off a jobs list', () => {
+    expect(shouldMarkHidden(false, blockedRules(), card(none, 'CBRE'))).toBe(false);
+  });
+
+  test('an unreadable hide set hides a blocked card but not an applied card', () => {
+    const rulesNow = hideRules({ status: 'unreadable' }, { status: 'ready', list: cbre });
+    expect(shouldMarkHidden(true, rulesNow, card(none, 'CBRE'))).toBe(true);
+    expect(shouldMarkHidden(true, rulesNow, card(applied, 'Acme'))).toBe(false);
+  });
+
+  test('an unreadable blocklist hides an applied card but not a blocked card', () => {
+    const rulesNow = hideRules({ status: 'ready', set: both }, { status: 'unreadable' });
+    expect(shouldMarkHidden(true, rulesNow, card(applied, 'Acme'))).toBe(true);
+    expect(shouldMarkHidden(true, rulesNow, card(none, 'CBRE'))).toBe(false);
+  });
+
   test('is false off a jobs list', () => {
-    expect(shouldMarkHidden(false, both, applied)).toBe(false);
-    expect(shouldMarkHidden(false, both, viewed)).toBe(false);
+    expect(shouldMarkHidden(false, rules(both), card(applied))).toBe(false);
+    expect(shouldMarkHidden(false, rules(both), card(viewed))).toBe(false);
   });
 
   test('hides a selected applied card and not one when the set is empty', () => {
-    expect(shouldMarkHidden(true, both, applied)).toBe(true);
-    expect(shouldMarkHidden(true, appliedOnly, applied)).toBe(true);
-    expect(shouldMarkHidden(true, emptyHideSet(), applied)).toBe(false);
+    expect(shouldMarkHidden(true, rules(both), card(applied))).toBe(true);
+    expect(shouldMarkHidden(true, rules(appliedOnly), card(applied))).toBe(true);
+    expect(shouldMarkHidden(true, rules(emptyHideSet()), card(applied))).toBe(false);
   });
 
   test('hides a viewed card only when viewed is selected', () => {
-    expect(shouldMarkHidden(true, both, viewed)).toBe(true);
-    expect(shouldMarkHidden(true, viewedOnly, viewed)).toBe(true);
-    expect(shouldMarkHidden(true, appliedOnly, viewed)).toBe(false);
+    expect(shouldMarkHidden(true, rules(both), card(viewed))).toBe(true);
+    expect(shouldMarkHidden(true, rules(viewedOnly), card(viewed))).toBe(true);
+    expect(shouldMarkHidden(true, rules(appliedOnly), card(viewed))).toBe(false);
   });
 
   test('hides a saved card only when saved is selected', () => {
-    expect(shouldMarkHidden(true, both, saved)).toBe(false);
-    expect(shouldMarkHidden(true, savedOnly, saved)).toBe(true);
+    expect(shouldMarkHidden(true, rules(both), card(saved))).toBe(false);
+    expect(shouldMarkHidden(true, rules(savedOnly), card(saved))).toBe(true);
   });
 
   test('keeps viewed and applied cards when only saved is selected', () => {
-    expect(shouldMarkHidden(true, savedOnly, viewed)).toBe(false);
-    expect(shouldMarkHidden(true, savedOnly, applied)).toBe(false);
+    expect(shouldMarkHidden(true, rules(savedOnly), card(viewed))).toBe(false);
+    expect(shouldMarkHidden(true, rules(savedOnly), card(applied))).toBe(false);
   });
 
   test('keeps an applied card when only viewed is selected', () => {
-    expect(shouldMarkHidden(true, viewedOnly, applied)).toBe(false);
+    expect(shouldMarkHidden(true, rules(viewedOnly), card(applied))).toBe(false);
   });
 });
 

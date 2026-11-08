@@ -4,6 +4,7 @@ const PANEL_CSS = `
 .panel{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:2147483647;width:min(448px,calc(100vw - 32px));padding:16px;border:1px solid oklch(0.922 0 0);border-radius:10px;background:oklch(1 0 0);color:oklch(0.145 0 0);font:400 14px/1.5 system-ui,sans-serif;box-shadow:0 8px 24px oklch(0 0 0 / 14%);outline:none}
 h2{margin:0;font-size:16px;font-weight:600;letter-spacing:-0.025em}
 p{margin:4px 0 0;color:oklch(0.556 0 0)}
+p.error{color:oklch(0.577 0.245 27.325)}
 .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
 button{height:32px;padding:0 12px;border:1px solid oklch(0.922 0 0);border-radius:10px;background:oklch(1 0 0);color:inherit;font:500 14px/1 system-ui,sans-serif;cursor:pointer}
 button:hover{background:oklch(0.97 0 0)}
@@ -13,6 +14,7 @@ button.primary:hover{background:oklch(0.205 0 0 / 80%)}
 @media (prefers-color-scheme:dark){
 .panel{border-color:oklch(1 0 0 / 10%);background:oklch(0.205 0 0);color:oklch(0.985 0 0)}
 p{color:oklch(0.708 0 0)}
+p.error{color:oklch(0.704 0.191 22.216)}
 button{border-color:oklch(1 0 0 / 15%);background:oklch(1 0 0 / 5%)}
 button:hover{background:oklch(0.269 0 0)}
 button.primary{background:oklch(0.922 0 0);color:oklch(0.205 0 0)}
@@ -27,7 +29,7 @@ export function closeBlockConfirmation(): void {
 
 export function openBlockConfirmation(
   name: string,
-  onConfirm: () => void,
+  onConfirm: () => Promise<void>,
   onClose?: () => void,
 ): void {
   closeBlockConfirmation();
@@ -54,12 +56,20 @@ export function openBlockConfirmation(
   body.textContent =
     'Their jobs will be hidden from your results. You can unblock them anytime in the LinkedOut popup.';
 
+  const error = document.createElement('p');
+  error.className = 'error';
+  error.textContent = 'Could not block this company. Try again.';
+
   const actions = document.createElement('div');
   actions.className = 'actions';
   const cancel = actionButton('Cancel', '', dismiss);
   const confirm = actionButton('Block', 'primary', () => {
-    dismiss();
-    onConfirm();
+    error.remove();
+    confirm.disabled = true;
+    onConfirm().then(dismiss, () => {
+      confirm.disabled = false;
+      body.after(error);
+    });
   });
   actions.append(cancel, confirm);
 
