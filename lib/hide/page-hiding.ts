@@ -1,6 +1,6 @@
 import { browser, type Browser } from 'wxt/browser';
 import {
-  HIDE_CATALOG,
+  BADGE_ROWS,
   hideRules,
   jobsListReport,
   notJobsListReport,
@@ -126,11 +126,11 @@ function onJobsResultsList(pathname: string): boolean {
 }
 
 function cardFacts(card: Element): CardFacts {
-  const facts = { applied: false, viewed: false, saved: false };
+  const facts = { applied: false, viewed: false, saved: false, reposted: false };
 
   for (const node of card.querySelectorAll('*')) {
     const childTextContents = [...node.children].map((child) => child.textContent ?? '');
-    for (const row of HIDE_CATALOG) {
+    for (const row of BADGE_ROWS) {
       if (facts[row.kind]) {
         continue;
       }

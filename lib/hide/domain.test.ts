@@ -188,6 +188,20 @@ describe('readyPopup', () => {
     expect(readyPopup(all, undefined).triggerLabel).toBe('Applied, Viewed, Saved');
   });
 
+  test('Reposted is off by default and lists last', () => {
+    const ready = readyPopup(withKind(defaultHideSet(), 'reposted', true), undefined);
+    expect(ready.triggerLabel).toBe('Applied, Viewed, Reposted');
+    expect(hasKind(defaultHideSet(), 'reposted')).toBe(false);
+  });
+
+  test('a choice stored before Reposted existed still parses', () => {
+    const parsed = parseStoredHideSet({ version: 1, kinds: ['applied', 'viewed', 'saved'] });
+    expect(parsed.status).toBe('ready');
+    if (parsed.status === 'ready') {
+      expect(parsed.set.kinds).toEqual(['applied', 'viewed', 'saved']);
+    }
+  });
+
   test('an empty set reads Nothing hidden with all rows unchecked', () => {
     const ready = readyPopup(emptyHideSet(), undefined);
     expect(ready.triggerLabel).toBe('Nothing hidden');
@@ -195,6 +209,12 @@ describe('readyPopup', () => {
       { kind: 'applied', label: 'Applied', checked: false },
       { kind: 'viewed', label: 'Viewed', checked: false },
       { kind: 'saved', label: 'Saved', checked: false },
+      {
+        kind: 'reposted',
+        label: 'Reposted',
+        checked: false,
+        note: 'Checks each job with LinkedIn as you scroll',
+      },
     ]);
   });
 });
@@ -204,13 +224,13 @@ describe('shouldMarkHidden', () => {
   const appliedOnly = withKind(both, 'viewed', false);
   const viewedOnly = withKind(both, 'applied', false);
   const savedOnly = withKind(emptyHideSet(), 'saved', true);
-  const applied = { applied: true, viewed: false, saved: false };
-  const viewed = { applied: false, viewed: true, saved: false };
-  const saved = { applied: false, viewed: false, saved: true };
+  const applied = { applied: true, viewed: false, saved: false, reposted: false };
+  const viewed = { applied: false, viewed: true, saved: false, reposted: false };
+  const saved = { applied: false, viewed: false, saved: true, reposted: false };
 
   const rules = (set: HideSet) => ({ set, blocklist: emptyBlocklist() });
   const card = (badges: typeof applied, company?: string) => ({ badges, company });
-  const none = { applied: false, viewed: false, saved: false };
+  const none = { applied: false, viewed: false, saved: false, reposted: false };
   const cbre = withBlocked(emptyBlocklist(), 'CBRE', 1);
   const blockedRules = (set = emptyHideSet()) => ({ set, blocklist: cbre });
 

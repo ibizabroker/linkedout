@@ -9,9 +9,22 @@ export const HIDE_CATALOG = [
   { kind: 'applied', menuLabel: 'Applied', badgeText: 'Applied', defaultOn: true },
   { kind: 'viewed', menuLabel: 'Viewed', badgeText: 'Viewed', defaultOn: true },
   { kind: 'saved', menuLabel: 'Saved', badgeText: 'Saved', defaultOn: false },
+  {
+    kind: 'reposted',
+    menuLabel: 'Reposted',
+    defaultOn: false,
+    note: 'Checks each job with LinkedIn as you scroll',
+  },
 ] as const;
 
 export type HideKind = (typeof HIDE_CATALOG)[number]['kind'];
+
+type CatalogRow = (typeof HIDE_CATALOG)[number];
+export type BadgeRow = Extract<CatalogRow, { readonly badgeText: string }>;
+
+export const BADGE_ROWS: readonly BadgeRow[] = HIDE_CATALOG.filter(
+  (row): row is BadgeRow => 'badgeText' in row,
+);
 
 const hideSetBrand: unique symbol = Symbol('HideSet');
 
@@ -43,6 +56,7 @@ export type MenuRow = {
   readonly kind: HideKind;
   readonly label: string;
   readonly checked: boolean;
+  readonly note?: string;
 };
 
 export type StatusLine =
@@ -176,6 +190,7 @@ export function readyPopup(set: HideSet, report: PageReport | undefined): ReadyP
       kind: row.kind,
       label: row.menuLabel,
       checked: hasKind(set, row.kind),
+      ...('note' in row ? { note: row.note } : {}),
     })),
     status: statusLine(set, report),
   };
