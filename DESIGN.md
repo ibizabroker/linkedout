@@ -206,6 +206,7 @@ Each status is a checkable row in one menu; the checkbox is the action.
 - **Shape:** Softly rounded sheet (0.625rem) with 0.25rem padding, exactly the trigger's width, 0.25rem below it. Rows are 1.75rem tall, softly rounded (0.5rem), and stack flush.
 - **Rows:** Body type, with a 16px check at the row's end when selected and blank space when not. Row alignment follows the Shared Edge Rule.
 - **Focus:** Row Highlight fills the row, and its text and check follow.
+- **Notes:** A row may carry one quiet disclosure line under it, in 0.75rem muted ink on the row's text edge. Reposted carries "Checks each job with LinkedIn as you scroll", because it is the only status that asks LinkedIn for anything.
 - **Behavior:** Non-modal. Toggling a row keeps the menu open, so several statuses can be set in one visit, and the trigger text and status line update behind it.
 - **Motion:** Opens in 100ms with a fade, a 95% zoom, and a slide from the trigger's side.
 
@@ -213,7 +214,7 @@ Each status is a checkable row in one menu; the checkbox is the action.
 
 One line directly under the name; the panel's main message.
 
-- **Tones:** Plain for this list's state ("12 cards hidden on this list", "No cards to hide on this list", "Showing every card"). The count is one number for cards hidden for a badge or a blocked company. "Showing every card" appears only when no status is selected and no card is hidden; with nothing selected and blocked cards hidden, the line still carries the count. Muted for idle guidance ("Open a Jobs search to hide cards"). Destructive for any failure.
+- **Tones:** Plain for this list's state ("12 cards hidden on this list", "No cards to hide on this list", "Showing every card"). The count is one number for cards hidden for a badge, a repost, or a blocked company. Muted also for "Reposted check paused by LinkedIn limits", which replaces the count while Reposted checks are backing off. "Showing every card" appears only when no status is selected and no card is hidden; with nothing selected and blocked cards hidden, the line still carries the count. Muted for idle guidance ("Open a Jobs search to hide cards"). Destructive for any failure.
 - **Failures:** The line replaces its text rather than adding a surface. A save failure takes precedence over everything else, then a blocklist failure (unblock failed or list unreadable), then an unreadable stored choice, then a failed page check. Every failure line says what failed and then the recovery, in two short sentences ("Could not check this list. Reload the tab."), except an unreadable blocklist, which has no recovery in the popup and says only what failed. Each failure line must fit one line at the 18rem measure, so the Hide trigger does not move and its menu keeps opening below it.
 - **Pending:** Empty, at its reserved height, in the muted tone. The control does not appear until the stored choice has loaded.
 - **Announcement:** A live status region, so the change reaches assistive technology.

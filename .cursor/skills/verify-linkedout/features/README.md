@@ -38,6 +38,6 @@ Keep implementation details out of the map. Name only user paths, stable handles
 
 ## Features
 
-- [Hide menu](./hide-menu.md) covers opening the popup and turning Applied, Viewed, and Saved hiding on and off.
+- [Hide menu](./hide-menu.md) covers opening the popup and turning Applied, Viewed, Saved, and Reposted hiding on and off.
 - [Blocked companies](./blocked-companies.md) covers expanding and collapsing the `Blocked companies (N)` section, its empty state, seeded rows, unblocking, and an unreadable list.
 - [Extension identity](./extension-identity.md) covers confirming the built extension name and popup title surface.
