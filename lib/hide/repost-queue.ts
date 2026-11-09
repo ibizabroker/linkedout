@@ -63,11 +63,6 @@ export function createRepostQueue(deps: RepostQueueDeps): RepostQueue {
       }
 
       backoffMs = FIRST_BACKOFF_MS;
-      if (outcome.kind === 'page') {
-        deps.onChecked(jobId, outcome.facts);
-      } else {
-        failed.add(jobId);
-      }
       cancelTimer = deps.schedule(
         () => {
           cancelTimer = undefined;
@@ -75,6 +70,11 @@ export function createRepostQueue(deps: RepostQueueDeps): RepostQueue {
         },
         REQUEST_GAP_MS + deps.jitter() * REQUEST_JITTER_MS,
       );
+      if (outcome.kind === 'page') {
+        deps.onChecked(jobId, outcome.facts);
+      } else {
+        failed.add(jobId);
+      }
     });
   }
 

@@ -2,7 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import type { JobPageOutcome } from './job-page.ts';
 import { FIRST_BACKOFF_MS, REQUEST_GAP_MS, createRepostQueue } from './repost-queue.ts';
 
-function harness(outcomes: Record<string, JobPageOutcome>) {
+function harness(outcomes: Record<string, JobPageOutcome>, wantOnChecked: string[] = []) {
   let clock = 0;
   const timers: { at: number; run: () => void; live: boolean }[] = [];
   const started: { id: string; at: number }[] = [];
@@ -14,7 +14,12 @@ function harness(outcomes: Record<string, JobPageOutcome>) {
       return outcomes[id] ?? { kind: 'failed' };
     },
     isKnown: (id) => known.has(id),
-    onChecked: (id) => known.add(id),
+    onChecked: (id) => {
+      known.add(id);
+      for (const next of wantOnChecked) {
+        queue.want(next);
+      }
+    },
     onPauseChange: (until) => pauses.push(until),
     now: () => clock,
     schedule: (run, delay) => {
@@ -48,6 +53,15 @@ function harness(outcomes: Record<string, JobPageOutcome>) {
 const page = { kind: 'page', facts: { reposted: false } } as const;
 
 describe('repost queue', () => {
+  test('a want made while recording a result still waits out the gap', async () => {
+    const h = harness({ '1': page, '2': page }, ['2']);
+    h.queue.want('1');
+    await h.advanceTo(REQUEST_GAP_MS - 1);
+    expect(h.started.map((s) => s.id)).toEqual(['1']);
+    await h.advanceTo(REQUEST_GAP_MS);
+    expect(h.started.map((s) => s.id)).toEqual(['1', '2']);
+  });
+
   test('requests go one at a time, a gap apart', async () => {
     const h = harness({ '1': page, '2': page, '3': page });
     h.queue.want('1');
