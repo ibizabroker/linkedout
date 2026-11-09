@@ -126,23 +126,23 @@ describe('withKind', () => {
 
 describe('readyPopup', () => {
   test('names the trigger, the hiding sentence, and the count', () => {
-    const ready = readyPopup(defaultHideSet(), { kind: 'jobs-list', hiddenCount: 2 });
+    const ready = readyPopup(defaultHideSet(), jobsListReport(2));
     expect(ready.triggerLabel).toBe('Applied, Viewed');
     expect(ready.status).toEqual({ kind: 'hiding', text: '2 cards hidden on this list' });
   });
 
   test('a single hidden card is singular', () => {
-    const ready = readyPopup(defaultHideSet(), { kind: 'jobs-list', hiddenCount: 1 });
+    const ready = readyPopup(defaultHideSet(), jobsListReport(1));
     expect(ready.status).toEqual({ kind: 'hiding', text: '1 card hidden on this list' });
   });
 
   test('no hidden cards says there is nothing to hide', () => {
-    const ready = readyPopup(defaultHideSet(), { kind: 'jobs-list', hiddenCount: 0 });
+    const ready = readyPopup(defaultHideSet(), jobsListReport(0));
     expect(ready.status).toEqual({ kind: 'hiding', text: 'No cards to hide on this list' });
   });
 
   test('an empty set on a jobs list says every card is showing', () => {
-    const ready = readyPopup(emptyHideSet(), { kind: 'jobs-list', hiddenCount: 0 });
+    const ready = readyPopup(emptyHideSet(), jobsListReport(0));
     expect(ready.triggerLabel).toBe('Nothing hidden');
     expect(ready.status).toEqual({ kind: 'showing', text: 'Showing every card' });
   });
@@ -150,6 +150,15 @@ describe('readyPopup', () => {
   test('an empty set with blocked cards hidden reports the count', () => {
     const ready = readyPopup(emptyHideSet(), jobsListReport(3));
     expect(ready.status).toEqual({ kind: 'hiding', text: '3 cards hidden on this list' });
+  });
+
+  test('a paused Reposted check replaces the count only while Reposted is on', () => {
+    const on = withKind(defaultHideSet(), 'reposted', true);
+    expect(readyPopup(on, jobsListReport(2, true)).status).toEqual({
+      kind: 'paused',
+      text: 'Reposted check paused by LinkedIn limits',
+    });
+    expect(readyPopup(defaultHideSet(), jobsListReport(2, true)).status.kind).toBe('hiding');
   });
 
   test('a page that is not a jobs list asks for a jobs search', () => {

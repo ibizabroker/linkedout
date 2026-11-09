@@ -10,9 +10,14 @@ export const PAGE_REPORT_PORT = 'linkedout-page-report';
 export function serializePageReport(report: PageReport): {
   readonly kind: PageReport['kind'];
   readonly hiddenCount?: number;
+  readonly repostPaused?: boolean;
 } {
   if (report.kind === 'jobs-list') {
-    return { kind: report.kind, hiddenCount: report.hiddenCount };
+    return {
+      kind: report.kind,
+      hiddenCount: report.hiddenCount,
+      repostPaused: report.repostPaused,
+    };
   }
 
   return { kind: report.kind };
@@ -29,7 +34,7 @@ export function parsePageReportMessage(raw: unknown): PageReport {
 
   if (raw.kind === 'jobs-list' && typeof raw.hiddenCount === 'number') {
     try {
-      return jobsListReport(raw.hiddenCount);
+      return jobsListReport(raw.hiddenCount, raw.repostPaused === true);
     } catch {
       return failedPageReport();
     }

@@ -115,6 +115,8 @@ function statusLine(
     case 'hiding':
     case 'showing':
       return { text: status.text, tone: 'plain' };
+    case 'paused':
+      return { text: status.text, tone: 'muted' };
     case 'elsewhere':
       return { text: status.text, tone: 'muted' };
     default:

@@ -4,6 +4,7 @@ import {
   REPOST_TTL_MS,
   emptyRepostCache,
   freshEntry,
+  mergeRepostCaches,
   parseStoredRepostCache,
   serializeRepostCache,
   withRepostEntry,
@@ -49,5 +50,12 @@ describe('repost cache', () => {
       },
     };
     expect([...parseStoredRepostCache(mixed, NOW).keys()]).toEqual(['5']);
+  });
+
+  test('merging keeps the newer entry for a job', () => {
+    const older = withRepostEntry(emptyRepostCache(), '1', false, NOW);
+    const newer = withRepostEntry(emptyRepostCache(), '1', true, NOW + 5);
+    expect(mergeRepostCaches(older, newer, NOW + 5).get('1')?.reposted).toBe(true);
+    expect(mergeRepostCaches(newer, older, NOW + 5).get('1')?.reposted).toBe(true);
   });
 });

@@ -48,7 +48,11 @@ export type Card = {
 };
 
 export type PageReport =
-  | { readonly kind: 'jobs-list'; readonly hiddenCount: number }
+  | {
+      readonly kind: 'jobs-list';
+      readonly hiddenCount: number;
+      readonly repostPaused: boolean;
+    }
   | { readonly kind: 'not-jobs-list' }
   | { readonly kind: 'failed' };
 
@@ -64,6 +68,7 @@ export type StatusLine =
   | { readonly kind: 'failed'; readonly text: 'Could not check this list. Reload the tab.' }
   | { readonly kind: 'elsewhere'; readonly text: 'Open a Jobs search to hide cards' }
   | { readonly kind: 'showing'; readonly text: 'Showing every card' }
+  | { readonly kind: 'paused'; readonly text: typeof REPOST_PAUSED_TEXT }
   | { readonly kind: 'hiding'; readonly text: string };
 
 export type ReadyPopup = {
@@ -72,6 +77,7 @@ export type ReadyPopup = {
   readonly status: StatusLine;
 };
 
+export const REPOST_PAUSED_TEXT = 'Reposted check paused by LinkedIn limits';
 export const UNREADABLE_CHOICE_TEXT = 'Could not load your choice. Choose again.';
 
 export type PopupModel =
@@ -196,12 +202,12 @@ export function readyPopup(set: HideSet, report: PageReport | undefined): ReadyP
   };
 }
 
-export function jobsListReport(hiddenCount: number): PageReport {
+export function jobsListReport(hiddenCount: number, repostPaused = false): PageReport {
   if (!Number.isInteger(hiddenCount) || hiddenCount < 0) {
     throw new Error('hiddenCount must be an integer greater than or equal to 0');
   }
 
-  return { kind: 'jobs-list', hiddenCount };
+  return { kind: 'jobs-list', hiddenCount, repostPaused };
 }
 
 export function notJobsListReport(): PageReport {
@@ -223,6 +229,9 @@ function statusLine(set: HideSet, report: PageReport | undefined): StatusLine {
     case 'not-jobs-list':
       return { kind: 'elsewhere', text: 'Open a Jobs search to hide cards' };
     case 'jobs-list':
+      if (report.repostPaused && hasKind(set, 'reposted')) {
+        return { kind: 'paused', text: REPOST_PAUSED_TEXT };
+      }
       if (report.hiddenCount === 0 && set.kinds.length === 0) {
         return { kind: 'showing', text: 'Showing every card' };
       }

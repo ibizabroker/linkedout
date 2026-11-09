@@ -1,6 +1,7 @@
 import { browser, type Browser } from 'wxt/browser';
 import {
   BADGE_ROWS,
+  hasKind,
   hideRules,
   jobsListReport,
   notJobsListReport,
@@ -18,7 +19,10 @@ import {
   syncBlockControl,
 } from '@/lib/block/card-controls';
 import { closeBlockConfirmation } from '@/lib/block/confirm-panel';
+import { jobIdOf } from '@/lib/hide/job-page';
+import { startRepostWatch } from '@/lib/hide/repost-watch';
 import { PAGE_REPORT_PORT, serializePageReport } from '@/lib/hide/page-report';
+import type { RepostWatch } from '@/lib/hide/repost-watch';
 import { watchHideSet } from '@/lib/hide/store';
 import { watchBlocklist } from '@/lib/block/store';
 import type { StoredBlocklistRead } from '@/lib/block/domain';
@@ -57,12 +61,17 @@ export function startJobListHiding(
 
   browser.runtime.onConnect.addListener(onConnect);
 
+  const reposts = startRepostWatch(() => {
+    if (latest !== undefined) {
+      publish(reconcile(doc, latest, reposts));
+    }
+  });
   const style = ensureStyle(doc);
   const observer = new MutationObserver(() => {
     if (latest === undefined) {
       return;
     }
-    publish(reconcile(doc, latest));
+    publish(reconcile(doc, latest, reposts));
   });
   observer.observe(doc.body, {
     childList: true,
@@ -81,6 +90,7 @@ export function startJobListHiding(
 
   ctx.onInvalidated(() => {
     observer.disconnect();
+    reposts.stop();
     style.remove();
     clearMarks(doc);
     closeBlockConfirmation();
@@ -98,7 +108,7 @@ export function startJobListHiding(
       return;
     }
     latest = hideRules(hideRead, blockRead);
-    publish(reconcile(doc, latest));
+    publish(reconcile(doc, latest, reposts));
   }
 
   function publish(report: PageReport): void {
@@ -125,8 +135,14 @@ function onJobsResultsList(pathname: string): boolean {
   return SEARCH_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
 }
 
-function cardFacts(card: Element): CardFacts {
-  const facts = { applied: false, viewed: false, saved: false, reposted: false };
+function cardFacts(card: Element, reposts: RepostWatch): CardFacts {
+  const jobId = jobIdOf(card);
+  const facts = {
+    applied: false,
+    viewed: false,
+    saved: false,
+    reposted: jobId !== undefined && reposts.isReposted(jobId),
+  };
 
   for (const node of card.querySelectorAll('*')) {
     const childTextContents = [...node.children].map((child) => child.textContent ?? '');
@@ -143,17 +159,22 @@ function cardFacts(card: Element): CardFacts {
   return facts;
 }
 
-function reconcile(doc: Document, rules: HideRules): PageReport {
+function reconcile(doc: Document, rules: HideRules, reposts: RepostWatch): PageReport {
   const pathname = doc.location?.pathname ?? '';
   if (!onJobsResultsList(pathname)) {
+    reposts.track([], false);
     clearMarks(doc);
     return notJobsListReport();
   }
 
+  const cards = doc.querySelectorAll(JOB_CARD);
+  const checkReposts = hasKind(rules.set, 'reposted');
+  reposts.track(cards, checkReposts);
+
   let marked = 0;
-  for (const card of doc.querySelectorAll(JOB_CARD)) {
+  for (const card of cards) {
     const company = cardCompany(card);
-    const hidden = shouldMarkHidden(true, rules, { badges: cardFacts(card), company });
+    const hidden = shouldMarkHidden(true, rules, { badges: cardFacts(card, reposts), company });
     card.toggleAttribute(HIDDEN_ATTR, hidden);
     syncBlockControl(card, company);
     if (hidden) {
@@ -161,7 +182,7 @@ function reconcile(doc: Document, rules: HideRules): PageReport {
     }
   }
 
-  return jobsListReport(marked);
+  return jobsListReport(marked, checkReposts && reposts.isPaused());
 }
 
 function clearMarks(doc: Document): void {
@@ -190,7 +211,7 @@ function reportsMatch(previous: PageReport | undefined, next: PageReport): boole
   }
 
   if (previous.kind === 'jobs-list' && next.kind === 'jobs-list') {
-    return previous.hiddenCount === next.hiddenCount;
+    return previous.hiddenCount === next.hiddenCount && previous.repostPaused === next.repostPaused;
   }
 
   return true;

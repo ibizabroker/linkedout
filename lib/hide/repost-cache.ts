@@ -33,6 +33,17 @@ export function withRepostEntry(
   return pruned(next, now);
 }
 
+export function mergeRepostCaches(a: RepostCache, b: RepostCache, now: number): RepostCache {
+  const merged = new Map(a);
+  for (const [jobId, entry] of b) {
+    const existing = merged.get(jobId);
+    if (existing === undefined || existing.checkedAt < entry.checkedAt) {
+      merged.set(jobId, entry);
+    }
+  }
+  return pruned(merged, now);
+}
+
 export function parseStoredRepostCache(raw: unknown, now: number): RepostCache {
   if (!isRecord(raw) || raw.version !== 1 || !isRecord(raw.entries)) {
     return emptyRepostCache();
