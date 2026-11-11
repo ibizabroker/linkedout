@@ -9,7 +9,7 @@ import {
 import { createRepostQueue } from '@/lib/hide/repost-queue';
 import {
   readRepostPause,
-  recordRepost,
+  recordReposts,
   watchRepostCache,
   writeRepostPause,
 } from '@/lib/hide/repost-store';
@@ -35,8 +35,8 @@ export function startRepostWatch(onChange: () => void): RepostWatch {
     check: (jobId) => fetchJobPage(jobId),
     isKnown: (jobId) => freshEntry(cache, jobId, Date.now()) !== undefined,
     onChecked: (jobId, facts) => {
-      cache = withRepostEntry(cache, jobId, facts.reposted, Date.now());
-      recordRepost(jobId, facts.reposted);
+      cache = withRepostEntry(cache, jobId, facts, Date.now());
+      recordReposts(new Map([[jobId, facts]]));
       onChange();
     },
     onPauseChange: (until) => {

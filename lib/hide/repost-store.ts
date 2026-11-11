@@ -4,6 +4,7 @@ import {
   serializeRepostCache,
   withRepostEntry,
   type RepostCache,
+  type RepostFacts,
 } from '@/lib/hide/repost-cache';
 
 const REPOST_CACHE_KEY = 'repost-cache';
@@ -40,8 +41,9 @@ export function watchRepostCache(onRead: (cache: RepostCache) => void): () => vo
   };
 }
 
-export function recordRepost(jobId: string, reposted: boolean): void {
-  void browser.runtime.sendMessage({ type: RECORD_REPOST, jobId, reposted }).catch(() => undefined);
+export function recordReposts(results: ReadonlyMap<string, RepostFacts>): void {
+  const records = [...results].map(([jobId, facts]) => ({ jobId, ...facts }));
+  void browser.runtime.sendMessage({ type: RECORD_REPOST, records }).catch(() => undefined);
 }
 
 export function readRepostPause(): Promise<number | undefined> {
@@ -76,12 +78,10 @@ export function startRepostCacheOwner(): void {
     const write = queue.then(async () => {
       const stored = await browser.storage.local.get(REPOST_CACHE_KEY);
       const now = Date.now();
-      const cache = withRepostEntry(
-        parseStoredRepostCache(stored[REPOST_CACHE_KEY], now),
-        message.jobId,
-        message.reposted,
-        now,
-      );
+      let cache = parseStoredRepostCache(stored[REPOST_CACHE_KEY], now);
+      for (const { jobId, ...facts } of message.records) {
+        cache = withRepostEntry(cache, jobId, facts, now);
+      }
       await browser.storage.local.set({ [REPOST_CACHE_KEY]: serializeRepostCache(cache) });
     });
     queue = write.catch(() => undefined);
@@ -89,19 +89,35 @@ export function startRepostCacheOwner(): void {
   });
 }
 
+type RepostRecord = RepostFacts & { readonly jobId: string };
+
 function isRecordMessage(message: unknown): message is {
   readonly type: typeof RECORD_REPOST;
-  readonly jobId: string;
-  readonly reposted: boolean;
+  readonly records: readonly RepostRecord[];
 } {
   if (typeof message !== 'object' || message === null) {
     return false;
   }
   const record = message as Record<string, unknown>;
   return (
-    record.type === RECORD_REPOST &&
+    record.type === RECORD_REPOST && Array.isArray(record.records) && record.records.every(isRecord)
+  );
+}
+
+function isRecord(value: unknown): value is RepostRecord {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  const record = value as Record<string, unknown>;
+  return (
     typeof record.jobId === 'string' &&
     /^\d+$/.test(record.jobId) &&
-    typeof record.reposted === 'boolean'
+    typeof record.reposted === 'boolean' &&
+    isOptionalNumber(record.applies) &&
+    isOptionalNumber(record.originalListedAt)
   );
+}
+
+function isOptionalNumber(value: unknown): boolean {
+  return value === undefined || (typeof value === 'number' && Number.isFinite(value));
 }
