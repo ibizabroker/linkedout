@@ -82,9 +82,9 @@ describe('request', () => {
     let credentials: unknown;
     const outcome = await fetchJobPostings(['1', '2'], {
       cookie,
-      fetchJson: (async (_url: unknown, init?: RequestInit) => {
-        token = (init?.headers as Record<string, string>)['csrf-token'];
-        credentials = init?.credentials;
+      fetchJson: (async (_url: unknown, init: RequestInit) => {
+        token = (init.headers as Record<string, string>)['csrf-token'];
+        credentials = init.credentials;
         return new Response(JSON.stringify(sample));
       }) as unknown as typeof fetch,
     });
