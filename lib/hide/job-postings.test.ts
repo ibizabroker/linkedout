@@ -78,17 +78,19 @@ describe('request', () => {
   });
 
   test('sends the csrf header and returns the covered postings', async () => {
-    let seen: RequestInit | undefined;
+    let token: string | undefined;
+    let credentials: unknown;
     const outcome = await fetchJobPostings(['1', '2'], {
       cookie,
       fetchJson: (async (_url: unknown, init?: RequestInit) => {
-        seen = init;
+        token = (init?.headers as Record<string, string>)['csrf-token'];
+        credentials = init?.credentials;
         return new Response(JSON.stringify(sample));
       }) as unknown as typeof fetch,
     });
     expect(outcome.kind).toBe('ok');
-    expect(seen?.credentials).toBe('include');
-    expect((seen?.headers as Record<string, string>)['csrf-token']).toBe('ajax:123');
+    expect(credentials).toBe('include');
+    expect(token).toBe('ajax:123');
   });
 
   test('limit statuses and network errors are limited', async () => {

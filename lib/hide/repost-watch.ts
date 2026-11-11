@@ -1,3 +1,4 @@
+import { fetchJobPostings, type PostingsOutcome } from '@/lib/hide/job-postings';
 import { fetchJobPage, jobIdOf } from '@/lib/hide/job-page';
 import {
   emptyRepostCache,
@@ -6,15 +7,13 @@ import {
   withRepostEntry,
   type RepostCache,
 } from '@/lib/hide/repost-cache';
-import { createRepostQueue } from '@/lib/hide/repost-queue';
+import { createRepostBatcher } from '@/lib/hide/repost-batcher';
 import {
   readRepostPause,
   recordReposts,
   watchRepostCache,
   writeRepostPause,
 } from '@/lib/hide/repost-store';
-
-const LOOKAHEAD_PX = 600;
 
 export type RepostWatch = {
   isReposted(jobId: string): boolean;
@@ -23,20 +22,27 @@ export type RepostWatch = {
   stop(): void;
 };
 
+async function fetchOnePosting(jobId: string): Promise<PostingsOutcome> {
+  const outcome = await fetchJobPage(jobId);
+  return outcome.kind === 'page'
+    ? { kind: 'ok', postings: new Map([[jobId, outcome.facts]]) }
+    : outcome;
+}
+
 export function startRepostWatch(onChange: () => void): RepostWatch {
   let cache: RepostCache = emptyRepostCache();
   let stopped = false;
   let enabled = false;
-  const observers = new Map<Element | null, IntersectionObserver>();
-  const watched = new WeakSet<Element>();
-  const nearScreen = new WeakSet<Element>();
 
-  const queue = createRepostQueue({
-    check: (jobId) => fetchJobPage(jobId),
+  const batcher = createRepostBatcher({
+    fetchBatch: (jobIds) => fetchJobPostings(jobIds),
+    fetchOne: fetchOnePosting,
     isKnown: (jobId) => freshEntry(cache, jobId, Date.now()) !== undefined,
-    onChecked: (jobId, facts) => {
-      cache = withRepostEntry(cache, jobId, facts, Date.now());
-      recordReposts(new Map([[jobId, facts]]));
+    onChecked: (results) => {
+      for (const [jobId, facts] of results) {
+        cache = withRepostEntry(cache, jobId, facts, Date.now());
+      }
+      recordReposts(results);
       onChange();
     },
     onPauseChange: (until) => {
@@ -57,48 +63,10 @@ export function startRepostWatch(onChange: () => void): RepostWatch {
   });
   void readRepostPause().then((until) => {
     if (!stopped && until !== undefined) {
-      queue.pauseUntil(until);
+      batcher.pauseUntil(until);
       onChange();
     }
   });
-
-  function observerFor(card: Element): IntersectionObserver {
-    const root = scrollParent(card);
-    const existing = observers.get(root);
-    if (existing !== undefined) {
-      return existing;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          const jobId = jobIdOf(entry.target);
-          if (entry.isIntersecting) {
-            nearScreen.add(entry.target);
-            if (jobId !== undefined) {
-              queue.want(jobId);
-            }
-          } else {
-            nearScreen.delete(entry.target);
-            if (jobId !== undefined) {
-              queue.drop(jobId);
-            }
-          }
-        }
-      },
-      { root, rootMargin: `0px 0px ${LOOKAHEAD_PX}px 0px` },
-    );
-    observers.set(root, observer);
-    return observer;
-  }
-
-  function disconnectAll(): void {
-    for (const observer of observers.values()) {
-      observer.disconnect();
-    }
-    observers.clear();
-    queue.clear();
-  }
 
   return {
     isReposted: (jobId) => freshEntry(cache, jobId, Date.now())?.reposted === true,
@@ -106,8 +74,7 @@ export function startRepostWatch(onChange: () => void): RepostWatch {
       if (on !== enabled) {
         enabled = on;
         if (!on) {
-          disconnectAll();
-          return;
+          batcher.clear();
         }
       }
       if (!on) {
@@ -115,33 +82,17 @@ export function startRepostWatch(onChange: () => void): RepostWatch {
       }
 
       for (const card of cards) {
-        if (!watched.has(card)) {
-          watched.add(card);
-          observerFor(card).observe(card);
-          continue;
-        }
-        const jobId = nearScreen.has(card) ? jobIdOf(card) : undefined;
+        const jobId = jobIdOf(card);
         if (jobId !== undefined) {
-          queue.want(jobId);
+          batcher.want(jobId);
         }
       }
     },
-    isPaused: () => queue.isPaused(),
+    isPaused: () => batcher.isPaused(),
     stop() {
       stopped = true;
       stopCacheWatch();
-      disconnectAll();
-      queue.stop();
+      batcher.stop();
     },
   };
-}
-
-function scrollParent(card: Element): Element | null {
-  for (let node = card.parentElement; node !== null; node = node.parentElement) {
-    const { overflowY } = getComputedStyle(node);
-    if (overflowY === 'auto' || overflowY === 'scroll') {
-      return node;
-    }
-  }
-  return null;
 }
