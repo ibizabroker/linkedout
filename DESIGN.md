@@ -206,7 +206,7 @@ Each status is a checkable row in one menu; the checkbox is the action.
 - **Shape:** Softly rounded sheet (0.625rem) with 0.25rem padding, exactly the trigger's width, 0.25rem below it. Rows are 1.75rem tall, softly rounded (0.5rem), and stack flush.
 - **Rows:** Body type, with a 16px check at the row's end when selected and blank space when not. Row alignment follows the Shared Edge Rule.
 - **Focus:** Row Highlight fills the row, and its text and check follow.
-- **Notes:** A row may carry one quiet disclosure line under it, in 0.75rem muted ink on the row's text edge. Reposted carries "Checks each job with LinkedIn as you scroll", because it is the only status that asks LinkedIn for anything.
+- **Notes:** A row may carry one quiet disclosure line under it, in 0.75rem muted ink on the row's text edge. Reposted carries "Checks these jobs with LinkedIn", because it is the only status that asks LinkedIn for anything. The line says "these jobs", not "each job as you scroll", because the extension checks the whole list in batches.
 - **Behavior:** Non-modal. Toggling a row keeps the menu open, so several statuses can be set in one visit, and the trigger text and status line update behind it.
 - **Motion:** Opens in 100ms with a fade, a 95% zoom, and a slide from the trigger's side.
 

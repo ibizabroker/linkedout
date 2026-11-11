@@ -5,7 +5,7 @@ The popup names LinkedOut, says whether this tab is a Jobs search, and turns App
 ## Sub-features
 
 - `hide-open` shows the heading, the jobs-search status, and a visible `Hide from results` label, and a closed trigger named `Hide from results: Applied, Viewed` on a fresh install.
-- `hide-menu` opens four checkboxes named Applied, Viewed, Saved, and Reposted. Applied and Viewed are checked, Saved and Reposted are not, and the text `Checks each job with LinkedIn as you scroll` sits under Reposted.
+- `hide-menu` opens four checkboxes named Applied, Viewed, Saved, and Reposted. Applied and Viewed are checked, Saved and Reposted are not, and the text `Checks these jobs with LinkedIn` sits under Reposted.
 - `hide-clear-applied` turns Applied off, keeps the menu open, and renames the trigger `Hide from results: Viewed`.
 - `hide-clear-all` turns Viewed off too, and renames the trigger `Hide from results: Nothing hidden`.
 - `hide-persist` keeps `Hide from results: Nothing hidden` after the popup document is opened again.
@@ -26,7 +26,7 @@ Preconditions:
 
 - **Open popup.** Run `bun run verify:control -- open-popup --run-id "$LINKEDOUT_VERIFY_RUN_ID"`. The heading `LinkedOut` is visible.
 - **Read the closed panel.** Run `bun run verify:control -- snapshot --run-id "$LINKEDOUT_VERIFY_RUN_ID" --path .cursor/skills/verify-linkedout/artifacts/hide-menu/closed.aria.txt`. The snapshot contains heading `LinkedOut`, status `Open a Jobs search to hide cards`, the text `Hide from results`, and button `Hide from results: Applied, Viewed`.
-- **Open the menu.** Run `bun run verify:control -- click --run-id "$LINKEDOUT_VERIFY_RUN_ID" --role button --name "Hide from results: Applied, Viewed"`. Then snapshot to `.cursor/skills/verify-linkedout/artifacts/hide-menu/menu.aria.txt`. The menu is named `Hide from results: Applied, Viewed` and the checkboxes `Applied` and `Viewed` are checked and `Saved` and `Reposted` are not checked, and the text `Checks each job with LinkedIn as you scroll` is visible.
+- **Open the menu.** Run `bun run verify:control -- click --run-id "$LINKEDOUT_VERIFY_RUN_ID" --role button --name "Hide from results: Applied, Viewed"`. Then snapshot to `.cursor/skills/verify-linkedout/artifacts/hide-menu/menu.aria.txt`. The menu is named `Hide from results: Applied, Viewed` and the checkboxes `Applied` and `Viewed` are checked and `Saved` and `Reposted` are not checked, and the text `Checks these jobs with LinkedIn` is visible.
 - **Clear Applied.** Run `bun run verify:control -- click --run-id "$LINKEDOUT_VERIFY_RUN_ID" --role menuitemcheckbox --name "Applied"`. Snapshot to `.cursor/skills/verify-linkedout/artifacts/hide-menu/cleared-applied.aria.txt`. The menu is named `Hide from results: Viewed`, the checkbox `Applied` is not checked, `Viewed` is checked, and `Saved` is not checked.
 - **Clear Viewed.** Run the same click with `--name "Viewed"`. Snapshot to `.cursor/skills/verify-linkedout/artifacts/hide-menu/cleared-all.aria.txt`. The menu is named `Hide from results: Nothing hidden` and none of the four checkboxes is checked.
 - **Reopen.** Run `bun run verify:control -- open-popup --run-id "$LINKEDOUT_VERIFY_RUN_ID"`. Snapshot to `.cursor/skills/verify-linkedout/artifacts/hide-menu/reopened.aria.txt`. The button is `Hide from results: Nothing hidden` and the status is still `Open a Jobs search to hide cards`.
@@ -37,7 +37,7 @@ Preconditions:
 
 ## Gotchas
 
-- Reposted hiding itself needs a logged-in LinkedIn Jobs search and real job pages, so this recipe only proves the menu row, the note, and the saved choice. Checks stay off until Reposted is on. Keep live runs short, because each card on screen costs one request to LinkedIn.
+- Reposted hiding itself needs a logged-in LinkedIn Jobs search and real job pages, so this recipe only proves the menu row, the note, and the saved choice. Checks stay off until Reposted is on. Keep live runs short: with Reposted on, the page sends one `voyagerJobsDashJobPostings` request per up to 25 listed cards, at most one every 1.5 seconds, and no `/jobs/view/` requests unless the batch answer was unreadable (then one per job, about a second apart). To check live, count those requests in the network log and confirm each hidden card's job has `repostedJob: true` in the response.
 
 - This profile is not a Jobs search, so the status stays `Open a Jobs search to hide cards` even after all options are cleared. `Showing every card` appears only on a Jobs results list with no card hidden; a blocked company's cards keep the count in the status line even with every option cleared.
 - Reloading the popup does not reset a saved choice. A fresh profile starts at Applied and Viewed, with Saved unchecked.
