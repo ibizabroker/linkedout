@@ -222,7 +222,7 @@ describe('readyPopup', () => {
         kind: 'reposted',
         label: 'Reposted',
         checked: false,
-        note: 'Checks each job with LinkedIn as you scroll',
+        note: 'Checks these jobs with LinkedIn',
       },
     ]);
   });

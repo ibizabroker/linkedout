@@ -13,7 +13,7 @@ export const HIDE_CATALOG = [
     kind: 'reposted',
     menuLabel: 'Reposted',
     defaultOn: false,
-    note: 'Checks each job with LinkedIn as you scroll',
+    note: 'Checks these jobs with LinkedIn',
   },
 ] as const;
 
