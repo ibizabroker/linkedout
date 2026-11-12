@@ -1,3 +1,5 @@
+import type { Applicants } from '@/lib/hide/applicants';
+
 export const MAX_POSTINGS_PER_REQUEST = 25;
 
 const JOB_ID = /^\d+$/;
@@ -7,7 +9,7 @@ const THROTTLED_STATUSES: ReadonlySet<number> = new Set([429, 999]);
 
 export type RepostFacts = {
   readonly reposted: boolean;
-  readonly applies?: number;
+  readonly applicants?: Applicants;
   readonly originalListedAt?: number;
 };
 
@@ -39,7 +41,7 @@ export function parseJobPostings(json: unknown): Map<string, RepostFacts> {
     if (JOB_ID.test(jobId)) {
       postings.set(jobId, {
         reposted: item.repostedJob,
-        applies: finiteNumber(item.numApplies),
+        applicants: finiteNumber(item.numApplies),
         originalListedAt: finiteNumber(item.originalListedAt),
       });
     }

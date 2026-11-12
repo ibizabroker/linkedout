@@ -1,10 +1,37 @@
+import type { Applicants } from '@/lib/hide/applicants';
+
 export const REPOST_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+export const COUNT_TTL_MS = 24 * 60 * 60 * 1000;
 export const REPOST_CACHE_CAP = 5000;
 
 export type RepostEntry = {
   readonly reposted: boolean;
   readonly checkedAt: number;
+  readonly applicants?: Applicants;
 };
+
+export type CachedFacts = {
+  readonly reposted: boolean;
+  readonly applicants: Applicants | undefined;
+  readonly countStale: boolean;
+};
+
+export function cachedFacts(
+  cache: RepostCache,
+  jobId: string,
+  now: number,
+): CachedFacts | undefined {
+  const entry = freshEntry(cache, jobId, now);
+  if (entry === undefined) {
+    return undefined;
+  }
+  const countStale = now - entry.checkedAt >= COUNT_TTL_MS;
+  return {
+    reposted: entry.reposted,
+    applicants: countStale ? undefined : entry.applicants,
+    countStale,
+  };
+}
 
 export type RepostCache = ReadonlyMap<string, RepostEntry>;
 
@@ -24,12 +51,16 @@ export function freshEntry(
 export function withRepostEntry(
   cache: RepostCache,
   jobId: string,
-  reposted: boolean,
+  facts: { readonly reposted: boolean; readonly applicants?: Applicants },
   now: number,
 ): RepostCache {
   const next = new Map(cache);
   next.delete(jobId);
-  next.set(jobId, { reposted, checkedAt: now });
+  next.set(jobId, {
+    reposted: facts.reposted,
+    checkedAt: now,
+    ...(facts.applicants === undefined ? {} : { applicants: facts.applicants }),
+  });
   return pruned(next, now);
 }
 
@@ -45,7 +76,7 @@ export function mergeRepostCaches(a: RepostCache, b: RepostCache, now: number): 
 }
 
 export function parseStoredRepostCache(raw: unknown, now: number): RepostCache {
-  if (!isRecord(raw) || raw.version !== 3 || !isRecord(raw.entries)) {
+  if (!isRecord(raw) || raw.version !== 4 || !isRecord(raw.entries)) {
     return emptyRepostCache();
   }
 
@@ -58,17 +89,22 @@ export function parseStoredRepostCache(raw: unknown, now: number): RepostCache {
       typeof value.checkedAt === 'number' &&
       Number.isFinite(value.checkedAt)
     ) {
-      entries.set(jobId, { reposted: value.reposted, checkedAt: value.checkedAt });
+      const applicants = parseApplicants(value.applicants);
+      entries.set(jobId, {
+        reposted: value.reposted,
+        checkedAt: value.checkedAt,
+        ...(applicants === undefined ? {} : { applicants }),
+      });
     }
   }
   return pruned(entries, now);
 }
 
 export function serializeRepostCache(cache: RepostCache): {
-  readonly version: 3;
+  readonly version: 4;
   readonly entries: Record<string, RepostEntry>;
 } {
-  return { version: 3, entries: Object.fromEntries(cache) };
+  return { version: 4, entries: Object.fromEntries(cache) };
 }
 
 function pruned(entries: Map<string, RepostEntry>, now: number): RepostCache {
@@ -84,6 +120,13 @@ function pruned(entries: Map<string, RepostEntry>, now: number): RepostCache {
     }
   }
   return entries;
+}
+
+export function parseApplicants(value: unknown): Applicants | undefined {
+  if (value === 'over-100') {
+    return value;
+  }
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0 ? value : undefined;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

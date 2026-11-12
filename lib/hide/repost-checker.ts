@@ -1,3 +1,5 @@
+import type { Applicants } from '@/lib/hide/applicants';
+import type { CachedFacts } from '@/lib/hide/repost-cache';
 import {
   MAX_POSTINGS_PER_REQUEST,
   type PostingsOutcome,
@@ -13,8 +15,8 @@ export type RepostCheckerDeps = {
   readonly fetchBatch: (jobIds: readonly string[]) => Promise<PostingsOutcome>;
   readonly fetchOne: (jobId: string) => Promise<PostingsOutcome>;
   readonly loadCache: () => Promise<void>;
-  readonly cachedReposted: (jobId: string) => boolean | undefined;
-  readonly onRecord: (results: ReadonlyMap<string, boolean>) => void;
+  readonly cached: (jobId: string) => CachedFacts | undefined;
+  readonly onRecord: (results: ReadonlyMap<string, RepostFacts>) => void;
   readonly onChange: () => void;
   readonly onPauseChange: (pausedUntil: number | undefined) => void;
   readonly now: () => number;
@@ -25,6 +27,8 @@ export type RepostCheckerDeps = {
 export type RepostChecker = {
   want(jobId: string): void;
   isReposted(jobId: string): boolean;
+  applicantsOf(jobId: string): Applicants | undefined;
+  countNeeded(needed: boolean): void;
   clear(): void;
   pauseUntil(timestamp: number): void;
   isPaused(): boolean;
@@ -46,9 +50,18 @@ export function createRepostChecker(deps: RepostCheckerDeps): RepostChecker {
   let paused = false;
   let backoffMs = FIRST_BACKOFF_MS;
   let stopped = false;
+  let countNeeded = false;
 
-  const isKnown = (jobId: string): boolean =>
-    facts.has(jobId) || (fallback && deps.cachedReposted(jobId) !== undefined);
+  const isKnown = (jobId: string): boolean => {
+    if (facts.has(jobId)) {
+      return true;
+    }
+    if (!fallback) {
+      return false;
+    }
+    const cached = deps.cached(jobId);
+    return cached !== undefined && !(countNeeded && cached.countStale);
+  };
 
   function sendBatches(): void {
     if (stopped || paused || batchInFlight || batchQueue.length === 0) {
@@ -150,7 +163,7 @@ export function createRepostChecker(deps: RepostCheckerDeps): RepostChecker {
         skipped.add(jobId);
       } else {
         facts.set(jobId, found);
-        deps.onRecord(new Map([[jobId, found.reposted]]));
+        deps.onRecord(new Map([[jobId, found]]));
         deps.onChange();
       }
       armSingle();
@@ -193,9 +206,21 @@ export function createRepostChecker(deps: RepostCheckerDeps): RepostChecker {
       }
     },
     isReposted(jobId) {
-      return (
-        (facts.get(jobId)?.reposted ?? (fallback ? deps.cachedReposted(jobId) : undefined)) === true
-      );
+      const known = facts.get(jobId);
+      if (known !== undefined) {
+        return known.reposted;
+      }
+      return fallback && deps.cached(jobId)?.reposted === true;
+    },
+    applicantsOf(jobId) {
+      const known = facts.get(jobId);
+      if (known !== undefined) {
+        return known.applicants;
+      }
+      return fallback ? deps.cached(jobId)?.applicants : undefined;
+    },
+    countNeeded(needed) {
+      countNeeded = needed;
     },
     clear() {
       facts.clear();

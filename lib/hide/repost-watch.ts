@@ -1,8 +1,9 @@
+import type { Applicants } from '@/lib/hide/applicants';
 import { fetchJobPostings, type PostingsOutcome } from '@/lib/hide/job-postings';
 import { fetchJobPage, jobIdOf } from '@/lib/hide/job-page';
 import {
   emptyRepostCache,
-  freshEntry,
+  cachedFacts,
   mergeRepostCaches,
   type RepostCache,
 } from '@/lib/hide/repost-cache';
@@ -17,7 +18,11 @@ import {
 
 export type RepostWatch = {
   isReposted(jobId: string): boolean;
-  track(cards: Iterable<Element>, enabled: boolean): void;
+  applicantsOf(jobId: string): Applicants | undefined;
+  track(
+    cards: Iterable<Element>,
+    needs: { readonly reposts: boolean; readonly counts: boolean },
+  ): void;
   isPaused(): boolean;
   stop(): void;
 };
@@ -46,7 +51,7 @@ export function startRepostWatch(onChange: () => void): RepostWatch {
         });
       }
     },
-    cachedReposted: (jobId) => freshEntry(cache, jobId, Date.now())?.reposted,
+    cached: (jobId) => cachedFacts(cache, jobId, Date.now()),
     onRecord: recordReposts,
     onChange,
     onPauseChange: (until) => {
@@ -70,8 +75,10 @@ export function startRepostWatch(onChange: () => void): RepostWatch {
 
   return {
     isReposted: (jobId) => checker.isReposted(jobId),
-    track(cards, on) {
-      if (!on) {
+    applicantsOf: (jobId) => checker.applicantsOf(jobId),
+    track(cards, needs) {
+      checker.countNeeded(needs.counts);
+      if (!needs.reposts && !needs.counts) {
         checker.clear();
         return;
       }

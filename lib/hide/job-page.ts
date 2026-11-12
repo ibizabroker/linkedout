@@ -1,10 +1,16 @@
+import type { Applicants } from '@/lib/hide/applicants';
+
 const JOB_DETAILS_SCREEN = 'com.linkedin.sdui.flagshipnav.jobs.JobDetails';
 const REPOSTED = /Reposted\s+\d+\s+(?:second|minute|hour|day|week|month|year)s?\s+ago/i;
+const COUNT_NOUN = '(?:applicants?|(?:people|person)\\s+clicked\\s+apply)';
+const OVER_100 = new RegExp(`Over\\s+100\\s+${COUNT_NOUN}`, 'i');
+const EXACT_COUNT = new RegExp(`(\\d[\\d,]*)\\s+${COUNT_NOUN}`, 'i');
 const JOB_ID = /^\d+$/;
 const THROTTLED_STATUSES: ReadonlySet<number> = new Set([403, 429, 999]);
 
 export type JobPageFacts = {
   readonly reposted: boolean;
+  readonly applicants?: Applicants;
 };
 
 export type JobPageOutcome =
@@ -16,7 +22,15 @@ export function readJobPage(html: string): JobPageFacts | undefined {
   if (!html.includes(JOB_DETAILS_SCREEN)) {
     return undefined;
   }
-  return { reposted: REPOSTED.test(html) };
+  return { reposted: REPOSTED.test(html), applicants: readApplicants(html) };
+}
+
+function readApplicants(html: string): Applicants | undefined {
+  if (OVER_100.test(html)) {
+    return 'over-100';
+  }
+  const exact = EXACT_COUNT.exec(html)?.[1];
+  return exact === undefined ? undefined : Number(exact.replace(/,/g, ''));
 }
 
 export function jobIdOf(card: Element): string | undefined {

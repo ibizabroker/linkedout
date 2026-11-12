@@ -21,6 +21,27 @@ describe('readJobPage', () => {
   });
 });
 
+describe('readJobPage applicant count', () => {
+  const count = (body: string) => readJobPage(screen(body))?.applicants;
+
+  test('reads exact counts in both wordings', () => {
+    expect(count('37 applicants')).toBe(37);
+    expect(count('12 people clicked apply')).toBe(12);
+    expect(count('1 applicant')).toBe(1);
+    expect(count('1 person clicked apply')).toBe(1);
+    expect(count('1,204 applicants')).toBe(1204);
+  });
+
+  test('reads Over 100 in both wordings', () => {
+    expect(count('Over 100 applicants')).toBe('over-100');
+    expect(count('Over 100 people clicked apply')).toBe('over-100');
+  });
+
+  test('no count text is unknown', () => {
+    expect(count('2 days ago')).toBeUndefined();
+  });
+});
+
 describe('jobIdOf', () => {
   const card = (html: string): Element =>
     parseHTML(`<html><body><ul>${html}</ul></body></html>`).document.querySelector('ul')!

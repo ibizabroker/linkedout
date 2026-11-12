@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import type { CachedFacts } from './repost-cache.ts';
 import type { PostingsOutcome, RepostFacts } from './job-postings.ts';
 import { FIRST_BACKOFF_MS, SINGLE_GAP_MS, createRepostChecker } from './repost-checker.ts';
 
@@ -15,7 +16,7 @@ function harness(batchReply: Reply, singleReply: Reply = batchReply) {
   const timers: { at: number; run: () => void; live: boolean }[] = [];
   const batches: string[][] = [];
   const singles: { id: string; at: number }[] = [];
-  const cache = new Map<string, boolean>();
+  const cache = new Map<string, CachedFacts>();
   const recorded: string[] = [];
   const pauses: (number | undefined)[] = [];
   let cacheLoads = 0;
@@ -32,7 +33,7 @@ function harness(batchReply: Reply, singleReply: Reply = batchReply) {
     loadCache: async () => {
       cacheLoads += 1;
     },
-    cachedReposted: (id) => cache.get(id),
+    cached: (id) => cache.get(id),
     onRecord: (results) => recorded.push(...results.keys()),
     onChange: () => {
       changes += 1;
@@ -118,7 +119,7 @@ describe('repost checker, batch path', () => {
   test('answers are readable and clear forgets them', async () => {
     const h = harness((asked) => ({
       kind: 'ok',
-      postings: new Map(asked.map((id) => [id, { reposted: true, applies: 3 }])),
+      postings: new Map(asked.map((id) => [id, { reposted: true, applicants: 3 }])),
     }));
     h.checker.want('1');
     await h.advanceTo(0);
@@ -192,7 +193,7 @@ describe('repost checker, fallback path', () => {
 
   test('jobs already in the persisted cache are not downloaded and still hide', async () => {
     const h = harness(failBatch(), all);
-    h.cache.set('2', true);
+    h.cache.set('2', { reposted: true, applicants: undefined, countStale: false });
     for (const id of ids(3)) {
       h.checker.want(id);
     }
@@ -222,5 +223,76 @@ describe('repost checker, fallback path', () => {
     expect(h.singles.length).toBe(1);
     await h.advanceTo(FIRST_BACKOFF_MS + 1);
     expect(h.singles.map((s) => s.id)).toEqual(['1', '1']);
+  });
+});
+
+describe('repost checker, applicant counts', () => {
+  const counted =
+    (n: number | 'over-100' | undefined): Reply =>
+    (asked) => ({
+      kind: 'ok',
+      postings: new Map(asked.map((id) => [id, { reposted: false, applicants: n }])),
+    });
+
+  test('the batch answer gives the count and clear forgets it', async () => {
+    const h = harness(counted(250));
+    h.checker.want('1');
+    await h.advanceTo(0);
+    expect(h.checker.applicantsOf('1')).toBe(250);
+    expect(h.batches.length).toBe(1);
+    h.checker.clear();
+    expect(h.checker.applicantsOf('1')).toBeUndefined();
+  });
+
+  test('a posting without a count is unknown', async () => {
+    const h = harness(counted(undefined));
+    h.checker.want('1');
+    await h.advanceTo(0);
+    expect(h.checker.applicantsOf('1')).toBeUndefined();
+  });
+
+  test('a fresh cached count is read in fallback and not downloaded', async () => {
+    const h = harness(() => ({ kind: 'failed' }), all);
+    h.cache.set('1', { reposted: false, applicants: 'over-100', countStale: false });
+    h.checker.countNeeded(true);
+    h.checker.want('1');
+    await h.advanceTo(10_000);
+    expect(h.singles).toEqual([]);
+    expect(h.checker.applicantsOf('1')).toBe('over-100');
+  });
+
+  test('a stale cached count is downloaded again only while the count is needed', async () => {
+    const stale: CachedFacts = { reposted: false, applicants: undefined, countStale: true };
+    const off = harness(() => ({ kind: 'failed' }), counted(80));
+    off.cache.set('1', stale);
+    off.checker.want('1');
+    await off.advanceTo(10_000);
+    expect(off.singles).toEqual([]);
+
+    const on = harness(() => ({ kind: 'failed' }), counted(80));
+    on.cache.set('1', stale);
+    on.checker.countNeeded(true);
+    on.checker.want('1');
+    await on.advanceTo(10_000);
+    expect(on.singles.map((s) => s.id)).toEqual(['1']);
+    expect(on.checker.applicantsOf('1')).toBe(80);
+    expect(on.recorded).toEqual(['1']);
+  });
+
+  test('turning the count on later queues stale entries through the same spaced queue', async () => {
+    const h = harness(() => ({ kind: 'failed' }), counted(5));
+    for (const id of ids(3)) {
+      h.cache.set(id, { reposted: false, applicants: undefined, countStale: true });
+      h.checker.want(id);
+    }
+    await h.advanceTo(10_000);
+    expect(h.singles).toEqual([]);
+    h.checker.countNeeded(true);
+    for (const id of ids(3)) {
+      h.checker.want(id);
+    }
+    await h.advanceTo(20_000);
+    expect(h.singles.map((s) => s.id)).toEqual(['1', '2', '3']);
+    expect(h.singles[1]!.at - h.singles[0]!.at).toBe(SINGLE_GAP_MS);
   });
 });

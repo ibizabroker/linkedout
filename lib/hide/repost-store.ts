@@ -1,4 +1,7 @@
 import { browser } from 'wxt/browser';
+import type { Applicants } from '@/lib/hide/applicants';
+import { parseApplicants } from '@/lib/hide/repost-cache';
+import type { RepostFacts } from '@/lib/hide/job-postings';
 import {
   emptyRepostCache,
   parseStoredRepostCache,
@@ -38,8 +41,12 @@ export function watchRepostCache(onRead: (cache: RepostCache) => void): () => vo
   };
 }
 
-export function recordReposts(results: ReadonlyMap<string, boolean>): void {
-  const records = [...results].map(([jobId, reposted]) => ({ jobId, reposted }));
+export function recordReposts(results: ReadonlyMap<string, RepostFacts>): void {
+  const records = [...results].map(([jobId, facts]) => ({
+    jobId,
+    reposted: facts.reposted,
+    applicants: facts.applicants,
+  }));
   void browser.runtime.sendMessage({ type: RECORD_REPOST, records }).catch(() => undefined);
 }
 
@@ -76,8 +83,8 @@ export function startRepostCacheOwner(): void {
       const stored = await browser.storage.local.get(REPOST_CACHE_KEY);
       const now = Date.now();
       let cache = parseStoredRepostCache(stored[REPOST_CACHE_KEY], now);
-      for (const { jobId, reposted } of message.records) {
-        cache = withRepostEntry(cache, jobId, reposted, now);
+      for (const { jobId, reposted, applicants } of message.records) {
+        cache = withRepostEntry(cache, jobId, { reposted, applicants }, now);
       }
       await browser.storage.local.set({ [REPOST_CACHE_KEY]: serializeRepostCache(cache) });
     });
@@ -86,7 +93,11 @@ export function startRepostCacheOwner(): void {
   });
 }
 
-type RepostRecord = { readonly jobId: string; readonly reposted: boolean };
+type RepostRecord = {
+  readonly jobId: string;
+  readonly reposted: boolean;
+  readonly applicants?: Applicants;
+};
 
 function isRecordMessage(message: unknown): message is {
   readonly type: typeof RECORD_REPOST;
@@ -109,6 +120,7 @@ function isRecord(value: unknown): value is RepostRecord {
   return (
     typeof record.jobId === 'string' &&
     /^\d+$/.test(record.jobId) &&
-    typeof record.reposted === 'boolean'
+    typeof record.reposted === 'boolean' &&
+    (record.applicants === undefined || parseApplicants(record.applicants) !== undefined)
   );
 }

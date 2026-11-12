@@ -45,12 +45,12 @@ describe('parseJobPostings', () => {
     const postings = parseJobPostings(sample);
     expect(postings.get('1')).toEqual({
       reposted: false,
-      applies: 37,
+      applicants: 37,
       originalListedAt: 1794264110000,
     });
     expect(postings.get('2')).toEqual({
       reposted: true,
-      applies: 347,
+      applicants: 347,
       originalListedAt: 1772574849000,
     });
   });
