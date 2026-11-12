@@ -218,12 +218,7 @@ describe('readyPopup', () => {
       { kind: 'applied', label: 'Applied', checked: false },
       { kind: 'viewed', label: 'Viewed', checked: false },
       { kind: 'saved', label: 'Saved', checked: false },
-      {
-        kind: 'reposted',
-        label: 'Reposted',
-        checked: false,
-        note: 'Checks these jobs with LinkedIn',
-      },
+      { kind: 'reposted', label: 'Reposted', checked: false },
     ]);
   });
 });

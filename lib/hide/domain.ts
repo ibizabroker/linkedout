@@ -9,12 +9,7 @@ export const HIDE_CATALOG = [
   { kind: 'applied', menuLabel: 'Applied', badgeText: 'Applied', defaultOn: true },
   { kind: 'viewed', menuLabel: 'Viewed', badgeText: 'Viewed', defaultOn: true },
   { kind: 'saved', menuLabel: 'Saved', badgeText: 'Saved', defaultOn: false },
-  {
-    kind: 'reposted',
-    menuLabel: 'Reposted',
-    defaultOn: false,
-    note: 'Checks these jobs with LinkedIn',
-  },
+  { kind: 'reposted', menuLabel: 'Reposted', defaultOn: false },
 ] as const;
 
 export type HideKind = (typeof HIDE_CATALOG)[number]['kind'];
@@ -60,7 +55,6 @@ export type MenuRow = {
   readonly kind: HideKind;
   readonly label: string;
   readonly checked: boolean;
-  readonly note?: string;
 };
 
 export type StatusLine =
@@ -196,7 +190,6 @@ export function readyPopup(set: HideSet, report: PageReport | undefined): ReadyP
       kind: row.kind,
       label: row.menuLabel,
       checked: hasKind(set, row.kind),
-      ...('note' in row ? { note: row.note } : {}),
     })),
     status: statusLine(set, report),
   };

@@ -1,10 +1,4 @@
-import {
-  Fragment,
-  useEffect,
-  useRef,
-  useState,
-  type ReactElement,
-} from 'react';
+import { useEffect, useRef, useState, type ReactElement } from 'react';
 import { browser, type Browser } from 'wxt/browser';
 import { ChevronDownIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -154,28 +148,22 @@ function HideMenu(props: {
         </DropdownMenuTrigger>
         <DropdownMenuContent className="ring-inset">
           {props.rows.map((row) => (
-            <Fragment key={row.kind}>
-              <DropdownMenuCheckboxItem
-                className="pl-[7px] **:data-[slot=dropdown-menu-checkbox-item-indicator]:right-[5px]"
-                checked={row.checked}
-                onSelect={(event) => {
-                  event.preventDefault();
-                }}
-                onCheckedChange={(checked) => {
-                  if (typeof checked !== 'boolean') {
-                    return;
-                  }
-                  props.onSetKind(row.kind, checked);
-                }}
-              >
-                {row.label}
-              </DropdownMenuCheckboxItem>
-              {row.note === undefined ? null : (
-                <p className="px-2 pb-1 text-xs text-muted-foreground">
-                  {row.note}
-                </p>
-              )}
-            </Fragment>
+            <DropdownMenuCheckboxItem
+              key={row.kind}
+              className="pl-[7px] **:data-[slot=dropdown-menu-checkbox-item-indicator]:right-[5px]"
+              checked={row.checked}
+              onSelect={(event) => {
+                event.preventDefault();
+              }}
+              onCheckedChange={(checked) => {
+                if (typeof checked !== 'boolean') {
+                  return;
+                }
+                props.onSetKind(row.kind, checked);
+              }}
+            >
+              {row.label}
+            </DropdownMenuCheckboxItem>
           ))}
         </DropdownMenuContent>
       </DropdownMenu>
