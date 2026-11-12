@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { offLimit } from './applicants.ts';
 import { emptyBlocklist, withBlocked } from '@/lib/block/domain';
 import {
   defaultHideSet,
@@ -224,6 +225,7 @@ describe('readyPopup', () => {
 });
 
 describe('shouldMarkHidden', () => {
+  const readyLimit = { status: 'ready', limit: offLimit() } as const;
   const both = defaultHideSet();
   const appliedOnly = withKind(both, 'viewed', false);
   const viewedOnly = withKind(both, 'applied', false);
@@ -232,11 +234,19 @@ describe('shouldMarkHidden', () => {
   const viewed = { applied: false, viewed: true, saved: false, reposted: false };
   const saved = { applied: false, viewed: false, saved: true, reposted: false };
 
-  const rules = (set: HideSet) => ({ set, blocklist: emptyBlocklist() });
+  const rules = (set: HideSet) => ({
+    set,
+    blocklist: emptyBlocklist(),
+    applicantLimit: offLimit(),
+  });
   const card = (badges: typeof applied, company?: string) => ({ badges, company });
   const none = { applied: false, viewed: false, saved: false, reposted: false };
   const cbre = withBlocked(emptyBlocklist(), 'CBRE', 1);
-  const blockedRules = (set = emptyHideSet()) => ({ set, blocklist: cbre });
+  const blockedRules = (set = emptyHideSet()) => ({
+    set,
+    blocklist: cbre,
+    applicantLimit: offLimit(),
+  });
 
   test('hides a blocked company with an empty hide set', () => {
     expect(shouldMarkHidden(true, blockedRules(), card(none, 'CBRE'))).toBe(true);
@@ -247,7 +257,11 @@ describe('shouldMarkHidden', () => {
   });
 
   test('blocking Amazon leaves Amazon Web Services visible', () => {
-    const amazon = { set: emptyHideSet(), blocklist: withBlocked(emptyBlocklist(), 'Amazon', 1) };
+    const amazon = {
+      set: emptyHideSet(),
+      blocklist: withBlocked(emptyBlocklist(), 'Amazon', 1),
+      applicantLimit: offLimit(),
+    };
     expect(shouldMarkHidden(true, amazon, card(none, 'Amazon Web Services (AWS)'))).toBe(false);
     expect(shouldMarkHidden(true, amazon, card(none, 'Amazon'))).toBe(true);
   });
@@ -265,13 +279,21 @@ describe('shouldMarkHidden', () => {
   });
 
   test('an unreadable hide set hides a blocked card but not an applied card', () => {
-    const rulesNow = hideRules({ status: 'unreadable' }, { status: 'ready', list: cbre });
+    const rulesNow = hideRules(
+      { status: 'unreadable' },
+      { status: 'ready', list: cbre },
+      readyLimit,
+    );
     expect(shouldMarkHidden(true, rulesNow, card(none, 'CBRE'))).toBe(true);
     expect(shouldMarkHidden(true, rulesNow, card(applied, 'Acme'))).toBe(false);
   });
 
   test('an unreadable blocklist hides an applied card but not a blocked card', () => {
-    const rulesNow = hideRules({ status: 'ready', set: both }, { status: 'unreadable' });
+    const rulesNow = hideRules(
+      { status: 'ready', set: both },
+      { status: 'unreadable' },
+      readyLimit,
+    );
     expect(shouldMarkHidden(true, rulesNow, card(applied, 'Acme'))).toBe(true);
     expect(shouldMarkHidden(true, rulesNow, card(none, 'CBRE'))).toBe(false);
   });
@@ -305,6 +327,73 @@ describe('shouldMarkHidden', () => {
 
   test('keeps an applied card when only viewed is selected', () => {
     expect(shouldMarkHidden(true, rules(viewedOnly), card(applied))).toBe(false);
+  });
+});
+
+describe('applicant count rule', () => {
+  const none = { applied: false, viewed: false, saved: false, reposted: false };
+  const limited = (enabled: boolean, max: number) => ({
+    set: emptyHideSet(),
+    blocklist: emptyBlocklist(),
+    applicantLimit: { enabled, max },
+  });
+  const counted = (applicants?: number | 'over-100') => ({
+    badges: none,
+    company: undefined,
+    applicants,
+  });
+
+  test('hides above the limit, keeps equal, below, and unknown', () => {
+    expect(shouldMarkHidden(true, limited(true, 200), counted(201))).toBe(true);
+    expect(shouldMarkHidden(true, limited(true, 200), counted(200))).toBe(false);
+    expect(shouldMarkHidden(true, limited(true, 200), counted(undefined))).toBe(false);
+  });
+
+  test('is off when disabled or off a jobs list', () => {
+    expect(shouldMarkHidden(true, limited(false, 10), counted(900))).toBe(false);
+    expect(shouldMarkHidden(false, limited(true, 10), counted(900))).toBe(false);
+  });
+
+  test('over 100 hides only below a limit of 100', () => {
+    expect(shouldMarkHidden(true, limited(true, 75), counted('over-100'))).toBe(true);
+    expect(shouldMarkHidden(true, limited(true, 100), counted('over-100'))).toBe(false);
+  });
+
+  test('an unreadable stored limit is treated as off while other rules still work', () => {
+    const rulesNow = hideRules(
+      { status: 'ready', set: defaultHideSet() },
+      { status: 'ready', list: emptyBlocklist() },
+      { status: 'unreadable' },
+    );
+    expect(rulesNow.applicantLimit.enabled).toBe(false);
+    expect(shouldMarkHidden(true, rulesNow, counted(5000))).toBe(false);
+    const applied = { ...none, applied: true };
+    expect(shouldMarkHidden(true, rulesNow, { badges: applied, company: undefined })).toBe(true);
+  });
+
+  test('with only the count filter on and nothing hidden the status is not "Showing every card"', () => {
+    const report = jobsListReport(0);
+    expect(readyPopup(emptyHideSet(), report).status.kind).toBe('showing');
+    expect(readyPopup(emptyHideSet(), report, true).status).toEqual({
+      kind: 'hiding',
+      text: 'No cards to hide on this list',
+    });
+    expect(readyPopup(emptyHideSet(), jobsListReport(3), true).status).toEqual({
+      kind: 'hiding',
+      text: '3 cards hidden on this list',
+    });
+  });
+
+  test('a paused check names the count when only the count filter is on', () => {
+    const paused = jobsListReport(0, true);
+    expect(readyPopup(emptyHideSet(), paused, true).status).toEqual({
+      kind: 'paused',
+      text: 'Applicant count check paused by LinkedIn limits',
+    });
+    expect(readyPopup(withKind(emptyHideSet(), 'reposted', true), paused, true).status).toEqual({
+      kind: 'paused',
+      text: 'Reposted check paused by LinkedIn limits',
+    });
   });
 });
 

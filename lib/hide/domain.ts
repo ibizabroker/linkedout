@@ -1,4 +1,11 @@
 import {
+  exceedsLimit,
+  type ApplicantLimit,
+  type Applicants,
+  type StoredLimitRead,
+  effectiveLimit,
+} from '@/lib/hide/applicants';
+import {
   emptyBlocklist,
   isBlocked,
   type Blocklist,
@@ -35,11 +42,13 @@ export type CardFacts = {
 export type HideRules = {
   readonly set: HideSet;
   readonly blocklist: Blocklist;
+  readonly applicantLimit: ApplicantLimit;
 };
 
 export type Card = {
   readonly badges: CardFacts;
   readonly company: string | undefined;
+  readonly applicants?: Applicants;
 };
 
 export type PageReport =
@@ -62,7 +71,7 @@ export type StatusLine =
   | { readonly kind: 'failed'; readonly text: 'Could not check this list. Reload the tab.' }
   | { readonly kind: 'elsewhere'; readonly text: 'Open a Jobs search to hide cards' }
   | { readonly kind: 'showing'; readonly text: 'Showing every card' }
-  | { readonly kind: 'paused'; readonly text: typeof REPOST_PAUSED_TEXT }
+  | { readonly kind: 'paused'; readonly text: typeof REPOST_PAUSED_TEXT | typeof COUNT_PAUSED_TEXT }
   | { readonly kind: 'hiding'; readonly text: string };
 
 export type ReadyPopup = {
@@ -72,6 +81,7 @@ export type ReadyPopup = {
 };
 
 export const REPOST_PAUSED_TEXT = 'Reposted check paused by LinkedIn limits';
+export const COUNT_PAUSED_TEXT = 'Applicant count check paused by LinkedIn limits';
 export const UNREADABLE_CHOICE_TEXT = 'Could not load your choice. Choose again.';
 
 export type PopupModel =
@@ -157,8 +167,13 @@ export function textIsLeafBadge(
   return !childTextContents.some((child) => child.trim() === badgeText);
 }
 
-export function hideRules(hide: StoredHideRead, block: StoredBlocklistRead): HideRules {
+export function hideRules(
+  hide: StoredHideRead,
+  block: StoredBlocklistRead,
+  limit: StoredLimitRead,
+): HideRules {
   return {
+    applicantLimit: effectiveLimit(limit),
     set: hide.status === 'ready' ? hide.set : emptyHideSet(),
     blocklist: block.status === 'ready' ? block.list : emptyBlocklist(),
   };
@@ -175,11 +190,16 @@ export function shouldMarkHidden(
 
   return (
     rules.set.kinds.some((kind) => card.badges[kind]) ||
-    (card.company !== undefined && isBlocked(rules.blocklist, card.company))
+    (card.company !== undefined && isBlocked(rules.blocklist, card.company)) ||
+    exceedsLimit(card.applicants, rules.applicantLimit)
   );
 }
 
-export function readyPopup(set: HideSet, report: PageReport | undefined): ReadyPopup {
+export function readyPopup(
+  set: HideSet,
+  report: PageReport | undefined,
+  countFilterOn = false,
+): ReadyPopup {
   const selectedLabels = HIDE_CATALOG.flatMap((row) =>
     hasKind(set, row.kind) ? [row.menuLabel] : [],
   );
@@ -191,7 +211,7 @@ export function readyPopup(set: HideSet, report: PageReport | undefined): ReadyP
       label: row.menuLabel,
       checked: hasKind(set, row.kind),
     })),
-    status: statusLine(set, report),
+    status: statusLine(set, report, countFilterOn),
   };
 }
 
@@ -211,7 +231,11 @@ export function failedPageReport(): PageReport {
   return { kind: 'failed' };
 }
 
-function statusLine(set: HideSet, report: PageReport | undefined): StatusLine {
+function statusLine(
+  set: HideSet,
+  report: PageReport | undefined,
+  countFilterOn: boolean,
+): StatusLine {
   if (report === undefined) {
     return { kind: 'pending' };
   }
@@ -222,10 +246,13 @@ function statusLine(set: HideSet, report: PageReport | undefined): StatusLine {
     case 'not-jobs-list':
       return { kind: 'elsewhere', text: 'Open a Jobs search to hide cards' };
     case 'jobs-list':
-      if (report.repostPaused && hasKind(set, 'reposted')) {
-        return { kind: 'paused', text: REPOST_PAUSED_TEXT };
+      if (report.repostPaused && (hasKind(set, 'reposted') || countFilterOn)) {
+        return {
+          kind: 'paused',
+          text: hasKind(set, 'reposted') ? REPOST_PAUSED_TEXT : COUNT_PAUSED_TEXT,
+        };
       }
-      if (report.hiddenCount === 0 && set.kinds.length === 0) {
+      if (report.hiddenCount === 0 && set.kinds.length === 0 && !countFilterOn) {
         return { kind: 'showing', text: 'Showing every card' };
       }
       return { kind: 'hiding', text: hidingText(report.hiddenCount) };

@@ -61,10 +61,7 @@ export function effectiveLimit(read: StoredLimitRead | undefined): ApplicantLimi
   return read?.status === 'ready' ? read.limit : offLimit();
 }
 
-export function exceedsLimit(
-  applicants: Applicants | undefined,
-  limit: ApplicantLimit,
-): boolean {
+export function exceedsLimit(applicants: Applicants | undefined, limit: ApplicantLimit): boolean {
   if (!limit.enabled || applicants === undefined) {
     return false;
   }

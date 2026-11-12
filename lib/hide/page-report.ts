@@ -1,3 +1,4 @@
+import { parseLimitDocument, serializeLimit, type ApplicantLimit } from '@/lib/hide/applicants';
 import {
   failedPageReport,
   jobsListReport,
@@ -6,6 +7,21 @@ import {
 } from '@/lib/hide/domain';
 
 export const PAGE_REPORT_PORT = 'linkedout-page-report';
+const PREVIEW_LIMIT = 'preview-limit';
+
+export function serializePreview(limit: ApplicantLimit): {
+  readonly type: typeof PREVIEW_LIMIT;
+  readonly document: ReturnType<typeof serializeLimit>;
+} {
+  return { type: PREVIEW_LIMIT, document: serializeLimit(limit) };
+}
+
+export function parsePreviewMessage(raw: unknown): ApplicantLimit | undefined {
+  if (!isRecord(raw) || raw.type !== PREVIEW_LIMIT) {
+    return undefined;
+  }
+  return parseLimitDocument(raw.document);
+}
 
 export function serializePageReport(report: PageReport): {
   readonly kind: PageReport['kind'];

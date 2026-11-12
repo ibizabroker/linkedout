@@ -19,9 +19,11 @@ import {
   syncBlockControl,
 } from '@/lib/block/card-controls';
 import { closeBlockConfirmation } from '@/lib/block/confirm-panel';
+import { type ApplicantLimit, type StoredLimitRead } from '@/lib/hide/applicants';
+import { watchApplicantLimit } from '@/lib/hide/applicant-store';
 import { jobIdOf } from '@/lib/hide/job-page';
 import { startRepostWatch } from '@/lib/hide/repost-watch';
-import { PAGE_REPORT_PORT, serializePageReport } from '@/lib/hide/page-report';
+import { PAGE_REPORT_PORT, parsePreviewMessage, serializePageReport } from '@/lib/hide/page-report';
 import type { RepostWatch } from '@/lib/hide/repost-watch';
 import { watchHideSet } from '@/lib/hide/store';
 import { watchBlocklist } from '@/lib/block/store';
@@ -41,6 +43,8 @@ export function startJobListHiding(
   const ports = new Set<Browser.runtime.Port>();
   let hideRead: StoredHideRead | undefined;
   let blockRead: StoredBlocklistRead | undefined;
+  let limitRead: StoredLimitRead | undefined;
+  let preview: ApplicantLimit | undefined;
   let latest: HideRules | undefined;
   let lastReport: PageReport | undefined;
 
@@ -50,8 +54,19 @@ export function startJobListHiding(
     }
 
     ports.add(port);
+    port.onMessage.addListener((message: unknown) => {
+      const limit = parsePreviewMessage(message);
+      if (limit !== undefined) {
+        preview = limit;
+        applyRules();
+      }
+    });
     port.onDisconnect.addListener(() => {
       ports.delete(port);
+      if (preview !== undefined) {
+        preview = undefined;
+        applyRules();
+      }
     });
 
     if (lastReport !== undefined) {
@@ -88,6 +103,12 @@ export function startJobListHiding(
     applyRules();
   });
 
+  const stopLimitWatch = watchApplicantLimit((read) => {
+    limitRead = read;
+    preview = undefined;
+    applyRules();
+  });
+
   ctx.onInvalidated(() => {
     observer.disconnect();
     reposts.stop();
@@ -96,6 +117,7 @@ export function startJobListHiding(
     closeBlockConfirmation();
     stopHideWatch();
     stopBlockWatch();
+    stopLimitWatch();
     browser.runtime.onConnect.removeListener(onConnect);
     for (const port of ports) {
       port.disconnect();
@@ -104,10 +126,13 @@ export function startJobListHiding(
   });
 
   function applyRules(): void {
-    if (hideRead === undefined || blockRead === undefined) {
+    if (hideRead === undefined || blockRead === undefined || limitRead === undefined) {
       return;
     }
-    latest = hideRules(hideRead, blockRead);
+    latest = hideRules(hideRead, blockRead, limitRead);
+    if (preview !== undefined && latest.applicantLimit !== preview) {
+      latest = { ...latest, applicantLimit: preview };
+    }
     publish(reconcile(doc, latest, reposts));
   }
 
@@ -162,19 +187,26 @@ function cardFacts(card: Element, reposts: RepostWatch): CardFacts {
 function reconcile(doc: Document, rules: HideRules, reposts: RepostWatch): PageReport {
   const pathname = doc.location?.pathname ?? '';
   if (!onJobsResultsList(pathname)) {
-    reposts.track([], false);
+    reposts.track([], { reposts: false, counts: false });
     clearMarks(doc);
     return notJobsListReport();
   }
 
   const cards = doc.querySelectorAll(JOB_CARD);
   const checkReposts = hasKind(rules.set, 'reposted');
-  reposts.track(cards, checkReposts);
+  const checkCounts = rules.applicantLimit.enabled;
+  reposts.track(cards, { reposts: checkReposts, counts: checkCounts });
 
   let marked = 0;
   for (const card of cards) {
     const company = cardCompany(card);
-    const hidden = shouldMarkHidden(true, rules, { badges: cardFacts(card, reposts), company });
+    const jobId = jobIdOf(card);
+    const applicants = jobId === undefined ? undefined : reposts.applicantsOf(jobId);
+    const hidden = shouldMarkHidden(true, rules, {
+      badges: cardFacts(card, reposts),
+      company,
+      applicants,
+    });
     card.toggleAttribute(HIDDEN_ATTR, hidden);
     syncBlockControl(card, company);
     if (hidden) {
@@ -182,7 +214,7 @@ function reconcile(doc: Document, rules: HideRules, reposts: RepostWatch): PageR
     }
   }
 
-  return jobsListReport(marked, checkReposts && reposts.isPaused());
+  return jobsListReport(marked, (checkReposts || checkCounts) && reposts.isPaused());
 }
 
 function clearMarks(doc: Document): void {
