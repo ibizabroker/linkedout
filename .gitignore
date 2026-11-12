@@ -15,6 +15,7 @@ stats-*.json
 web-ext.config.ts
 .tmp/
 .claude/settings.local.json
+.claude/worktrees/
 .claude/skills/impeccable/
 .claude/agents/impeccable-*
 .cursor/skills/impeccable/
