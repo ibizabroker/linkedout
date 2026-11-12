@@ -84,6 +84,8 @@ Stops only the daemon/browser started for that run id and deletes `.tmp/linkedou
 | `bun run verify:control -- doctor --run-id id` | Health check |
 | `bun run verify:control -- open-popup --run-id id` | Navigate to popup.html |
 | `bun run verify:control -- click --run-id id --role ROLE --name NAME` | Click by role + accessible name |
+| `bun run verify:control -- fill --run-id id --role ROLE --name NAME --value TEXT` | Replace a field's text |
+| `bun run verify:control -- press --run-id id --role ROLE --name NAME --key KEY` | Press a key on an element (for example `ArrowRight` on a slider, `Enter`) |
 | `bun run verify:control -- text --run-id id --role ROLE --name NAME` | Read inner text |
 | `bun run verify:control -- snapshot --run-id id --path FILE` | Write ARIA snapshot |
 | `bun run verify:control -- screenshot --run-id id --path FILE` | Write PNG |

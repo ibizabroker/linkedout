@@ -239,6 +239,26 @@ async function startDaemon(runId: string): Promise<void> {
         return send(res, 200, { ok: true });
       }
 
+      if (req.method === 'POST' && (url.pathname === '/fill' || url.pathname === '/press')) {
+        const body = (await readBody(req)) as {
+          role?: string;
+          name?: string;
+          value?: string;
+        };
+        if (!body.role || !body.name || body.value === undefined) {
+          return send(res, 400, { ok: false, error: 'role, name and value required' });
+        }
+        const target = session.page.getByRole(body.role as Parameters<Page['getByRole']>[0], {
+          name: body.name,
+        });
+        if (url.pathname === '/fill') {
+          await target.fill(body.value);
+        } else {
+          await target.press(body.value);
+        }
+        return send(res, 200, { ok: true });
+      }
+
       if (req.method === 'POST' && url.pathname === '/text-content') {
         const body = (await readBody(req)) as {
           role?: string;
@@ -447,6 +467,17 @@ async function cmdClick(flags: Map<string, string | boolean>) {
   if (!result.ok) process.exit(1);
 }
 
+async function cmdFill(flags: Map<string, string | boolean>, route: '/fill' | '/press') {
+  const state = await withState(flags);
+  const result = await postJson(state.port, route, {
+    role: flag(flags, 'role'),
+    name: flag(flags, 'name'),
+    value: flag(flags, route === '/fill' ? 'value' : 'key'),
+  });
+  console.log(JSON.stringify(result.data, null, 2));
+  if (!result.ok) process.exit(1);
+}
+
 async function cmdText(flags: Map<string, string | boolean>) {
   const state = await withState(flags);
   const result = await postJson(state.port, '/text-content', {
@@ -514,6 +545,8 @@ Usage:
   control-linkedout doctor --run-id <id>
   control-linkedout open-popup --run-id <id>
   control-linkedout click --run-id <id> --role <role> --name <name>
+  control-linkedout fill --run-id <id> --role <role> --name <name> --value <text>
+  control-linkedout press --run-id <id> --role <role> --name <name> --key <key>
   control-linkedout text --run-id <id> --role <role> --name <name>
   control-linkedout snapshot --run-id <id> --path <file> [--aria]
   control-linkedout screenshot --run-id <id> --path <file>
@@ -548,6 +581,12 @@ async function main() {
       break;
     case 'click':
       await cmdClick(flags);
+      break;
+    case 'fill':
+      await cmdFill(flags, '/fill');
+      break;
+    case 'press':
+      await cmdFill(flags, '/press');
       break;
     case 'text':
       await cmdText(flags);

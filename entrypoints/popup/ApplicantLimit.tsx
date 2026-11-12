@@ -152,7 +152,6 @@ export function ApplicantLimitSection(props: {
       </div>
       <div className="flex items-center gap-3">
         <Slider
-          aria-label="Applicant limit"
           min={0}
           max={APPLICANT_STOPS.length - 1}
           step={1}
@@ -173,7 +172,10 @@ export function ApplicantLimitSection(props: {
               commitMax(stop);
             }
           }}
-          thumbProps={{ 'aria-valuetext': `${max} applicants` }}
+          thumbProps={{
+            'aria-label': 'Applicant limit',
+            'aria-valuetext': `${max} applicants`,
+          }}
         />
         <Input
           aria-label="Applicant limit number"
