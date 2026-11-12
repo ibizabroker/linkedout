@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState, type ReactElement } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactElement,
+} from 'react';
 import { browser, type Browser } from 'wxt/browser';
 import { ChevronDownIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,7 +30,14 @@ import {
 import {
   PAGE_REPORT_PORT,
   parsePageReportMessage,
+  serializePreview,
 } from '@/lib/hide/page-report';
+import type { ApplicantLimit } from '@/lib/hide/applicants';
+import {
+  ApplicantLimitSection,
+  LIMIT_SAVE_FAILED_TEXT,
+  useApplicantLimitSession,
+} from './ApplicantLimit';
 import { requestHideSet, watchHideSet } from '@/lib/hide/store';
 import {
   BlockedCompaniesSection,
@@ -36,10 +49,19 @@ export default function App() {
 }
 
 export function PopupApp(): ReactElement {
-  const { model, setKind, saveFailed } = useHideSetSession();
+  const { report, sendPreview } = usePageReport();
+  const limit = useApplicantLimitSession(sendPreview);
+  const { model, setKind, saveFailed } = useHideSetSession(
+    report,
+    limit.limit?.enabled === true,
+  );
 
   const blocklist = useBlocklistSession();
-  const status = statusLine(model, saveFailed, blocklist.failureText);
+  const status = statusLine(
+    model,
+    saveFailed,
+    limit.failed ? LIMIT_SAVE_FAILED_TEXT : blocklist.failureText,
+  );
 
   return (
     <main className="flex flex-col px-4 pt-5 pb-4">
@@ -61,6 +83,7 @@ export function PopupApp(): ReactElement {
             rows={model.menu}
             onSetKind={setKind}
           />
+          <ApplicantLimitSection session={limit} />
           {blocklist.companies === undefined ? null : (
             <BlockedCompaniesSection
               companies={blocklist.companies}
@@ -171,43 +194,14 @@ function HideMenu(props: {
   );
 }
 
-function useHideSetSession(): {
-  readonly model: PopupModel;
-  readonly setKind: (kind: HideKind, on: boolean) => void;
-  readonly saveFailed: boolean;
+function usePageReport(): {
+  readonly report: PageReport | undefined;
+  readonly sendPreview: (limit: ApplicantLimit) => void;
 } {
-  const [phase, setPhase] = useState<'loading' | 'ready' | 'unreadable'>(
-    'loading',
-  );
-  const [hideSet, setHideSet] = useState<HideSet | null>(null);
   const [report, setReport] = useState<PageReport | undefined>(undefined);
-  const [saveFailed, setSaveFailed] = useState(false);
-  const hideSetRef = useRef<HideSet | null>(null);
-  const resolvedRef = useRef<HideSet | null>(null);
-  const epoch = useRef(0);
-  const inflight = useRef(0);
-
-  useEffect(() => {
-    return watchHideSet((read) => {
-      if (inflight.current > 0) {
-        return;
-      }
-
-      if (read.status !== 'ready') {
-        const empty = emptyHideSet();
-        resolvedRef.current = empty;
-        hideSetRef.current = empty;
-        setHideSet(empty);
-        setPhase('unreadable');
-        return;
-      }
-
-      resolvedRef.current = read.set;
-      hideSetRef.current = read.set;
-      setHideSet(read.set);
-      setPhase('ready');
-    });
-  }, []);
+  const [pagePort, setPagePort] = useState<Browser.runtime.Port | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -239,6 +233,7 @@ function useHideSetSession(): {
 
         try {
           port = browser.tabs.connect(tab.id, { name: PAGE_REPORT_PORT });
+          setPagePort(port);
         } catch {
           setReport(failedPageReport());
           return;
@@ -274,6 +269,60 @@ function useHideSetSession(): {
       cancelled = true;
       port?.disconnect();
     };
+  }, []);
+
+  const sendPreview = useCallback(
+    (limit: ApplicantLimit): void => {
+      try {
+        pagePort?.postMessage(serializePreview(limit));
+      } catch {
+        setPagePort(undefined);
+      }
+    },
+    [pagePort],
+  );
+
+  return { report, sendPreview };
+}
+
+function useHideSetSession(
+  report: PageReport | undefined,
+  countFilterOn: boolean,
+): {
+  readonly model: PopupModel;
+  readonly setKind: (kind: HideKind, on: boolean) => void;
+  readonly saveFailed: boolean;
+} {
+  const [phase, setPhase] = useState<'loading' | 'ready' | 'unreadable'>(
+    'loading',
+  );
+  const [hideSet, setHideSet] = useState<HideSet | null>(null);
+  const [saveFailed, setSaveFailed] = useState(false);
+  const hideSetRef = useRef<HideSet | null>(null);
+  const resolvedRef = useRef<HideSet | null>(null);
+  const epoch = useRef(0);
+  const inflight = useRef(0);
+
+  useEffect(() => {
+    return watchHideSet((read) => {
+      if (inflight.current > 0) {
+        return;
+      }
+
+      if (read.status !== 'ready') {
+        const empty = emptyHideSet();
+        resolvedRef.current = empty;
+        hideSetRef.current = empty;
+        setHideSet(empty);
+        setPhase('unreadable');
+        return;
+      }
+
+      resolvedRef.current = read.set;
+      hideSetRef.current = read.set;
+      setHideSet(read.set);
+      setPhase('ready');
+    });
   }, []);
 
   function setKind(kind: HideKind, on: boolean): void {
@@ -317,20 +366,25 @@ function useHideSetSession(): {
     );
   }
 
-  return { model: popupModel(phase, hideSet, report), setKind, saveFailed };
+  return {
+    model: popupModel(phase, hideSet, report, countFilterOn),
+    setKind,
+    saveFailed,
+  };
 }
 
 function popupModel(
   phase: 'loading' | 'ready' | 'unreadable',
   hideSet: HideSet | null,
   report: PageReport | undefined,
+  countFilterOn: boolean,
 ): PopupModel {
   if (phase === 'loading' || hideSet === null) {
     return { phase: 'loading' };
   }
 
   if (phase === 'unreadable') {
-    const { triggerLabel, menu } = readyPopup(hideSet, report);
+    const { triggerLabel, menu } = readyPopup(hideSet, report, countFilterOn);
     return {
       phase: 'unreadable',
       text: UNREADABLE_CHOICE_TEXT,
@@ -339,7 +393,7 @@ function popupModel(
     };
   }
 
-  return { phase: 'ready', ...readyPopup(hideSet, report) };
+  return { phase: 'ready', ...readyPopup(hideSet, report, countFilterOn) };
 }
 
 function hostnameOf(url: string | undefined): string | undefined {
