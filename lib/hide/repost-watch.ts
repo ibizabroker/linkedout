@@ -4,11 +4,11 @@ import {
   emptyRepostCache,
   freshEntry,
   mergeRepostCaches,
-  withRepostEntry,
   type RepostCache,
 } from '@/lib/hide/repost-cache';
-import { createRepostBatcher } from '@/lib/hide/repost-batcher';
+import { createRepostChecker } from '@/lib/hide/repost-checker';
 import {
+  readRepostCache,
   readRepostPause,
   recordReposts,
   watchRepostCache,
@@ -31,20 +31,24 @@ async function fetchOnePosting(jobId: string): Promise<PostingsOutcome> {
 
 export function startRepostWatch(onChange: () => void): RepostWatch {
   let cache: RepostCache = emptyRepostCache();
+  let stopCacheWatch: (() => void) | undefined;
   let stopped = false;
-  let enabled = false;
 
-  const batcher = createRepostBatcher({
+  const checker = createRepostChecker({
     fetchBatch: (jobIds) => fetchJobPostings(jobIds),
     fetchOne: fetchOnePosting,
-    isKnown: (jobId) => freshEntry(cache, jobId, Date.now()) !== undefined,
-    onChecked: (results) => {
-      for (const [jobId, facts] of results) {
-        cache = withRepostEntry(cache, jobId, facts, Date.now());
+    loadCache: async () => {
+      cache = mergeRepostCaches(cache, await readRepostCache(), Date.now());
+      if (!stopped) {
+        stopCacheWatch ??= watchRepostCache((stored) => {
+          cache = mergeRepostCaches(cache, stored, Date.now());
+          onChange();
+        });
       }
-      recordReposts(results);
-      onChange();
     },
+    cachedReposted: (jobId) => freshEntry(cache, jobId, Date.now())?.reposted,
+    onRecord: recordReposts,
+    onChange,
     onPauseChange: (until) => {
       writeRepostPause(until);
       onChange();
@@ -57,42 +61,33 @@ export function startRepostWatch(onChange: () => void): RepostWatch {
     jitter: Math.random,
   });
 
-  const stopCacheWatch = watchRepostCache((stored) => {
-    cache = mergeRepostCaches(cache, stored, Date.now());
-    onChange();
-  });
   void readRepostPause().then((until) => {
     if (!stopped && until !== undefined) {
-      batcher.pauseUntil(until);
+      checker.pauseUntil(until);
       onChange();
     }
   });
 
   return {
-    isReposted: (jobId) => freshEntry(cache, jobId, Date.now())?.reposted === true,
+    isReposted: (jobId) => checker.isReposted(jobId),
     track(cards, on) {
-      if (on !== enabled) {
-        enabled = on;
-        if (!on) {
-          batcher.clear();
-        }
-      }
       if (!on) {
+        checker.clear();
         return;
       }
 
       for (const card of cards) {
         const jobId = jobIdOf(card);
         if (jobId !== undefined) {
-          batcher.want(jobId);
+          checker.want(jobId);
         }
       }
     },
-    isPaused: () => batcher.isPaused(),
+    isPaused: () => checker.isPaused(),
     stop() {
       stopped = true;
-      stopCacheWatch();
-      batcher.stop();
+      stopCacheWatch?.();
+      checker.stop();
     },
   };
 }

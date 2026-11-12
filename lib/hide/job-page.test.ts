@@ -48,14 +48,14 @@ describe('fetchJobPage', () => {
     expect(outcome).toEqual({ kind: 'page', facts: { reposted: true } });
   });
 
-  test('429, 403, 999, 5xx, and network errors mean limited', async () => {
+  test('429, 403, 999, 5xx, and network errors mean throttled', async () => {
     for (const status of [429, 403, 999, 503]) {
-      expect(await fetchJobPage('1', respond(status))).toEqual({ kind: 'limited' });
+      expect(await fetchJobPage('1', respond(status))).toEqual({ kind: 'throttled' });
     }
     const down = (async () => {
       throw new TypeError('offline');
     }) as unknown as typeof fetch;
-    expect(await fetchJobPage('1', down)).toEqual({ kind: 'limited' });
+    expect(await fetchJobPage('1', down)).toEqual({ kind: 'throttled' });
   });
 
   test('a missing job or an unreadable page fails without limiting', async () => {

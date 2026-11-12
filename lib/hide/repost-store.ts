@@ -1,10 +1,10 @@
 import { browser } from 'wxt/browser';
 import {
+  emptyRepostCache,
   parseStoredRepostCache,
   serializeRepostCache,
   withRepostEntry,
   type RepostCache,
-  type RepostFacts,
 } from '@/lib/hide/repost-cache';
 
 const REPOST_CACHE_KEY = 'repost-cache';
@@ -12,18 +12,16 @@ const REPOST_PAUSE_KEY = 'repost-pause-until';
 const RECORD_REPOST = 'linkedout/repost-cache/record';
 const LINKEDIN_ORIGIN = 'https://www.linkedin.com/';
 
+export async function readRepostCache(): Promise<RepostCache> {
+  try {
+    const stored = await browser.storage.local.get(REPOST_CACHE_KEY);
+    return parseStoredRepostCache(stored[REPOST_CACHE_KEY], Date.now());
+  } catch {
+    return emptyRepostCache();
+  }
+}
+
 export function watchRepostCache(onRead: (cache: RepostCache) => void): () => void {
-  let stopped = false;
-
-  void browser.storage.local.get(REPOST_CACHE_KEY).then(
-    (stored) => {
-      if (!stopped) {
-        onRead(parseStoredRepostCache(stored[REPOST_CACHE_KEY], Date.now()));
-      }
-    },
-    () => undefined,
-  );
-
   const onChanged: Parameters<typeof browser.storage.onChanged.addListener>[0] = (
     changes,
     areaName,
@@ -36,13 +34,12 @@ export function watchRepostCache(onRead: (cache: RepostCache) => void): () => vo
   browser.storage.onChanged.addListener(onChanged);
 
   return () => {
-    stopped = true;
     browser.storage.onChanged.removeListener(onChanged);
   };
 }
 
-export function recordReposts(results: ReadonlyMap<string, RepostFacts>): void {
-  const records = [...results].map(([jobId, facts]) => ({ jobId, ...facts }));
+export function recordReposts(results: ReadonlyMap<string, boolean>): void {
+  const records = [...results].map(([jobId, reposted]) => ({ jobId, reposted }));
   void browser.runtime.sendMessage({ type: RECORD_REPOST, records }).catch(() => undefined);
 }
 
@@ -79,8 +76,8 @@ export function startRepostCacheOwner(): void {
       const stored = await browser.storage.local.get(REPOST_CACHE_KEY);
       const now = Date.now();
       let cache = parseStoredRepostCache(stored[REPOST_CACHE_KEY], now);
-      for (const { jobId, ...facts } of message.records) {
-        cache = withRepostEntry(cache, jobId, facts, now);
+      for (const { jobId, reposted } of message.records) {
+        cache = withRepostEntry(cache, jobId, reposted, now);
       }
       await browser.storage.local.set({ [REPOST_CACHE_KEY]: serializeRepostCache(cache) });
     });
@@ -89,7 +86,7 @@ export function startRepostCacheOwner(): void {
   });
 }
 
-type RepostRecord = RepostFacts & { readonly jobId: string };
+type RepostRecord = { readonly jobId: string; readonly reposted: boolean };
 
 function isRecordMessage(message: unknown): message is {
   readonly type: typeof RECORD_REPOST;
@@ -112,12 +109,6 @@ function isRecord(value: unknown): value is RepostRecord {
   return (
     typeof record.jobId === 'string' &&
     /^\d+$/.test(record.jobId) &&
-    typeof record.reposted === 'boolean' &&
-    isOptionalNumber(record.applies) &&
-    isOptionalNumber(record.originalListedAt)
+    typeof record.reposted === 'boolean'
   );
-}
-
-function isOptionalNumber(value: unknown): boolean {
-  return value === undefined || (typeof value === 'number' && Number.isFinite(value));
 }

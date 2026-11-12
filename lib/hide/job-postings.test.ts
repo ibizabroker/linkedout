@@ -93,22 +93,24 @@ describe('request', () => {
     expect(token).toBe('ajax:123');
   });
 
-  test('limit statuses and network errors are limited', async () => {
-    for (const status of [403, 429, 999, 500, 503]) {
+  test('429, 999, and network errors are throttled', async () => {
+    for (const status of [429, 999]) {
       expect((await fetchJobPostings(['1'], { cookie, fetchJson: respond(status, {}) })).kind).toBe(
-        'limited',
+        'throttled',
       );
     }
     const down = (async () => {
       throw new Error('offline');
     }) as unknown as typeof fetch;
-    expect((await fetchJobPostings(['1'], { cookie, fetchJson: down })).kind).toBe('limited');
+    expect((await fetchJobPostings(['1'], { cookie, fetchJson: down })).kind).toBe('throttled');
   });
 
-  test('other statuses, non-JSON, no csrf cookie, and a changed schema are failed', async () => {
-    expect((await fetchJobPostings(['1'], { cookie, fetchJson: respond(404, {}) })).kind).toBe(
-      'failed',
-    );
+  test('403, 5xx, other statuses, non-JSON, no csrf cookie, and a changed schema are failed', async () => {
+    for (const status of [403, 404, 500, 503]) {
+      expect((await fetchJobPostings(['1'], { cookie, fetchJson: respond(status, {}) })).kind).toBe(
+        'failed',
+      );
+    }
     expect(
       (await fetchJobPostings(['1'], { cookie, fetchJson: respond(200, '<html>') })).kind,
     ).toBe('failed');

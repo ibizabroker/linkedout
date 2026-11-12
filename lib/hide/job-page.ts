@@ -1,7 +1,7 @@
 const JOB_DETAILS_SCREEN = 'com.linkedin.sdui.flagshipnav.jobs.JobDetails';
 const REPOSTED = /Reposted\s+\d+\s+(?:second|minute|hour|day|week|month|year)s?\s+ago/i;
 const JOB_ID = /^\d+$/;
-const LIMITED_STATUSES: ReadonlySet<number> = new Set([403, 429, 999]);
+const THROTTLED_STATUSES: ReadonlySet<number> = new Set([403, 429, 999]);
 
 export type JobPageFacts = {
   readonly reposted: boolean;
@@ -9,7 +9,7 @@ export type JobPageFacts = {
 
 export type JobPageOutcome =
   | { readonly kind: 'page'; readonly facts: JobPageFacts }
-  | { readonly kind: 'limited' }
+  | { readonly kind: 'throttled' }
   | { readonly kind: 'failed' };
 
 export function readJobPage(html: string): JobPageFacts | undefined {
@@ -38,11 +38,11 @@ export async function fetchJobPage(
   try {
     response = await fetchPage(`/jobs/view/${jobId}/`, { credentials: 'include' });
   } catch {
-    return { kind: 'limited' };
+    return { kind: 'throttled' };
   }
 
-  if (LIMITED_STATUSES.has(response.status) || response.status >= 500) {
-    return { kind: 'limited' };
+  if (THROTTLED_STATUSES.has(response.status) || response.status >= 500) {
+    return { kind: 'throttled' };
   }
   if (!response.ok) {
     return { kind: 'failed' };
@@ -52,7 +52,7 @@ export async function fetchJobPage(
   try {
     html = await response.text();
   } catch {
-    return { kind: 'limited' };
+    return { kind: 'throttled' };
   }
   const facts = readJobPage(html);
   return facts === undefined ? { kind: 'failed' } : { kind: 'page', facts };

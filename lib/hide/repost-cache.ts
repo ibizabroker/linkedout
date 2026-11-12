@@ -1,13 +1,8 @@
 export const REPOST_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 export const REPOST_CACHE_CAP = 5000;
 
-export type RepostFacts = {
+export type RepostEntry = {
   readonly reposted: boolean;
-  readonly applies?: number;
-  readonly originalListedAt?: number;
-};
-
-export type RepostEntry = RepostFacts & {
   readonly checkedAt: number;
 };
 
@@ -29,12 +24,12 @@ export function freshEntry(
 export function withRepostEntry(
   cache: RepostCache,
   jobId: string,
-  facts: RepostFacts,
+  reposted: boolean,
   now: number,
 ): RepostCache {
   const next = new Map(cache);
   next.delete(jobId);
-  next.set(jobId, entryOf(facts, now));
+  next.set(jobId, { reposted, checkedAt: now });
   return pruned(next, now);
 }
 
@@ -50,7 +45,7 @@ export function mergeRepostCaches(a: RepostCache, b: RepostCache, now: number): 
 }
 
 export function parseStoredRepostCache(raw: unknown, now: number): RepostCache {
-  if (!isRecord(raw) || raw.version !== 2 || !isRecord(raw.entries)) {
+  if (!isRecord(raw) || raw.version !== 3 || !isRecord(raw.entries)) {
     return emptyRepostCache();
   }
 
@@ -63,45 +58,17 @@ export function parseStoredRepostCache(raw: unknown, now: number): RepostCache {
       typeof value.checkedAt === 'number' &&
       Number.isFinite(value.checkedAt)
     ) {
-      entries.set(
-        jobId,
-        entryOf(
-          {
-            reposted: value.reposted,
-            applies: finiteNumber(value.applies),
-            originalListedAt: finiteNumber(value.originalListedAt),
-          },
-          value.checkedAt,
-        ),
-      );
+      entries.set(jobId, { reposted: value.reposted, checkedAt: value.checkedAt });
     }
   }
   return pruned(entries, now);
 }
 
 export function serializeRepostCache(cache: RepostCache): {
-  readonly version: 2;
+  readonly version: 3;
   readonly entries: Record<string, RepostEntry>;
 } {
-  return { version: 2, entries: Object.fromEntries(cache) };
-}
-
-function entryOf(facts: RepostFacts, checkedAt: number): RepostEntry {
-  const entry: { -readonly [K in keyof RepostEntry]: RepostEntry[K] } = {
-    reposted: facts.reposted,
-    checkedAt,
-  };
-  if (facts.applies !== undefined) {
-    entry.applies = facts.applies;
-  }
-  if (facts.originalListedAt !== undefined) {
-    entry.originalListedAt = facts.originalListedAt;
-  }
-  return entry;
-}
-
-function finiteNumber(value: unknown): number | undefined {
-  return typeof value === 'number' && Number.isFinite(value) ? value : undefined;
+  return { version: 3, entries: Object.fromEntries(cache) };
 }
 
 function pruned(entries: Map<string, RepostEntry>, now: number): RepostCache {

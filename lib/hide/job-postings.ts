@@ -1,15 +1,19 @@
-import type { RepostFacts } from '@/lib/hide/repost-cache';
-
 export const MAX_POSTINGS_PER_REQUEST = 25;
 
 const JOB_ID = /^\d+$/;
 const JOB_POSTING_TYPE = 'com.linkedin.voyager.dash.jobs.JobPosting';
 const URN_PREFIX = 'urn:li:fsd_jobPosting:';
-const LIMITED_STATUSES: ReadonlySet<number> = new Set([403, 429, 999]);
+const THROTTLED_STATUSES: ReadonlySet<number> = new Set([429, 999]);
+
+export type RepostFacts = {
+  readonly reposted: boolean;
+  readonly applies?: number;
+  readonly originalListedAt?: number;
+};
 
 export type PostingsOutcome =
   | { readonly kind: 'ok'; readonly postings: ReadonlyMap<string, RepostFacts> }
-  | { readonly kind: 'limited' }
+  | { readonly kind: 'throttled' }
   | { readonly kind: 'failed' };
 
 export function parseJobPostings(json: unknown): Map<string, RepostFacts> {
@@ -85,11 +89,11 @@ export async function fetchJobPostings(
       },
     });
   } catch {
-    return { kind: 'limited' };
+    return { kind: 'throttled' };
   }
 
-  if (LIMITED_STATUSES.has(response.status) || response.status >= 500) {
-    return { kind: 'limited' };
+  if (THROTTLED_STATUSES.has(response.status)) {
+    return { kind: 'throttled' };
   }
   if (!response.ok) {
     return { kind: 'failed' };

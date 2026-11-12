@@ -14,21 +14,14 @@ const NOW = 10 * REPOST_TTL_MS;
 
 describe('repost cache', () => {
   test('a recorded entry is fresh and round-trips through storage', () => {
-    const cache = withRepostEntry(emptyRepostCache(), '1', { reposted: true }, NOW);
+    const cache = withRepostEntry(emptyRepostCache(), '1', true, NOW);
     expect(freshEntry(cache, '1', NOW + 1000)).toEqual({ reposted: true, checkedAt: NOW });
     const back = parseStoredRepostCache(serializeRepostCache(cache), NOW);
     expect(freshEntry(back, '1', NOW)?.reposted).toBe(true);
   });
 
-  test('applies and the original listing time survive a round trip', () => {
-    const facts = { reposted: true, applies: 347, originalListedAt: 1772574849000 };
-    const cache = withRepostEntry(emptyRepostCache(), '9', facts, NOW);
-    const back = parseStoredRepostCache(serializeRepostCache(cache), NOW);
-    expect(back.get('9')).toEqual({ ...facts, checkedAt: NOW });
-  });
-
   test('an entry older than seven days is unknown and dropped on parse', () => {
-    const cache = withRepostEntry(emptyRepostCache(), '1', { reposted: true }, NOW);
+    const cache = withRepostEntry(emptyRepostCache(), '1', true, NOW);
     expect(freshEntry(cache, '1', NOW + REPOST_TTL_MS)).toBeUndefined();
     const stored = serializeRepostCache(cache);
     expect(parseStoredRepostCache(stored, NOW + REPOST_TTL_MS).size).toBe(0);
@@ -37,7 +30,7 @@ describe('repost cache', () => {
   test('past the cap the oldest entries go first', () => {
     let cache = emptyRepostCache();
     for (let id = 1; id <= REPOST_CACHE_CAP + 2; id += 1) {
-      cache = withRepostEntry(cache, String(id), { reposted: false }, NOW + id);
+      cache = withRepostEntry(cache, String(id), false, NOW + id);
     }
     expect(cache.size).toBe(REPOST_CACHE_CAP);
     expect(cache.has('1')).toBe(false);
@@ -49,12 +42,12 @@ describe('repost cache', () => {
     expect(parseStoredRepostCache(undefined, NOW).size).toBe(0);
     expect(
       parseStoredRepostCache(
-        { version: 1, entries: { '1': { reposted: true, checkedAt: NOW } } },
+        { version: 2, entries: { '1': { reposted: true, checkedAt: NOW } } },
         NOW,
       ).size,
     ).toBe(0);
     const mixed = {
-      version: 2,
+      version: 3,
       entries: {
         '5': { reposted: true, checkedAt: NOW },
         x: { reposted: true, checkedAt: NOW },
@@ -65,8 +58,8 @@ describe('repost cache', () => {
   });
 
   test('merging keeps the newer entry for a job', () => {
-    const older = withRepostEntry(emptyRepostCache(), '1', { reposted: false }, NOW);
-    const newer = withRepostEntry(emptyRepostCache(), '1', { reposted: true }, NOW + 5);
+    const older = withRepostEntry(emptyRepostCache(), '1', false, NOW);
+    const newer = withRepostEntry(emptyRepostCache(), '1', true, NOW + 5);
     expect(mergeRepostCaches(older, newer, NOW + 5).get('1')?.reposted).toBe(true);
     expect(mergeRepostCaches(newer, older, NOW + 5).get('1')?.reposted).toBe(true);
   });
