@@ -209,11 +209,22 @@ Each status is a checkable row in one menu; the checkbox is the action.
 - **Behavior:** Non-modal. Toggling a row keeps the menu open, so several statuses can be set in one visit, and the trigger text and status line update behind it.
 - **Motion:** Opens in 100ms with a fade, a 95% zoom, and a slide from the trigger's side.
 
+### Applicant Limit
+
+A section below the Hide Field that hides jobs with more applicants than a chosen number.
+
+- **Layout:** Starts 1.25rem below the Hide Field, like the other sections. A row with a 16px checkbox and the label `Hide by applicant count` in Label type (weight 500), then 0.5rem below it a row with the slider filling the width and a number box, 4rem wide and 2rem tall, right aligned with tabular digits, 0.75rem apart.
+- **Off:** The default. The slider and the number box are disabled at 50% opacity while the checkbox is clear; the number box still shows 100.
+- **Slider:** A 4px track in Soft Gray with the filled part in Primary, and a 16px round thumb with a hairline Primary border. It moves through thirteen stops (10 to 2000), and a number-box value between stops puts the thumb on the nearest stop. Focus gives the thumb a 3px ring at 50%.
+- **Number box:** Outline field with the Hide Field's radius and focus ring. It accepts whole numbers from 1 to 2000; an invalid entry reverts when the box is left.
+- **Behavior:** Dragging, arrow keys, or a valid typed number change the cards at once without saving. Releasing the slider, leaving the box, or pressing Enter saves. The checkbox saves at once. Closing the popup mid-drag drops the unsaved preview.
+- **Failure:** "Your applicant limit could not be saved. Try again." in the status line's destructive tone, with the control returning to the last saved value.
+
 ### Status Line
 
 One line directly under the name; the panel's main message.
 
-- **Tones:** Plain for this list's state ("12 cards hidden on this list", "No cards to hide on this list", "Showing every card"). The count is one number for cards hidden for a badge, a repost, or a blocked company. Muted also for "Reposted check paused by LinkedIn limits", which replaces the count while Reposted checks are backing off after LinkedIn throttles them (429, 999, or a network failure); a 403 or server error falls back to slower per-job checks and shows the normal count. "Showing every card" appears only when no status is selected and no card is hidden; with nothing selected and blocked cards hidden, the line still carries the count. Muted for idle guidance ("Open a Jobs search to hide cards"). Destructive for any failure.
+- **Tones:** Plain for this list's state ("12 cards hidden on this list", "No cards to hide on this list", "Showing every card"). The count is one number for cards hidden for a badge, a repost, an applicant count, or a blocked company. Muted also for "Reposted check paused by LinkedIn limits", which replaces the count while Reposted checks are backing off after LinkedIn throttles them (429, 999, or a network failure); a 403 or server error falls back to slower per-job checks and shows the normal count. "Applicant count check paused by LinkedIn limits" does the same when only the applicant limit needs the request. "Showing every card" appears only when no status is selected, the applicant limit is off, and no card is hidden; with nothing selected and blocked cards hidden, the line still carries the count. Muted for idle guidance ("Open a Jobs search to hide cards"). Destructive for any failure.
 - **Failures:** The line replaces its text rather than adding a surface. A save failure takes precedence over everything else, then a blocklist failure (unblock failed or list unreadable), then an unreadable stored choice, then a failed page check. Every failure line says what failed and then the recovery, in two short sentences ("Could not check this list. Reload the tab."), except an unreadable blocklist, which has no recovery in the popup and says only what failed. Each failure line must fit one line at the 18rem measure, so the Hide trigger does not move and its menu keeps opening below it.
 - **Pending:** Empty, at its reserved height, in the muted tone. The control does not appear until the stored choice has loaded.
 - **Announcement:** A live status region, so the change reaches assistive technology.
