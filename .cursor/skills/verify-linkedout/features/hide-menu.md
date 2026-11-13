@@ -1,6 +1,6 @@
 # Hide menu
 
-The popup names LinkedOut, says whether this tab is a Jobs search, and turns Applied, Viewed, Saved, and Reposted hiding on or off from four checkboxes. Applied and Viewed start checked, and Saved and Reposted start unchecked. Reposted shows a disclosure line under it. The choice is saved as soon as a checkbox changes.
+The popup names LinkedOut, says whether this tab is a Jobs search, and turns Applied, Viewed, Saved, and Reposted hiding on or off from four checkboxes. Applied and Viewed start checked, and Saved and Reposted start unchecked. The choice is saved as soon as a checkbox changes.
 
 ## Sub-features
 
