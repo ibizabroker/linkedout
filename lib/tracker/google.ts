@@ -25,9 +25,9 @@ const REVOKE_URL = 'https://oauth2.googleapis.com/revoke';
 export class SignInError extends Error {
   readonly failure: SignInFailure;
 
-  constructor(message: string | undefined) {
-    super(message ?? 'Sign-in failed');
-    this.failure = classifySignInError(message);
+  constructor(failure: SignInFailure, message: string) {
+    super(message);
+    this.failure = failure;
   }
 }
 
@@ -40,17 +40,38 @@ export class GoogleApiError extends Error {
   }
 }
 
+const SIGN_IN_TIMEOUT_MS = 120_000;
+
+function interactiveTimeout(): { readonly promise: Promise<never>; readonly stop: () => void } {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const promise = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      reject(new SignInError('cancelled', 'Sign-in timed out'));
+    }, SIGN_IN_TIMEOUT_MS);
+  });
+  return { promise, stop: () => clearTimeout(timer) };
+}
+
 async function getToken(interactive: boolean): Promise<string> {
-  let token: string | undefined;
+  const timeout = interactive ? interactiveTimeout() : undefined;
   try {
-    token = (await browser.identity.getAuthToken({ interactive })).token;
+    const request = browser.identity.getAuthToken({ interactive });
+    const { token } = await (timeout === undefined
+      ? request
+      : Promise.race([request, timeout.promise]));
+    if (token === undefined || token.length === 0) {
+      throw new SignInError('failed', 'No token returned');
+    }
+    return token;
   } catch (error) {
-    throw new SignInError(error instanceof Error ? error.message : undefined);
+    if (error instanceof SignInError) {
+      throw error;
+    }
+    const message = error instanceof Error ? error.message : 'Sign-in failed';
+    throw new SignInError(classifySignInError(message), message);
+  } finally {
+    timeout?.stop();
   }
-  if (token === undefined || token.length === 0) {
-    throw new SignInError(undefined);
-  }
-  return token;
 }
 
 async function send(interactive: boolean, url: string, init: RequestInit = {}): Promise<Response> {
