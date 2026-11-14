@@ -44,6 +44,8 @@ import {
   useBlocklistSession,
 } from './BlockedCompanies';
 
+import { JobTrackerSection, useTrackerSession } from './JobTracker';
+
 export default function App() {
   return <PopupApp />;
 }
@@ -57,6 +59,7 @@ export function PopupApp(): ReactElement {
   );
 
   const blocklist = useBlocklistSession();
+  const tracker = useTrackerSession();
   const status = statusLine(
     model,
     saveFailed,
@@ -90,6 +93,7 @@ export function PopupApp(): ReactElement {
               onUnblock={blocklist.unblock}
             />
           )}
+          <JobTrackerSection view={tracker.view} act={tracker.act} />
         </>
       )}
     </main>
