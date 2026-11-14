@@ -41,4 +41,5 @@ Keep implementation details out of the map. Name only user paths, stable handles
 - [Hide menu](./hide-menu.md) covers opening the popup and turning Applied, Viewed, Saved, and Reposted hiding on and off.
 - [Applicant limit](./applicant-limit.md) covers the `Hide by applicant count` checkbox, slider, and number box: default off, enabling at 100, sync between the two, and persistence.
 - [Blocked companies](./blocked-companies.md) covers expanding and collapsing the `Blocked companies (N)` section, its empty state, seeded rows, unblocking, and an unreadable list.
+- [Job tracker](./job-tracker.md) covers the `Job tracker` section: Connect Google Sheets, the Connecting state, Connected, Disconnect, and the hidden section in a build without Google settings.
 - [Extension identity](./extension-identity.md) covers confirming the built extension name and popup title surface.
