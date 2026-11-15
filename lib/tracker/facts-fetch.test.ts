@@ -6,9 +6,16 @@ import { fetchJobFacts, voyagerBatchUrl } from './facts-fetch.ts';
 
 const COOKIE = 'JSESSIONID="ajax:123"; other=1';
 
-function linkedIn(status = 200): typeof fetch {
+const MERCURY_PAGE = '{\\"children\\":[\\"Mercury \u2022 San Francisco, CA (On-site)\\"]}';
+const APPLIED_AT = 1794708579385;
+
+function linkedIn(status = 200, pages: string[] = []): typeof fetch {
   const serve = async (input: RequestInfo | URL): Promise<Response> => {
     const url = String(input);
+    if (url.startsWith('/jobs/view/')) {
+      pages.push(url);
+      return new Response(MERCURY_PAGE);
+    }
     const body = url.includes('JobSeekerApplicationDetails')
       ? details
       : url.includes('voyagerDashGeo')
@@ -37,6 +44,28 @@ describe('fetching a job as one set of facts', () => {
     expect(facts?.[0]?.company).toBe('Mercury');
     expect(facts?.[0]?.location).toBe('San Francisco, CA');
     expect(facts?.[0]?.applied).toBe(true);
+  });
+
+  test('a recent application with no workplace in the data takes it from the job page', async () => {
+    const pages: string[] = [];
+    const facts = await fetchJobFacts(['4480699030'], {
+      fetchJson: linkedIn(200, pages),
+      cookie: () => COOKIE,
+      now: () => APPLIED_AT + 60_000,
+    });
+    expect(facts?.[0]?.workplace).toBe('On-site');
+    expect(pages).toEqual(['/jobs/view/4480699030/']);
+  });
+
+  test('an old application never costs a job page request', async () => {
+    const pages: string[] = [];
+    const facts = await fetchJobFacts(['4480699030'], {
+      fetchJson: linkedIn(200, pages),
+      cookie: () => COOKIE,
+      now: () => APPLIED_AT + 3_600_000,
+    });
+    expect(facts?.[0]?.workplace).toBe(null);
+    expect(pages).toEqual([]);
   });
 
   test('jobs LinkedIn did not return are left out', async () => {

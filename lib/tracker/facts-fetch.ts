@@ -1,10 +1,13 @@
 import { MAX_POSTINGS_PER_REQUEST, csrfTokenFrom } from '../hide/job-postings.ts';
+import { MAX_APPLICATION_AGE_MS } from './decision.ts';
 import {
   assembleJobFacts,
   parseApplicationDetails,
   parseGeoNames,
   parsePostingDetails,
+  workplaceFromPage,
   type JobFacts,
+  type Workplace,
 } from './job-facts.ts';
 
 const JOB_ID = /^\d+$/;
@@ -16,7 +19,11 @@ export function voyagerBatchUrl(path: string, urnType: string, ids: readonly str
 
 export async function fetchJobFacts(
   jobIds: readonly string[],
-  deps: { readonly fetchJson?: typeof fetch; readonly cookie?: () => string } = {},
+  deps: {
+    readonly fetchJson?: typeof fetch;
+    readonly cookie?: () => string;
+    readonly now?: () => number;
+  } = {},
 ): Promise<readonly JobFacts[] | undefined> {
   const token = csrfTokenFrom((deps.cookie ?? (() => document.cookie))());
   if (
@@ -69,8 +76,28 @@ export async function fetchJobFacts(
         facts.push(assembleJobFacts(jobId, detail, posting, geoNames));
       }
     }
-    return facts;
+    const now = (deps.now ?? Date.now)();
+    return Promise.all(
+      facts.map(async (job) =>
+        job.workplace === null && recentlyApplied(job, now)
+          ? { ...job, workplace: await pageWorkplace(job.jobId, fetchJson) }
+          : job,
+      ),
+    );
   } catch {
     return undefined;
+  }
+}
+
+function recentlyApplied(job: JobFacts, now: number): boolean {
+  return job.applied && job.appliedAt !== null && now - job.appliedAt <= MAX_APPLICATION_AGE_MS;
+}
+
+async function pageWorkplace(jobId: string, fetchPage: typeof fetch): Promise<Workplace | null> {
+  try {
+    const response = await fetchPage(`/jobs/view/${jobId}/`, { credentials: 'include' });
+    return response.ok ? workplaceFromPage(await response.text()) : null;
+  } catch {
+    return null;
   }
 }

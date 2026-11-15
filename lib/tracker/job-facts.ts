@@ -93,6 +93,18 @@ export function parseGeoNames(json: unknown): Map<string, string> {
   return names;
 }
 
+const PAGE_WORKPLACE = /\u2022 [^"\\\n]{1,160} \((On-site|Hybrid|Remote)\)(?=\\*")/;
+const PAGE_WORKPLACES: Readonly<Record<string, Workplace>> = {
+  'On-site': 'On-site',
+  Hybrid: 'Hybrid',
+  Remote: 'Remote',
+};
+
+export function workplaceFromPage(html: string): Workplace | null {
+  const found = PAGE_WORKPLACE.exec(html)?.[1];
+  return found === undefined ? null : (PAGE_WORKPLACES[found] ?? null);
+}
+
 export function assembleJobFacts(
   jobId: string,
   detail: ApplicationDetail,

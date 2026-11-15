@@ -7,6 +7,7 @@ import {
   parseApplicationDetails,
   parseGeoNames,
   parsePostingDetails,
+  workplaceFromPage,
   type JobFacts,
 } from './job-facts.ts';
 import { buildRow } from './row.ts';
@@ -60,6 +61,25 @@ describe('job facts from LinkedIn batches', () => {
     expect(parseApplicationDetails({}).size).toBe(0);
     expect(parsePostingDetails({ included: 'x' }).size).toBe(0);
     expect(parseGeoNames(null).size).toBe(0);
+  });
+});
+
+describe('workplace from the job page', () => {
+  const subtitle = (text: string): string => `{\\"children\\":[\\"${text}\\"],\\"x\\":1}`;
+
+  test('the company and place line carries the workplace LinkedIn shows', () => {
+    expect(workplaceFromPage(subtitle('Mercury \u2022 San Francisco, CA (On-site)'))).toBe(
+      'On-site',
+    );
+    expect(workplaceFromPage(subtitle('Figma \u2022 New York, NY (Remote)'))).toBe('Remote');
+    expect(
+      workplaceFromPage(subtitle('QuoteWell \u2022 Austin, Texas Metropolitan Area (Hybrid)')),
+    ).toBe('Hybrid');
+  });
+
+  test('a line with no workplace, or none at all, reads as unknown', () => {
+    expect(workplaceFromPage(subtitle('Amazon Web Services (AWS) \u2022 Brooklyn, NY'))).toBe(null);
+    expect(workplaceFromPage('<main>nothing here</main>')).toBe(null);
   });
 });
 
