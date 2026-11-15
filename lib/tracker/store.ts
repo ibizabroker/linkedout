@@ -1,10 +1,5 @@
 import { browser } from 'wxt/browser';
-import {
-  parseStoredTracker,
-  serializeTracker,
-  type CheckResult,
-  type TrackerSheet,
-} from './domain.ts';
+import type { CheckResult } from './domain.ts';
 import { SignInError, checkSheet, connectSheet, recreateSheet, signOut } from './google.ts';
 import {
   TRACKER_REQUEST,
@@ -14,44 +9,10 @@ import {
   type ActionReply,
   type TrackerAction,
 } from './messages.ts';
-
-const TRACKER_STORAGE_KEY = 'tracker';
+import { clearSync, readSnapshot, writeConnection } from './snapshot.ts';
 
 export function oauthConfigured(): boolean {
   return browser.runtime.getManifest().oauth2 !== undefined;
-}
-
-export function watchTracker(onRead: (sheet: TrackerSheet | null) => void): () => void {
-  let stopped = false;
-
-  void browser.storage.local.get(TRACKER_STORAGE_KEY).then(
-    (stored) => {
-      if (!stopped) {
-        onRead(parseStoredTracker(stored[TRACKER_STORAGE_KEY]));
-      }
-    },
-    () => {
-      if (!stopped) {
-        onRead(null);
-      }
-    },
-  );
-
-  const onChanged: Parameters<typeof browser.storage.onChanged.addListener>[0] = (
-    changes,
-    areaName,
-  ) => {
-    const change = areaName === 'local' ? changes[TRACKER_STORAGE_KEY] : undefined;
-    if (change !== undefined) {
-      onRead(parseStoredTracker(change.newValue));
-    }
-  };
-  browser.storage.onChanged.addListener(onChanged);
-
-  return () => {
-    stopped = true;
-    browser.storage.onChanged.removeListener(onChanged);
-  };
 }
 
 function send(action: TrackerAction): Promise<unknown> {
@@ -101,11 +62,12 @@ async function runAction(action: 'connect' | 'disconnect' | 'recreate'): Promise
   try {
     if (action === 'disconnect') {
       await signOut();
-      await writeSheet(null);
+      await clearSync();
+      await writeConnection(null);
       return { status: 'done', sheet: null };
     }
     const sheet = await (action === 'connect' ? connectSheet() : recreateSheet());
-    await writeSheet(sheet);
+    await writeConnection({ sheet, connectedAt: await connectedAtFor(action) });
     return { status: 'done', sheet };
   } catch (error) {
     return error instanceof SignInError && error.failure === 'cancelled'
@@ -118,13 +80,13 @@ async function runCheck(): Promise<{ readonly status: CheckResult }> {
   if (!oauthConfigured()) {
     return { status: 'error' };
   }
-  const stored = await browser.storage.local.get(TRACKER_STORAGE_KEY);
-  const sheet = parseStoredTracker(stored[TRACKER_STORAGE_KEY]);
-  return { status: sheet === null ? 'ok' : await checkSheet(sheet) };
+  const { connection } = await readSnapshot();
+  return { status: connection === null ? 'ok' : await checkSheet(connection.sheet) };
 }
 
-function writeSheet(sheet: TrackerSheet | null): Promise<void> {
-  return browser.storage.local.set({ [TRACKER_STORAGE_KEY]: serializeTracker(sheet) });
+async function connectedAtFor(action: 'connect' | 'recreate'): Promise<number> {
+  const { connection } = await readSnapshot();
+  return action === 'recreate' && connection !== null ? connection.connectedAt : Date.now();
 }
 
 function extensionSender(sender: { readonly tab?: unknown; readonly url?: string }): boolean {

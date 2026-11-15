@@ -1,11 +1,25 @@
+import type { SyncState } from './outbox.ts';
+
 export type TrackerSheet = {
   readonly spreadsheetId: string;
   readonly url: string;
 };
 
+export type Connection = {
+  readonly sheet: TrackerSheet;
+  readonly connectedAt: number;
+};
+
 export type StoredTracker = {
-  readonly version: 1;
+  readonly version: 2;
   readonly sheet: TrackerSheet | null;
+  readonly connectedAt: number | null;
+};
+
+export type SyncSummary = {
+  readonly added: number;
+  readonly waiting: number;
+  readonly authExpired: boolean;
 };
 
 export type TrackerView =
@@ -15,17 +29,24 @@ export type TrackerView =
   | {
       readonly kind: 'connected';
       readonly sheet: TrackerSheet;
+      readonly sync: SyncSummary;
       readonly busy: boolean;
       readonly error?: string;
     }
-  | { readonly kind: 'missing'; readonly busy: boolean; readonly error?: string };
+  | {
+      readonly kind: 'missing';
+      readonly sheet: TrackerSheet;
+      readonly sync: SyncSummary;
+      readonly busy: boolean;
+      readonly error?: string;
+    };
 
 export type CheckResult = 'ok' | 'missing' | 'error';
 export type AppendResult = 'ok' | 'missing' | 'auth-expired' | 'error';
 export type SignInFailure = 'cancelled' | 'failed';
 
 export type TrackerEvent =
-  | { readonly type: 'stored'; readonly sheet: TrackerSheet | null }
+  | { readonly type: 'stored'; readonly sheet: TrackerSheet | null; readonly sync: SyncSummary }
   | { readonly type: 'started' }
   | { readonly type: 'succeeded' }
   | { readonly type: 'failed'; readonly error?: string }
@@ -44,15 +65,35 @@ export function initialView(oauthConfigured: boolean): TrackerView {
   return oauthConfigured ? { kind: 'loading' } : { kind: 'unavailable' };
 }
 
-export function parseStoredTracker(raw: unknown): TrackerSheet | null {
+export const NO_SYNC: SyncSummary = { added: 0, waiting: 0, authExpired: false };
+
+export function summarizeSync(state: SyncState, authExpired: boolean): SyncSummary {
+  return { added: state.written.length, waiting: state.outbox.length, authExpired };
+}
+
+export function parseStoredTracker(raw: unknown): Connection | null {
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
     return null;
   }
   const doc = raw as Record<string, unknown>;
-  if (doc.version !== 1 || typeof doc.sheet !== 'object' || doc.sheet === null) {
+  const sheet = parseSheet(doc.sheet);
+  const { connectedAt } = doc;
+  if (
+    doc.version !== 2 ||
+    sheet === null ||
+    typeof connectedAt !== 'number' ||
+    !Number.isFinite(connectedAt)
+  ) {
     return null;
   }
-  const { spreadsheetId, url } = doc.sheet as Record<string, unknown>;
+  return { sheet, connectedAt };
+}
+
+export function parseSheet(raw: unknown): TrackerSheet | null {
+  if (typeof raw !== 'object' || raw === null) {
+    return null;
+  }
+  const { spreadsheetId, url } = raw as Record<string, unknown>;
   if (typeof spreadsheetId !== 'string' || !SPREADSHEET_ID.test(spreadsheetId)) {
     return null;
   }
@@ -60,8 +101,10 @@ export function parseStoredTracker(raw: unknown): TrackerSheet | null {
   return url === sheet.url ? sheet : null;
 }
 
-export function serializeTracker(sheet: TrackerSheet | null): StoredTracker {
-  return { version: 1, sheet };
+export function serializeTracker(connection: Connection | null): StoredTracker {
+  return connection === null
+    ? { version: 2, sheet: null, connectedAt: null }
+    : { version: 2, sheet: connection.sheet, connectedAt: connection.connectedAt };
 }
 
 export function trackerReducer(view: TrackerView, event: TrackerEvent): TrackerView {
@@ -70,7 +113,7 @@ export function trackerReducer(view: TrackerView, event: TrackerEvent): TrackerV
   }
   switch (event.type) {
     case 'stored':
-      return fromStored(view, event.sheet);
+      return fromStored(view, event.sheet, event.sync);
     case 'started':
       return view.kind === 'loading' ? view : { ...view, busy: true, error: undefined };
     case 'succeeded':
@@ -79,21 +122,24 @@ export function trackerReducer(view: TrackerView, event: TrackerEvent): TrackerV
       return view.kind === 'loading' ? view : { ...view, busy: false, error: event.error };
     case 'checked':
       return view.kind === 'connected' && event.result === 'missing'
-        ? { kind: 'missing', busy: false }
+        ? { kind: 'missing', sheet: view.sheet, sync: view.sync, busy: false }
         : view;
     default:
       return unexpected(event);
   }
 }
 
-function fromStored(view: TrackerView, sheet: TrackerSheet | null): TrackerView {
+function fromStored(view: TrackerView, sheet: TrackerSheet | null, sync: SyncSummary): TrackerView {
   if (sheet === null) {
     return view.kind === 'disconnected' ? view : { kind: 'disconnected', busy: false };
   }
-  if (view.kind === 'connected') {
-    return { ...view, sheet };
+  if (view.kind === 'missing' && view.sheet.spreadsheetId === sheet.spreadsheetId) {
+    return { ...view, sync };
   }
-  return { kind: 'connected', sheet, busy: false };
+  if (view.kind === 'connected') {
+    return { ...view, sheet, sync };
+  }
+  return { kind: 'connected', sheet, sync, busy: false };
 }
 
 export function classifySignInError(message: string | undefined): SignInFailure {

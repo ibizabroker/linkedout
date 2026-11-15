@@ -1,9 +1,4 @@
-import {
-  parseStoredTracker,
-  serializeTracker,
-  type CheckResult,
-  type TrackerSheet,
-} from './domain.ts';
+import { parseSheet, type CheckResult, type TrackerSheet } from './domain.ts';
 
 export const TRACKER_REQUEST = 'linkedout/tracker';
 
@@ -39,7 +34,7 @@ export function parseActionReply(raw: unknown): ActionReply | undefined {
   if (sheet === null) {
     return { status, sheet: null };
   }
-  const parsed = parseStoredTracker(serializeTracker(sheet as TrackerSheet));
+  const parsed = parseSheet(sheet);
   return parsed === null ? undefined : { status, sheet: parsed };
 }
 

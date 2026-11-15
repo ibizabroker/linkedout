@@ -3,14 +3,15 @@ import { Button } from '@/components/ui/button';
 import {
   CONNECT_FAILED_TEXT,
   initialView,
+  summarizeSync,
   trackerReducer,
   type TrackerView,
 } from '@/lib/tracker/domain';
+import { watchTracker } from '@/lib/tracker/snapshot';
 import {
   oauthConfigured,
   requestTrackerAction,
   requestTrackerCheck,
-  watchTracker,
 } from '@/lib/tracker/store';
 
 const DISCONNECT_FAILED_TEXT = "Couldn't disconnect. Try again.";
@@ -32,9 +33,13 @@ export function useTrackerSession(): {
       return;
     }
     let first = true;
-    return watchTracker((sheet) => {
-      dispatch({ type: 'stored', sheet });
-      if (first && sheet !== null) {
+    return watchTracker((snapshot) => {
+      dispatch({
+        type: 'stored',
+        sheet: snapshot.connection?.sheet ?? null,
+        sync: summarizeSync(snapshot.sync, snapshot.authExpired),
+      });
+      if (first && snapshot.connection !== null) {
         void requestTrackerCheck().then(
           (result) => {
             dispatch({ type: 'checked', result });
@@ -53,7 +58,6 @@ export function useTrackerSession(): {
     requestTrackerAction(action).then(
       (reply) => {
         if (reply.status === 'done') {
-          dispatch({ type: 'stored', sheet: reply.sheet });
           dispatch({ type: 'succeeded' });
         } else {
           dispatch({
