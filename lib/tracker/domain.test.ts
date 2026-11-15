@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  classifyAppend,
   classifyCheck,
   classifySignInError,
   initialView,
@@ -170,5 +171,15 @@ describe('error classification', () => {
     expect(classifyCheck(500, undefined)).toBe('error');
     expect(classifyCheck(403, undefined)).toBe('error');
     expect(classifyCheck(401, undefined)).toBe('error');
+  });
+});
+
+describe('classifyAppend', () => {
+  test('each response maps to what the writer does next', () => {
+    expect(classifyAppend(200)).toBe('ok');
+    expect(classifyAppend(401)).toBe('auth-expired');
+    expect(classifyAppend(404)).toBe('missing');
+    expect(classifyAppend(429)).toBe('error');
+    expect(classifyAppend(500)).toBe('error');
   });
 });

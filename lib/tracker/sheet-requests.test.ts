@@ -1,6 +1,8 @@
 import { describe, expect, test } from 'bun:test';
 import { COLUMNS, STATUSES } from './columns.ts';
 import {
+  appendBody,
+  appendUrl,
   createFileBody,
   findTrackerUrl,
   formatBody,
@@ -103,5 +105,21 @@ describe('response parsing', () => {
     expect(parseFoundFileId({ files: [{ id: 'abc' }, { id: 'def' }] })).toBe('abc');
     expect(parseFoundFileId({ files: [] })).toBeUndefined();
     expect(parseFoundFileId({})).toBeUndefined();
+  });
+});
+
+describe('appending a row', () => {
+  test('the row goes after the last row of the Applications tab as typed values', () => {
+    expect(appendUrl('abc_1')).toBe(
+      'https://sheets.googleapis.com/v4/spreadsheets/abc_1/values/Applications!A%3AM:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS',
+    );
+  });
+
+  test('the range covers every column', () => {
+    expect(COLUMNS.length).toBe(13);
+  });
+
+  test('the body is one row of values', () => {
+    expect(appendBody(['a', 2])).toEqual({ majorDimension: 'ROWS', values: [['a', 2]] });
   });
 });

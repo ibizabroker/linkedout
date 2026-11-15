@@ -1,4 +1,5 @@
 import { APPLICATIONS_TAB, COLUMNS, STATUSES, TRACKER_FILE_NAME, columnIndex } from './columns.ts';
+import type { SheetRow } from './row.ts';
 
 const DRIVE = 'https://www.googleapis.com/drive/v3/files';
 const SHEETS = 'https://sheets.googleapis.com/v4/spreadsheets';
@@ -38,6 +39,23 @@ export function sheetPropertiesUrl(id: string): string {
 
 export function batchUpdateUrl(id: string): string {
   return `${SHEETS}/${encodeURIComponent(id)}:batchUpdate`;
+}
+
+export function appendUrl(id: string): string {
+  const lastColumn = String.fromCharCode('A'.charCodeAt(0) + COLUMNS.length - 1);
+  const range = encodeURIComponent(`${APPLICATIONS_TAB}!A:${lastColumn}`);
+  const query = new URLSearchParams({
+    valueInputOption: 'USER_ENTERED',
+    insertDataOption: 'INSERT_ROWS',
+  });
+  return `${SHEETS}/${encodeURIComponent(id)}/values/${range}:append?${query}`;
+}
+
+export function appendBody(row: SheetRow): {
+  readonly majorDimension: 'ROWS';
+  readonly values: readonly [SheetRow];
+} {
+  return { majorDimension: 'ROWS', values: [row] };
 }
 
 export function parseFirstSheetId(raw: unknown): number | undefined {

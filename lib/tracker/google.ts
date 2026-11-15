@@ -1,13 +1,18 @@
 import { browser } from 'wxt/browser';
 import {
+  classifyAppend,
   classifyCheck,
   classifySignInError,
   sheetFromId,
+  type AppendResult,
   type CheckResult,
   type SignInFailure,
   type TrackerSheet,
 } from './domain.ts';
+import type { SheetRow } from './row.ts';
 import {
+  appendBody,
+  appendUrl,
   batchUpdateUrl,
   createFileBody,
   createFileUrl,
@@ -149,6 +154,23 @@ export async function checkSheet(sheet: TrackerSheet): Promise<CheckResult> {
   } catch {
     return 'error';
   }
+}
+
+export async function appendRow(sheet: TrackerSheet, row: SheetRow): Promise<AppendResult> {
+  try {
+    const response = await send(false, appendUrl(sheet.spreadsheetId), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(appendBody(row)),
+    });
+    return classifyAppend(response.status);
+  } catch (error) {
+    return error instanceof SignInError ? 'auth-expired' : 'error';
+  }
+}
+
+export async function renewSignIn(): Promise<void> {
+  await getToken(true);
 }
 
 export async function signOut(): Promise<void> {

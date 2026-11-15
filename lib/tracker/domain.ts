@@ -21,6 +21,7 @@ export type TrackerView =
   | { readonly kind: 'missing'; readonly busy: boolean; readonly error?: string };
 
 export type CheckResult = 'ok' | 'missing' | 'error';
+export type AppendResult = 'ok' | 'missing' | 'auth-expired' | 'error';
 export type SignInFailure = 'cancelled' | 'failed';
 
 export type TrackerEvent =
@@ -107,6 +108,16 @@ export function classifyCheck(status: number, trashed: boolean | undefined): Che
     return 'missing';
   }
   return status === 200 ? 'ok' : 'error';
+}
+
+export function classifyAppend(status: number): AppendResult {
+  if (status === 200) {
+    return 'ok';
+  }
+  if (status === 401) {
+    return 'auth-expired';
+  }
+  return status === 404 ? 'missing' : 'error';
 }
 
 function unexpected(value: never): never {
