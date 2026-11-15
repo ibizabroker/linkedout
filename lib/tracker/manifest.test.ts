@@ -2,10 +2,10 @@ import { describe, expect, test } from 'bun:test';
 import { trackerManifest } from './manifest.ts';
 
 describe('trackerManifest', () => {
-  test('both values add the key, identity permission, and drive.file oauth2', () => {
+  test('both values add the key, identity and alarms permissions, and drive.file oauth2', () => {
     expect(trackerManifest({ WXT_GOOGLE_CLIENT_ID: ' id ', WXT_EXTENSION_KEY: 'k' })).toEqual({
       key: 'k',
-      permissions: ['identity'],
+      permissions: ['identity', 'alarms'],
       oauth2: { client_id: 'id', scopes: ['https://www.googleapis.com/auth/drive.file'] },
     });
   });

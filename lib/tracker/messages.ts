@@ -2,14 +2,14 @@ import { parseSheet, type CheckResult, type TrackerSheet } from './domain.ts';
 
 export const TRACKER_REQUEST = 'linkedout/tracker';
 
-export type TrackerAction = 'connect' | 'disconnect' | 'recreate' | 'check';
+export type TrackerAction = 'connect' | 'disconnect' | 'recreate' | 'reconnect' | 'check';
 
 export type ActionReply =
   | { readonly status: 'done'; readonly sheet: TrackerSheet | null }
   | { readonly status: 'cancelled' }
   | { readonly status: 'failed' };
 
-const ACTIONS: readonly string[] = ['connect', 'disconnect', 'recreate', 'check'];
+const ACTIONS: readonly string[] = ['connect', 'disconnect', 'recreate', 'reconnect', 'check'];
 const CHECK_RESULTS: readonly string[] = ['ok', 'missing', 'error'];
 
 export function parseRequest(raw: unknown): TrackerAction | undefined {
