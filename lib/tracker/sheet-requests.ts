@@ -20,6 +20,9 @@ const STATUS_RULE = {
   showCustomUi: true,
 } as const;
 
+const DATE_RULE = { condition: { type: 'DATE_IS_VALID' }, strict: true } as const;
+const DATE_FORMAT = { type: 'DATE', pattern: 'yyyy-mm-dd' } as const;
+
 const TRACKER_PROPERTIES = { linkedout: 'tracker' } as const;
 
 export function findTrackerUrl(): string {
@@ -114,13 +117,9 @@ function cellData(kind: CellKind, value: SheetCell): object {
         userEnteredFormat: {
           ...PLAIN,
           numberFormat:
-            kind === 'date'
-              ? { type: 'DATE', pattern: 'yyyy-mm-dd' }
-              : { type: 'DATE_TIME', pattern: 'yyyy-mm-dd hh:mm' },
+            kind === 'date' ? DATE_FORMAT : { type: 'DATE_TIME', pattern: 'yyyy-mm-dd hh:mm' },
         },
-        ...(kind === 'date'
-          ? { dataValidation: { condition: { type: 'DATE_IS_VALID' }, strict: true } }
-          : {}),
+        ...(kind === 'date' ? { dataValidation: DATE_RULE } : {}),
       };
     }
     case 'status':
@@ -197,6 +196,7 @@ export function parseFoundFileId(raw: unknown): string | undefined {
 
 export function formatBody(sheetId: number): { readonly requests: readonly object[] } {
   const statusColumn = columnIndex('Status');
+  const dateColumn = columnIndex('Last update');
   return {
     requests: [
       {
@@ -250,6 +250,29 @@ export function formatBody(sheetId: number): { readonly requests: readonly objec
             endColumnIndex: statusColumn + 1,
           },
           rule: STATUS_RULE,
+        },
+      },
+      {
+        setDataValidation: {
+          range: {
+            sheetId,
+            startRowIndex: 1,
+            startColumnIndex: dateColumn,
+            endColumnIndex: dateColumn + 1,
+          },
+          rule: DATE_RULE,
+        },
+      },
+      {
+        repeatCell: {
+          range: {
+            sheetId,
+            startRowIndex: 1,
+            startColumnIndex: dateColumn,
+            endColumnIndex: dateColumn + 1,
+          },
+          cell: { userEnteredFormat: { numberFormat: DATE_FORMAT } },
+          fields: 'userEnteredFormat.numberFormat',
         },
       },
     ],

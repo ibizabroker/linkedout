@@ -85,6 +85,27 @@ describe('sheet formatting', () => {
     expect(rule.strict).toBe(true);
     expect(rule.showCustomUi).toBe(true);
   });
+
+  test('every Last update cell below the header is a date with a date picker', () => {
+    const column = COLUMNS.indexOf('Last update');
+    const range = {
+      sheetId: 7,
+      startRowIndex: 1,
+      startColumnIndex: column,
+      endColumnIndex: column + 1,
+    };
+    const validation = requests()
+      .map((request) => request.setDataValidation)
+      .find((v) => v?.range.startColumnIndex === column);
+    expect(validation?.range).toEqual(range);
+    expect(validation?.rule).toEqual({ condition: { type: 'DATE_IS_VALID' }, strict: true });
+    const format = find('repeatCell');
+    expect(format.range).toEqual(range);
+    expect(format.cell.userEnteredFormat.numberFormat).toEqual({
+      type: 'DATE',
+      pattern: 'yyyy-mm-dd',
+    });
+  });
 });
 
 describe('response parsing', () => {
