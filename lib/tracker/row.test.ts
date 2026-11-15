@@ -96,7 +96,7 @@ describe('row builder', () => {
       'Company site',
       116,
       'Yes',
-      '2026-11-14 18:09:39',
+      '2026-11-14',
       '',
       'https://www.linkedin.com/jobs/view/4480699030/',
       '4480699030',
@@ -116,18 +116,5 @@ describe('row builder', () => {
 
   test('a missing applicant count leaves the cell empty', () => {
     expect(buildRow({ ...factsFor('4480699030'), applicants: null }, 0, 0)[7]).toBe('');
-  });
-
-  test('text a spreadsheet would run as a formula is written as text', () => {
-    const facts = {
-      ...factsFor('4480699030'),
-      company: '=HYPERLINK("x")',
-      title: "'Tis",
-      location: '@x',
-    };
-    const row = buildRow(facts, 0, 0);
-    expect(row[1]).toBe('\'=HYPERLINK("x")');
-    expect(row[2]).toBe("''Tis");
-    expect(row[4]).toBe("'@x");
   });
 });

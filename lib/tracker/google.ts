@@ -11,8 +11,7 @@ import {
 } from './domain.ts';
 import type { SheetRow } from './row.ts';
 import {
-  appendBody,
-  appendUrl,
+  appendCellsBody,
   batchUpdateUrl,
   createFileBody,
   createFileUrl,
@@ -22,7 +21,9 @@ import {
   parseFileId,
   parseFirstSheetId,
   parseFoundFileId,
+  parseApplicationsSheetId,
   sheetPropertiesUrl,
+  sheetTabsUrl,
 } from './sheet-requests.ts';
 
 const REVOKE_URL = 'https://oauth2.googleapis.com/revoke';
@@ -158,10 +159,18 @@ export async function checkSheet(sheet: TrackerSheet): Promise<CheckResult> {
 
 export async function appendRow(sheet: TrackerSheet, row: SheetRow): Promise<AppendResult> {
   try {
-    const response = await send(false, appendUrl(sheet.spreadsheetId), {
+    const tabs = await send(false, sheetTabsUrl(sheet.spreadsheetId));
+    if (!tabs.ok) {
+      return classifyAppend(tabs.status);
+    }
+    const sheetId = parseApplicationsSheetId(await tabs.json());
+    if (sheetId === undefined) {
+      return 'error';
+    }
+    const response = await send(false, batchUpdateUrl(sheet.spreadsheetId), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(appendBody(row)),
+      body: JSON.stringify(appendCellsBody(sheetId, row)),
     });
     return classifyAppend(response.status);
   } catch (error) {
