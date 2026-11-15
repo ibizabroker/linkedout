@@ -24,7 +24,9 @@ import {
   readSnapshot,
   writeAuthExpired,
   writeConnection,
+  writeSync,
 } from './snapshot.ts';
+import { forNewSheet } from './outbox.ts';
 import { FLUSH_ALARM, flush, recordApplication } from './writer.ts';
 
 const LINKEDIN_ORIGIN = 'https://www.linkedin.com/';
@@ -126,6 +128,9 @@ async function runAction(action: UserAction): Promise<ActionReply> {
       return { status: 'done', sheet: connection.sheet };
     }
     const sheet = await (action === 'connect' ? connectSheet() : recreateSheet());
+    if (action === 'recreate') {
+      await writeSync(forNewSheet((await readSnapshot()).sync));
+    }
     await writeConnection({ sheet, connectedAt: await connectedAtFor(action) });
     return { status: 'done', sheet };
   } catch (error) {

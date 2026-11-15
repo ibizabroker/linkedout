@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  forNewSheet,
   deliveryFailed,
   delivered,
   emptySync,
@@ -76,5 +77,13 @@ describe('stored sync documents', () => {
       },
     );
     expect(state).toEqual({ written: ['1'], outbox: [a], failures: 0 });
+  });
+});
+
+describe('a new sheet', () => {
+  test('starts the added count again and keeps rows still waiting', () => {
+    const waiting = { jobId: '2', row: ['x'] };
+    const state = forNewSheet({ written: ['1'], outbox: [waiting], failures: 4 });
+    expect(state).toEqual({ written: [], outbox: [waiting], failures: 0 });
   });
 });

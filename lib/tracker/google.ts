@@ -161,6 +161,7 @@ export async function appendRow(sheet: TrackerSheet, row: SheetRow): Promise<App
   try {
     const tabs = await send(false, sheetTabsUrl(sheet.spreadsheetId));
     if (!tabs.ok) {
+      console.warn('[linkedout] reading the sheet tabs failed', tabs.status, await tabs.text());
       return classifyAppend(tabs.status);
     }
     const sheetId = parseApplicationsSheetId(await tabs.json());
@@ -172,8 +173,12 @@ export async function appendRow(sheet: TrackerSheet, row: SheetRow): Promise<App
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(appendCellsBody(sheetId, row)),
     });
+    if (!response.ok) {
+      console.warn('[linkedout] append failed', response.status, await response.text());
+    }
     return classifyAppend(response.status);
   } catch (error) {
+    console.warn('[linkedout] append failed', error);
     return error instanceof SignInError ? 'auth-expired' : 'error';
   }
 }

@@ -43,6 +43,10 @@ export function delivered(state: SyncState, jobId: string): SyncState {
   };
 }
 
+export function forNewSheet(state: SyncState): SyncState {
+  return { written: [], outbox: state.outbox, failures: 0 };
+}
+
 export function deliveryFailed(state: SyncState): SyncState {
   return { ...state, failures: state.failures + 1 };
 }
