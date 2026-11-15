@@ -16,6 +16,7 @@ import {
   parseRequest,
   type ActionReply,
   type TrackerAction,
+  type UserAction,
 } from './messages.ts';
 import {
   clearSync,
@@ -27,8 +28,6 @@ import {
 import { FLUSH_ALARM, flush, recordApplication } from './writer.ts';
 
 const LINKEDIN_ORIGIN = 'https://www.linkedin.com/';
-
-type UserAction = Exclude<TrackerAction, 'check'>;
 
 function send(action: TrackerAction): Promise<unknown> {
   return browser.runtime.sendMessage({ type: TRACKER_REQUEST, action });

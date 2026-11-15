@@ -9,6 +9,8 @@ export type ActionReply =
   | { readonly status: 'cancelled' }
   | { readonly status: 'failed' };
 
+export type UserAction = Exclude<TrackerAction, 'check'>;
+
 const ACTIONS: readonly string[] = ['connect', 'disconnect', 'recreate', 'reconnect', 'check'];
 const CHECK_RESULTS: readonly string[] = ['ok', 'missing', 'error'];
 

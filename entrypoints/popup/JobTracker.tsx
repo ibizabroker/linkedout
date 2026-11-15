@@ -5,14 +5,16 @@ import {
   initialView,
   summarizeSync,
   trackerReducer,
+  type SyncSummary,
   type TrackerView,
 } from '@/lib/tracker/domain';
+import type { UserAction } from '@/lib/tracker/messages';
 import { oauthConfigured, watchTracker } from '@/lib/tracker/snapshot';
 import { requestTrackerAction, requestTrackerCheck } from '@/lib/tracker/store';
 
 const DISCONNECT_FAILED_TEXT = "Couldn't disconnect. Try again.";
 
-type Act = (action: 'connect' | 'disconnect' | 'recreate') => void;
+type Act = (action: UserAction) => void;
 
 export function useTrackerSession(): {
   readonly view: TrackerView;
@@ -127,6 +129,7 @@ function Body(props: {
               LinkedOut Job Tracker
             </strong>
           </p>
+          <SyncLines sync={view.sync} busy={view.busy} act={act} />
           <div className="flex gap-2">
             <Button asChild variant="outline" size="lg" className="flex-1">
               <a href={view.sheet.url} target="_blank" rel="noreferrer">
@@ -141,6 +144,7 @@ function Body(props: {
       return (
         <>
           <p className="text-sm text-muted-foreground">Sheet not found.</p>
+          <SyncLines sync={view.sync} busy={view.busy} act={act} />
           <div className="flex gap-2">
             <Button
               type="button"
@@ -161,6 +165,49 @@ function Body(props: {
     default:
       return unexpectedView(view);
   }
+}
+
+function jobCount(count: number): string {
+  return `${count} ${count === 1 ? 'job' : 'jobs'}`;
+}
+
+function SyncLines(props: {
+  readonly sync: SyncSummary;
+  readonly busy: boolean;
+  readonly act: Act;
+}): ReactElement {
+  const { sync, busy, act } = props;
+  return (
+    <>
+      {sync.added === 0 ? null : (
+        <p className="text-sm text-muted-foreground">
+          {jobCount(sync.added)} added
+        </p>
+      )}
+      {sync.waiting === 0 ? null : (
+        <p className="text-sm text-muted-foreground">
+          {jobCount(sync.waiting)} waiting to sync
+        </p>
+      )}
+      {sync.authExpired ? (
+        <>
+          <p className="text-sm text-destructive">Google sign-in expired.</p>
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            className="w-full"
+            disabled={busy}
+            onClick={() => {
+              act('reconnect');
+            }}
+          >
+            Reconnect
+          </Button>
+        </>
+      ) : null}
+    </>
+  );
 }
 
 function DisconnectButton(props: {
