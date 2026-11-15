@@ -28,6 +28,21 @@ describe('stored tracker document', () => {
     expect(parseStoredTracker(serializeTracker(connection))).toEqual(connection);
   });
 
+  test('a renamed sheet reads back with its new name', () => {
+    const renamed = {
+      ...connection,
+      sheet: sheetFromId(connection.sheet.spreadsheetId, 'My jobs 2026'),
+    };
+    expect(parseStoredTracker(serializeTracker(renamed))?.sheet.name).toBe('My jobs 2026');
+  });
+
+  test('a sheet saved without a name, or with a blank one, reads as LinkedOut Job Tracker', () => {
+    const { name: _name, ...unnamed } = connection.sheet;
+    const stored = { ...serializeTracker(connection), sheet: unnamed };
+    expect(parseStoredTracker(stored)?.sheet.name).toBe('LinkedOut Job Tracker');
+    expect(sheetFromId('abc', '  ').name).toBe('LinkedOut Job Tracker');
+  });
+
   test('missing, disconnected, and malformed documents read as disconnected', () => {
     expect(parseStoredTracker(undefined)).toBe(null);
     expect(parseStoredTracker(serializeTracker(null))).toBe(null);

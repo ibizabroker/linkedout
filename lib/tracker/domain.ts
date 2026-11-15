@@ -1,8 +1,10 @@
+import { TRACKER_FILE_NAME } from './columns.ts';
 import type { SyncState } from './outbox.ts';
 
 export type TrackerSheet = {
   readonly spreadsheetId: string;
   readonly url: string;
+  readonly name: string;
 };
 
 export type Connection = {
@@ -42,6 +44,7 @@ export type TrackerView =
     };
 
 export type CheckResult = 'ok' | 'missing' | 'error';
+export type SheetCheck = { readonly result: CheckResult; readonly name?: string };
 export type AppendResult = 'ok' | 'missing' | 'auth-expired' | 'error';
 export type SignInFailure = 'cancelled' | 'failed';
 
@@ -57,8 +60,12 @@ export const CONNECT_FAILED_TEXT = "Couldn't connect to Google. Try again.";
 const SHEET_URL_PREFIX = 'https://docs.google.com/spreadsheets/d/';
 const SPREADSHEET_ID = /^[A-Za-z0-9_-]+$/;
 
-export function sheetFromId(spreadsheetId: string): TrackerSheet {
-  return { spreadsheetId, url: `${SHEET_URL_PREFIX}${spreadsheetId}/edit` };
+export function sheetFromId(spreadsheetId: string, name?: string): TrackerSheet {
+  return {
+    spreadsheetId,
+    url: `${SHEET_URL_PREFIX}${spreadsheetId}/edit`,
+    name: name === undefined || name.trim() === '' ? TRACKER_FILE_NAME : name,
+  };
 }
 
 export function initialView(oauthConfigured: boolean): TrackerView {
@@ -93,11 +100,11 @@ export function parseSheet(raw: unknown): TrackerSheet | null {
   if (typeof raw !== 'object' || raw === null) {
     return null;
   }
-  const { spreadsheetId, url } = raw as Record<string, unknown>;
+  const { spreadsheetId, url, name } = raw as Record<string, unknown>;
   if (typeof spreadsheetId !== 'string' || !SPREADSHEET_ID.test(spreadsheetId)) {
     return null;
   }
-  const sheet = sheetFromId(spreadsheetId);
+  const sheet = sheetFromId(spreadsheetId, typeof name === 'string' ? name : undefined);
   return url === sheet.url ? sheet : null;
 }
 

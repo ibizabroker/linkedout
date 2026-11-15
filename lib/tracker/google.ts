@@ -5,7 +5,7 @@ import {
   classifySignInError,
   sheetFromId,
   type AppendResult,
-  type CheckResult,
+  type SheetCheck,
   type SignInFailure,
   type TrackerSheet,
 } from './domain.ts';
@@ -20,7 +20,7 @@ import {
   formatBody,
   parseFileId,
   parseFirstSheetId,
-  parseFoundFileId,
+  parseFoundFile,
   parseApplicationsSheetId,
   sheetPropertiesUrl,
   sheetTabsUrl,
@@ -114,8 +114,8 @@ async function sendJson(interactive: boolean, url: string, body?: unknown): Prom
 }
 
 async function findSheet(interactive: boolean): Promise<TrackerSheet | undefined> {
-  const id = parseFoundFileId(await sendJson(interactive, findTrackerUrl()));
-  return id === undefined ? undefined : sheetFromId(id);
+  const found = parseFoundFile(await sendJson(interactive, findTrackerUrl()));
+  return found === undefined ? undefined : sheetFromId(found.id, found.name);
 }
 
 async function createSheet(interactive: boolean): Promise<TrackerSheet> {
@@ -144,16 +144,22 @@ export function recreateSheet(): Promise<TrackerSheet> {
   return createSheet(true);
 }
 
-export async function checkSheet(sheet: TrackerSheet): Promise<CheckResult> {
+export async function checkSheet(sheet: TrackerSheet): Promise<SheetCheck> {
   try {
-    const response = await send(false, fileUrl(sheet.spreadsheetId, 'trashed'));
-    const trashed =
+    const response = await send(false, fileUrl(sheet.spreadsheetId, 'trashed,name'));
+    const file =
       response.status === 200
-        ? ((await response.json()) as { trashed?: unknown }).trashed === true
-        : undefined;
-    return classifyCheck(response.status, trashed);
+        ? ((await response.json()) as { trashed?: unknown; name?: unknown })
+        : {};
+    return {
+      result: classifyCheck(
+        response.status,
+        response.status === 200 ? file.trashed === true : undefined,
+      ),
+      ...(typeof file.name === 'string' ? { name: file.name } : {}),
+    };
   } catch {
-    return 'error';
+    return { result: 'error' };
   }
 }
 

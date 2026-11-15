@@ -27,7 +27,7 @@ const TRACKER_PROPERTIES = { linkedout: 'tracker' } as const;
 
 export function findTrackerUrl(): string {
   const q = "appProperties has { key='linkedout' and value='tracker' } and trashed=false";
-  return `${DRIVE}?${new URLSearchParams({ q, fields: 'files(id)' })}`;
+  return `${DRIVE}?${new URLSearchParams({ q, fields: 'files(id,name)' })}`;
 }
 
 export function createFileUrl(): string {
@@ -189,9 +189,16 @@ export function parseFileId(raw: unknown): string | undefined {
   return typeof id === 'string' && id.length > 0 ? id : undefined;
 }
 
-export function parseFoundFileId(raw: unknown): string | undefined {
+export function parseFoundFile(
+  raw: unknown,
+): { readonly id: string; readonly name?: string } | undefined {
   const files = (raw as { files?: unknown } | null)?.files;
-  return Array.isArray(files) ? parseFileId(files[0]) : undefined;
+  if (!Array.isArray(files)) {
+    return undefined;
+  }
+  const id = parseFileId(files[0]);
+  const name = (files[0] as { name?: unknown } | undefined)?.name;
+  return id === undefined ? undefined : { id, ...(typeof name === 'string' ? { name } : {}) };
 }
 
 export function formatBody(sheetId: number): { readonly requests: readonly object[] } {

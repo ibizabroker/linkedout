@@ -1,6 +1,6 @@
 import { browser } from 'wxt/browser';
 import { parseFactsMessage } from './facts-message.ts';
-import type { CheckResult } from './domain.ts';
+import { sheetFromId, type CheckResult } from './domain.ts';
 import {
   SignInError,
   checkSheet,
@@ -145,7 +145,18 @@ async function runCheck(): Promise<{ readonly status: CheckResult }> {
     return { status: 'error' };
   }
   const { connection } = await readSnapshot();
-  return { status: connection === null ? 'ok' : await checkSheet(connection.sheet) };
+  if (connection === null) {
+    return { status: 'ok' };
+  }
+  const check = await checkSheet(connection.sheet);
+  const renamed =
+    check.result === 'ok' && check.name !== undefined
+      ? sheetFromId(connection.sheet.spreadsheetId, check.name)
+      : undefined;
+  if (renamed !== undefined && renamed.name !== connection.sheet.name) {
+    await writeConnection({ ...connection, sheet: renamed });
+  }
+  return { status: check.result };
 }
 
 async function connectedAtFor(action: 'connect' | 'recreate'): Promise<number> {

@@ -126,7 +126,7 @@ function Body(props: {
           <p className="text-sm text-muted-foreground">
             Tracking to{' '}
             <strong className="font-medium text-foreground">
-              LinkedOut Job Tracker
+              {view.sheet.name}
             </strong>
           </p>
           <SyncLines sync={view.sync} busy={view.busy} act={act} />

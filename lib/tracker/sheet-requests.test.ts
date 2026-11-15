@@ -8,7 +8,7 @@ import {
   formatBody,
   parseFileId,
   parseFirstSheetId,
-  parseFoundFileId,
+  parseFoundFile,
 } from './sheet-requests.ts';
 
 type Request = Record<string, Record<string, any>>;
@@ -40,7 +40,7 @@ describe('sheet creation', () => {
     expect(url.searchParams.get('q')).toBe(
       "appProperties has { key='linkedout' and value='tracker' } and trashed=false",
     );
-    expect(url.searchParams.get('fields')).toBe('files(id)');
+    expect(url.searchParams.get('fields')).toBe('files(id,name)');
   });
 });
 
@@ -123,9 +123,13 @@ describe('response parsing', () => {
   });
 
   test('reads the first search hit, or nothing for an empty search', () => {
-    expect(parseFoundFileId({ files: [{ id: 'abc' }, { id: 'def' }] })).toBe('abc');
-    expect(parseFoundFileId({ files: [] })).toBeUndefined();
-    expect(parseFoundFileId({})).toBeUndefined();
+    expect(parseFoundFile({ files: [{ id: 'abc', name: 'My jobs' }, { id: 'def' }] })).toEqual({
+      id: 'abc',
+      name: 'My jobs',
+    });
+    expect(parseFoundFile({ files: [{ id: 'abc' }] })).toEqual({ id: 'abc' });
+    expect(parseFoundFile({ files: [] })).toBeUndefined();
+    expect(parseFoundFile({})).toBeUndefined();
   });
 });
 
