@@ -8,6 +8,10 @@ import {
   type SyncState,
 } from './outbox.ts';
 
+export function oauthConfigured(): boolean {
+  return browser.runtime.getManifest().oauth2 !== undefined;
+}
+
 const TRACKER_KEY = 'tracker';
 const WRITTEN_KEY = 'tracker-written';
 const OUTBOX_KEY = 'tracker-outbox';

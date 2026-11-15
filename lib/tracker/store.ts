@@ -17,16 +17,18 @@ import {
   type ActionReply,
   type TrackerAction,
 } from './messages.ts';
-import { clearSync, readSnapshot, writeAuthExpired, writeConnection } from './snapshot.ts';
+import {
+  clearSync,
+  oauthConfigured,
+  readSnapshot,
+  writeAuthExpired,
+  writeConnection,
+} from './snapshot.ts';
 import { FLUSH_ALARM, flush, recordApplication } from './writer.ts';
 
 const LINKEDIN_ORIGIN = 'https://www.linkedin.com/';
 
 type UserAction = Exclude<TrackerAction, 'check'>;
-
-export function oauthConfigured(): boolean {
-  return browser.runtime.getManifest().oauth2 !== undefined;
-}
 
 function send(action: TrackerAction): Promise<unknown> {
   return browser.runtime.sendMessage({ type: TRACKER_REQUEST, action });

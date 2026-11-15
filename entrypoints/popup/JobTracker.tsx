@@ -7,12 +7,8 @@ import {
   trackerReducer,
   type TrackerView,
 } from '@/lib/tracker/domain';
-import { watchTracker } from '@/lib/tracker/snapshot';
-import {
-  oauthConfigured,
-  requestTrackerAction,
-  requestTrackerCheck,
-} from '@/lib/tracker/store';
+import { oauthConfigured, watchTracker } from '@/lib/tracker/snapshot';
+import { requestTrackerAction, requestTrackerCheck } from '@/lib/tracker/store';
 
 const DISCONNECT_FAILED_TEXT = "Couldn't disconnect. Try again.";
 
