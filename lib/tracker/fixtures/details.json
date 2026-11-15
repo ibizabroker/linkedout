@@ -1,0 +1,46 @@
+{
+  "included": [
+    {
+      "$type": "com.linkedin.voyager.dash.jobs.JobSeekerApplicationDetail",
+      "entityUrn": "urn:li:fsd_jobSeekerApplicationDetail:4455934008",
+      "applied": true,
+      "appliedAt": 1794530107765,
+      "onsiteApply": false
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.jobs.JobSeekerApplicationDetail",
+      "entityUrn": "urn:li:fsd_jobSeekerApplicationDetail:4487547179",
+      "applied": false,
+      "appliedAt": null,
+      "onsiteApply": true
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.jobs.JobSeekerApplicationDetail",
+      "entityUrn": "urn:li:fsd_jobSeekerApplicationDetail:4482178406",
+      "applied": false,
+      "appliedAt": null,
+      "onsiteApply": false
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.jobs.JobSeekerApplicationDetail",
+      "entityUrn": "urn:li:fsd_jobSeekerApplicationDetail:4480699030",
+      "applied": true,
+      "appliedAt": 1794708579385,
+      "onsiteApply": false
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.jobs.JobSeekerApplicationDetail",
+      "entityUrn": "urn:li:fsd_jobSeekerApplicationDetail:4463906975",
+      "applied": true,
+      "appliedAt": 1794708591195,
+      "onsiteApply": false
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.jobs.JobSeekerApplicationDetail",
+      "entityUrn": "urn:li:fsd_jobSeekerApplicationDetail:4489502813",
+      "applied": false,
+      "appliedAt": null,
+      "onsiteApply": true
+    }
+  ]
+}

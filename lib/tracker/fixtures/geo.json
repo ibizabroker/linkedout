@@ -1,0 +1,39 @@
+{
+  "included": [
+    {
+      "$type": "com.linkedin.voyager.dash.common.Geo",
+      "entityUrn": "urn:li:fsd_geo:101655944",
+      "abbreviatedLocalizedName": "Newport Beach, CA",
+      "defaultLocalizedName": "Newport Beach, California, United States",
+      "localizedName": "Newport Beach"
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.common.Geo",
+      "entityUrn": "urn:li:fsd_geo:102277331",
+      "abbreviatedLocalizedName": "San Francisco, CA",
+      "defaultLocalizedName": "San Francisco, California, United States",
+      "localizedName": "San Francisco"
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.common.Geo",
+      "entityUrn": "urn:li:fsd_geo:90000064",
+      "abbreviatedLocalizedName": "Austin, Texas Metropolitan Area",
+      "defaultLocalizedName": "Austin, Texas Metropolitan Area",
+      "localizedName": "Austin, Texas Metropolitan Area"
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.common.Geo",
+      "entityUrn": "urn:li:fsd_geo:102571732",
+      "abbreviatedLocalizedName": "New York, NY",
+      "defaultLocalizedName": "New York, New York, United States",
+      "localizedName": "New York"
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.common.Geo",
+      "entityUrn": "urn:li:fsd_geo:104361728",
+      "abbreviatedLocalizedName": "Brooklyn, NY",
+      "defaultLocalizedName": "Brooklyn, New York, United States",
+      "localizedName": "Brooklyn"
+    }
+  ]
+}

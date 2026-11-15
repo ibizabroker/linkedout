@@ -1,0 +1,82 @@
+{
+  "included": [
+    {
+      "$type": "com.linkedin.voyager.dash.jobs.JobPosting",
+      "entityUrn": "urn:li:fsd_jobPosting:4489502813",
+      "title": "Software Engineer",
+      "locationUrn": "urn:li:fsd_geo:101655944",
+      "workplaceTypes": ["urn:li:fsd_workplaceType:1"],
+      "repostedJob": false,
+      "numApplies": 550,
+      "companyDetails": {
+        "$type": "com.linkedin.voyager.dash.jobs.JobPostingCompany",
+        "name": "HubIQ"
+      }
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.jobs.JobPosting",
+      "entityUrn": "urn:li:fsd_jobPosting:4480699030",
+      "title": "Software Engineer - Mercury Command",
+      "locationUrn": "urn:li:fsd_geo:102277331",
+      "workplaceTypes": [],
+      "repostedJob": true,
+      "numApplies": 116,
+      "companyDetails": {
+        "$type": "com.linkedin.voyager.dash.jobs.JobPostingCompany",
+        "name": "Mercury"
+      }
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.jobs.JobPosting",
+      "entityUrn": "urn:li:fsd_jobPosting:4463906975",
+      "title": "Backend Engineer, AI",
+      "locationUrn": "urn:li:fsd_geo:102571732",
+      "workplaceTypes": ["urn:li:fsd_workplaceType:1"],
+      "repostedJob": true,
+      "numApplies": 624,
+      "companyDetails": {
+        "$type": "com.linkedin.voyager.dash.jobs.JobPostingCompany",
+        "name": "Rain"
+      }
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.jobs.JobPosting",
+      "entityUrn": "urn:li:fsd_jobPosting:4487547179",
+      "title": "Software Engineer",
+      "locationUrn": "urn:li:fsd_geo:90000064",
+      "workplaceTypes": ["urn:li:fsd_workplaceType:3"],
+      "repostedJob": false,
+      "numApplies": 486,
+      "companyDetails": {
+        "$type": "com.linkedin.voyager.dash.jobs.JobPostingCompany",
+        "name": "QuoteWell"
+      }
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.jobs.JobPosting",
+      "entityUrn": "urn:li:fsd_jobPosting:4455934008",
+      "title": "Software Development Engineer, AWS",
+      "locationUrn": "urn:li:fsd_geo:104361728",
+      "workplaceTypes": [],
+      "repostedJob": true,
+      "numApplies": 118,
+      "companyDetails": {
+        "$type": "com.linkedin.voyager.dash.jobs.JobPostingCompany",
+        "name": "Amazon Web Services (AWS)"
+      }
+    },
+    {
+      "$type": "com.linkedin.voyager.dash.jobs.JobPosting",
+      "entityUrn": "urn:li:fsd_jobPosting:4482178406",
+      "title": "Full-Stack Software Engineer, Experience",
+      "locationUrn": "urn:li:fsd_geo:102571732",
+      "workplaceTypes": ["urn:li:fsd_workplaceType:2"],
+      "repostedJob": false,
+      "numApplies": 1048,
+      "companyDetails": {
+        "$type": "com.linkedin.voyager.dash.jobs.JobPostingCompany",
+        "name": "Pinecone"
+      }
+    }
+  ]
+}
