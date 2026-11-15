@@ -1,12 +1,10 @@
 import { browser, type Browser } from 'wxt/browser';
 import {
-  BADGE_ROWS,
   hasKind,
   hideRules,
   jobsListReport,
   notJobsListReport,
   shouldMarkHidden,
-  textIsLeafBadge,
   type CardFacts,
   type HideRules,
   type PageReport,
@@ -21,6 +19,7 @@ import {
 import { closeBlockConfirmation } from '@/lib/block/confirm-panel';
 import { type ApplicantLimit, type StoredLimitRead } from '@/lib/hide/applicants';
 import { watchApplicantLimit } from '@/lib/hide/applicant-store';
+import { JOB_CARD, cardBadges } from '@/lib/hide/card-badges';
 import { jobIdOf } from '@/lib/hide/job-page';
 import { startRepostWatch } from '@/lib/hide/repost-watch';
 import { PAGE_REPORT_PORT, parsePreviewMessage, serializePageReport } from '@/lib/hide/page-report';
@@ -29,8 +28,6 @@ import { watchHideSet } from '@/lib/hide/store';
 import { watchBlocklist } from '@/lib/block/store';
 import type { StoredBlocklistRead } from '@/lib/block/domain';
 
-const JOB_CARD =
-  'li[data-occludable-job-id], div[role="button"][componentkey^="job-card-component-ref-"]';
 const HIDDEN_ATTR = 'data-linkedout-hidden';
 const STYLE_ID = 'linkedout-hidden-style';
 const HIDDEN_CSS = `[data-linkedout-hidden]{display:none !important}${BLOCK_CONTROL_CSS}`;
@@ -162,26 +159,10 @@ function onJobsResultsList(pathname: string): boolean {
 
 function cardFacts(card: Element, reposts: RepostWatch): CardFacts {
   const jobId = jobIdOf(card);
-  const facts = {
-    applied: false,
-    viewed: false,
-    saved: false,
+  return {
+    ...cardBadges(card),
     reposted: jobId !== undefined && reposts.isReposted(jobId),
   };
-
-  for (const node of card.querySelectorAll('*')) {
-    const childTextContents = [...node.children].map((child) => child.textContent ?? '');
-    for (const row of BADGE_ROWS) {
-      if (facts[row.kind]) {
-        continue;
-      }
-      if (textIsLeafBadge(node.textContent ?? '', childTextContents, row.badgeText)) {
-        facts[row.kind] = true;
-      }
-    }
-  }
-
-  return facts;
 }
 
 function reconcile(doc: Document, rules: HideRules, reposts: RepostWatch): PageReport {
