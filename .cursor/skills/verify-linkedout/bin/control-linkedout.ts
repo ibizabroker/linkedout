@@ -140,6 +140,15 @@ function send(res: ServerResponse, status: number, data: unknown) {
   res.end(JSON.stringify(data));
 }
 
+async function openOptions(session: Session): Promise<Page> {
+  const optionsUrl = session.state.popupUrl.replace(/popup\.html$/, 'options.html');
+  await session.page.goto(optionsUrl, { waitUntil: 'domcontentloaded' });
+  await session.page.getByRole('heading', { name: 'Blocked companies' }).waitFor({
+    timeout: 10_000,
+  });
+  return session.page;
+}
+
 async function openPopup(session: Session): Promise<Page> {
   await session.page.goto(session.state.popupUrl, { waitUntil: 'domcontentloaded' });
   await session.page.getByRole('heading', { name: 'LinkedOut' }).waitFor({
@@ -221,6 +230,38 @@ async function startDaemon(runId: string): Promise<void> {
       if (req.method === 'POST' && url.pathname === '/open-popup') {
         await openPopup(session);
         return send(res, 200, { ok: true, popupUrl: session.state.popupUrl });
+      }
+
+      if (req.method === 'POST' && url.pathname === '/open-options') {
+        await openOptions(session);
+        return send(res, 200, { ok: true });
+      }
+
+      if (req.method === 'POST' && url.pathname === '/scheme') {
+        const body = (await readBody(req)) as { scheme?: string };
+        if (body.scheme !== 'light' && body.scheme !== 'dark') {
+          return send(res, 400, { ok: false, error: 'scheme must be light or dark' });
+        }
+        await session.page.emulateMedia({ colorScheme: body.scheme });
+        return send(res, 200, { ok: true });
+      }
+
+      if (req.method === 'POST' && url.pathname === '/viewport') {
+        const body = (await readBody(req)) as { width?: number; height?: number };
+        if (!body.width || !body.height) {
+          return send(res, 400, { ok: false, error: 'width and height required' });
+        }
+        await session.page.setViewportSize({ width: body.width, height: body.height });
+        return send(res, 200, { ok: true });
+      }
+
+      if (req.method === 'POST' && url.pathname === '/ext-eval') {
+        const body = (await readBody(req)) as { expression?: string };
+        if (!body.expression) {
+          return send(res, 400, { ok: false, error: 'expression required' });
+        }
+        const value = await session.page.evaluate(body.expression);
+        return send(res, 200, { ok: true, value });
       }
 
       if (req.method === 'POST' && url.pathname === '/click') {
@@ -457,6 +498,39 @@ async function cmdOpenPopup(flags: Map<string, string | boolean>) {
   if (!result.ok) process.exit(1);
 }
 
+async function cmdOpenOptions(flags: Map<string, string | boolean>) {
+  const state = await withState(flags);
+  const result = await postJson(state.port, '/open-options');
+  console.log(JSON.stringify(result.data, null, 2));
+  if (!result.ok) process.exit(1);
+}
+
+async function cmdScheme(flags: Map<string, string | boolean>) {
+  const state = await withState(flags);
+  const result = await postJson(state.port, '/scheme', { scheme: flag(flags, 'scheme') });
+  console.log(JSON.stringify(result.data, null, 2));
+  if (!result.ok) process.exit(1);
+}
+
+async function cmdViewport(flags: Map<string, string | boolean>) {
+  const state = await withState(flags);
+  const result = await postJson(state.port, '/viewport', {
+    width: Number(flag(flags, 'width')),
+    height: Number(flag(flags, 'height')),
+  });
+  console.log(JSON.stringify(result.data, null, 2));
+  if (!result.ok) process.exit(1);
+}
+
+async function cmdExtEval(flags: Map<string, string | boolean>) {
+  const state = await withState(flags);
+  const result = await postJson(state.port, '/ext-eval', {
+    expression: flag(flags, 'expression'),
+  });
+  console.log(JSON.stringify(result.data, null, 2));
+  if (!result.ok) process.exit(1);
+}
+
 async function cmdClick(flags: Map<string, string | boolean>) {
   const state = await withState(flags);
   const result = await postJson(state.port, '/click', {
@@ -544,6 +618,10 @@ Usage:
   control-linkedout launch [--run-id <id>] [--no-build]
   control-linkedout doctor --run-id <id>
   control-linkedout open-popup --run-id <id>
+  control-linkedout open-options --run-id <id>
+  control-linkedout scheme --run-id <id> --scheme <light|dark>
+  control-linkedout viewport --run-id <id> --width <px> --height <px>
+  control-linkedout ext-eval --run-id <id> --expression <js>
   control-linkedout click --run-id <id> --role <role> --name <name>
   control-linkedout fill --run-id <id> --role <role> --name <name> --value <text>
   control-linkedout press --run-id <id> --role <role> --name <name> --key <key>
@@ -578,6 +656,18 @@ async function main() {
       break;
     case 'open-popup':
       await cmdOpenPopup(flags);
+      break;
+    case 'open-options':
+      await cmdOpenOptions(flags);
+      break;
+    case 'scheme':
+      await cmdScheme(flags);
+      break;
+    case 'viewport':
+      await cmdViewport(flags);
+      break;
+    case 'ext-eval':
+      await cmdExtEval(flags);
       break;
     case 'click':
       await cmdClick(flags);

@@ -12,7 +12,9 @@ This directory is the maintained source for verifying user-facing behavior of Li
 
 ## Driving conventions
 
-- Start every recipe from a fresh `open-popup` unless its preconditions say otherwise.
+- Start every recipe from a fresh `open-popup` (or `open-options` for the settings page) unless its preconditions say otherwise.
+- `viewport --width 352 --height 640` sizes the tab like the popup, and `scheme --scheme dark` (or `light`) switches the colour scheme. Capture both for UI proof.
+- `ext-eval --expression "<js>"` runs a script on the open extension page, for seeding storage or sending a background message. Use it only on a disposable run.
 - Prefer ARIA roles and accessible names (`getByRole`) over CSS selectors or coordinates.
 - Treat every command as literal. Keep quoted names and flags unchanged.
 - Restore disposable run state with `cleanup`. Do not remove proof artifacts.
@@ -20,7 +22,7 @@ This directory is the maintained source for verifying user-facing behavior of Li
 ## Proof and skip reporting
 
 - Capture the user action and the resulting state, not only the final screen.
-- UI proof includes an ARIA snapshot and a screenshot with the `LinkedOut` heading visible.
+- UI proof includes an ARIA snapshot and a screenshot in light and dark with the `LinkedOut` heading visible (popup) or the `Blocked companies` heading visible (settings page).
 - Record the feature ID and entry point used with every artifact.
 - Report an unreachable path with the attempted command and the unmet precondition.
 - Do not report a skipped entry point as verified through a different path.
@@ -38,8 +40,8 @@ Keep implementation details out of the map. Name only user paths, stable handles
 
 ## Features
 
-- [Hide menu](./hide-menu.md) covers opening the popup and turning Applied, Viewed, Saved, and Reposted hiding on and off.
-- [Applicant limit](./applicant-limit.md) covers the `Hide by applicant count` checkbox, slider, and number box: default off, enabling at 100, sync between the two, and persistence.
-- [Blocked companies](./blocked-companies.md) covers expanding and collapsing the `Blocked companies (N)` section, its empty state, seeded rows, unblocking, and an unreadable list.
-- [Job tracker](./job-tracker.md) covers the `Job tracker` section: Connect Google Sheets, the Connecting state, Connected, Disconnect, and the hidden section in a build without Google settings.
-- [Extension identity](./extension-identity.md) covers confirming the built extension name and popup title surface.
+- [Hide menu](./hide-menu.md) covers the `Hide from results` switch rows: Applied, Viewed, Saved, and Reposted turning hiding on and off, and the readout and message line above them.
+- [Applicant limit](./applicant-limit.md) covers the `Limit` switch, the slider, and the number box: default off, enabling at 100, sync between the two, and persistence.
+- [Blocked companies](./blocked-companies.md) covers the settings page, opened from `Open settings`: the empty state, seeded rows newest first, unblocking, an unreadable list, and the `Blocked` figure in the popup readout.
+- [Job tracker](./job-tracker.md) covers the `Job tracker` group: Connect Google Sheets, the Connecting state, the Sheet and Status rows, Disconnect, the expired sign-in line, and the hidden group in a build without Google settings.
+- [Extension identity](./extension-identity.md) covers confirming the built extension name and the popup and settings page titles.

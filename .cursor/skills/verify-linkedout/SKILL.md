@@ -58,13 +58,13 @@ bun run verify:control -- snapshot --run-id "$LINKEDOUT_VERIFY_RUN_ID" --path .c
 bun run verify:control -- screenshot --run-id "$LINKEDOUT_VERIFY_RUN_ID" --path .cursor/skills/verify-linkedout/artifacts/<feature>/popup.png
 ```
 
-Drive the real popup document (`chrome-extension://<id>/popup.html`). Do not stub React state or call extension APIs as a substitute for the user path.
+Drive the real popup document (`chrome-extension://<id>/popup.html`) and settings page (`options.html`). Do not stub React state or call extension APIs as a substitute for the user path.
 
 ## Evidence
 
 - Store proof under `.cursor/skills/verify-linkedout/artifacts/<feature>/`.
 - Capture the action and the resulting state (for the counter: button text before and after click).
-- UI proof includes an ARIA snapshot and a screenshot that shows the `LinkedOut` heading.
+- UI proof includes an ARIA snapshot and a screenshot that shows the `LinkedOut` heading, in light and dark.
 - Record `run-id`, `extensionId`, and `buildRevision` from launch/doctor alongside the artifacts (print them into the agent reply; optional `meta.json` in the feature artifact folder).
 - Cleanup must not delete artifacts.
 
@@ -83,6 +83,10 @@ Stops only the daemon/browser started for that run id and deletes `.tmp/linkedou
 | `bun run verify:control -- launch [--run-id id] [--no-build]` | Build (optional), start Chromium + extension + control daemon |
 | `bun run verify:control -- doctor --run-id id` | Health check |
 | `bun run verify:control -- open-popup --run-id id` | Navigate to popup.html |
+| `bun run verify:control -- open-options --run-id id` | Navigate to options.html, the settings page |
+| `bun run verify:control -- scheme --run-id id --scheme light\|dark` | Emulate the colour scheme |
+| `bun run verify:control -- viewport --run-id id --width W --height H` | Resize the tab (popup is 352px wide) |
+| `bun run verify:control -- ext-eval --run-id id --expression JS` | Run JS on the open extension page (seed storage, send messages) |
 | `bun run verify:control -- click --run-id id --role ROLE --name NAME` | Click by role + accessible name |
 | `bun run verify:control -- fill --run-id id --role ROLE --name NAME --value TEXT` | Replace a field's text |
 | `bun run verify:control -- press --run-id id --role ROLE --name NAME --key KEY` | Press a key on an element (for example `ArrowRight` on a slider, `Enter`) |
