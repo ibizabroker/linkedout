@@ -1,7 +1,8 @@
 import { describe, expect, test } from 'bun:test';
 import { renderToStaticMarkup } from 'react-dom/server';
 import {
-  BlockedCompaniesSection,
+  BLOCKLIST_UNREADABLE_TEXT,
+  BlockedCompaniesPage,
   BlockedCompanyList,
 } from './BlockedCompanies';
 
@@ -33,23 +34,43 @@ describe('BlockedCompanyList', () => {
   });
 });
 
-describe('BlockedCompaniesSection', () => {
-  test('shows the count of the given companies', () => {
+describe('BlockedCompaniesPage', () => {
+  test('lists the companies under the page title', () => {
     const html = renderToStaticMarkup(
-      <BlockedCompaniesSection
+      <BlockedCompaniesPage
         companies={[{ name: 'CBRE' }, { name: 'Acme' }]}
+        failureText={undefined}
         onUnblock={noop}
       />,
     );
-    expect(html).toContain('Blocked companies (2)');
+    expect(html).toContain('Blocked companies</h1>');
+    expect(html).toContain('Unblock CBRE');
+    expect(html).toContain('Unblock Acme');
+    expect(html).not.toContain('role="alert"');
   });
 
-  test('shows no count and no empty state when the blocklist is unreadable', () => {
+  test('shows the failure and no rows or empty state when the list is unreadable', () => {
     const html = renderToStaticMarkup(
-      <BlockedCompaniesSection companies={null} onUnblock={noop} />,
+      <BlockedCompaniesPage
+        companies={null}
+        failureText={BLOCKLIST_UNREADABLE_TEXT}
+        onUnblock={noop}
+      />,
     );
-    expect(html).toContain('Blocked companies<');
-    expect(html).not.toContain('(0)');
+    expect(html).toContain('Could not load blocked companies.');
+    expect(html).not.toContain('Unblock');
     expect(html).not.toContain('No blocked companies');
+  });
+
+  test('keeps the row and shows the failure when an unblock fails', () => {
+    const html = renderToStaticMarkup(
+      <BlockedCompaniesPage
+        companies={[{ name: 'CBRE' }]}
+        failureText="Could not unblock that company. Try again."
+        onUnblock={noop}
+      />,
+    );
+    expect(html).toContain('Could not unblock that company. Try again.');
+    expect(html).toContain('Unblock CBRE');
   });
 });

@@ -1,5 +1,5 @@
-import { useEffect, useId, useState, type ReactElement } from 'react';
-import { ChevronDownIcon, XIcon } from 'lucide-react';
+import { useEffect, useState, type ReactElement } from 'react';
+import { XIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { StoredBlocklistRead } from '@/lib/block/domain';
 import { requestUnblock, watchBlocklist } from '@/lib/block/store';
@@ -48,13 +48,16 @@ export function BlockedCompanyList(props: {
   readonly onUnblock: (name: string) => void;
 }): ReactElement {
   if (props.companies.length === 0) {
-    return <p className="text-sm text-muted-foreground">{EMPTY_TEXT}</p>;
+    return <p className="py-2 text-muted-foreground">{EMPTY_TEXT}</p>;
   }
   return (
-    <ul className="flex flex-col gap-1">
+    <ul className="border-t border-border">
       {props.companies.map(({ name }) => (
-        <li key={name} className="flex items-center justify-between gap-2">
-          <span className="truncate text-sm">{name}</span>
+        <li
+          key={name}
+          className="flex h-[30px] items-center gap-2 border-b border-border"
+        >
+          <span className="flex-1 truncate">{name}</span>
           <Button
             type="button"
             variant="ghost"
@@ -72,39 +75,29 @@ export function BlockedCompanyList(props: {
   );
 }
 
-export function BlockedCompaniesSection(props: {
-  readonly companies: readonly BlockedCompanyRow[] | null;
+export function BlockedCompaniesPage(props: {
+  readonly companies: readonly BlockedCompanyRow[] | null | undefined;
+  readonly failureText: string | undefined;
   readonly onUnblock: (name: string) => void;
 }): ReactElement {
-  const [open, setOpen] = useState(false);
-  const regionId = useId();
   return (
-    <div className="mt-5 flex flex-col gap-1.5">
-      <Button
-        type="button"
-        variant="ghost"
-        className="w-full justify-between px-0 hover:bg-transparent aria-expanded:bg-transparent dark:hover:bg-transparent"
-        aria-expanded={open}
-        aria-controls={regionId}
-        onClick={() => {
-          setOpen((current) => !current);
-        }}
-      >
-        Blocked companies
-        {props.companies === null ? '' : ` (${props.companies.length})`}
-        <ChevronDownIcon
-          data-icon="inline-end"
-          className="text-muted-foreground transition-transform duration-150 group-aria-expanded/button:rotate-180"
+    <main className="mx-auto flex w-[560px] max-w-full flex-col px-4 pt-8 pb-10">
+      <h1 className="text-[0.9375rem] font-semibold">Blocked companies</h1>
+      <p className="mt-0.5 mb-2 text-muted-foreground">
+        Their jobs are hidden from results. Block more from a job card or the
+        job details.
+      </p>
+      {props.failureText === undefined ? null : (
+        <p role="alert" className="mb-2 text-destructive">
+          {props.failureText}
+        </p>
+      )}
+      {props.companies == null ? null : (
+        <BlockedCompanyList
+          companies={props.companies}
+          onUnblock={props.onUnblock}
         />
-      </Button>
-      <div id={regionId} hidden={!open}>
-        {props.companies === null ? null : (
-          <BlockedCompanyList
-            companies={props.companies}
-            onUnblock={props.onUnblock}
-          />
-        )}
-      </div>
-    </div>
+      )}
+    </main>
   );
 }

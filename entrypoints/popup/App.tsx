@@ -6,14 +6,10 @@ import {
   type ReactElement,
 } from 'react';
 import { browser, type Browser } from 'wxt/browser';
-import { ChevronDownIcon } from 'lucide-react';
+import { SettingsIcon } from 'lucide-react';
+import logoUrl from '@/assets/icon.svg';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { Switch } from '@/components/ui/switch';
 import {
   UNREADABLE_CHOICE_TEXT,
   emptyHideSet,
@@ -39,12 +35,14 @@ import {
   useApplicantLimitSession,
 } from './ApplicantLimit';
 import { requestHideSet, watchHideSet } from '@/lib/hide/store';
+import { Group } from './Group';
+import { useBlocklistSession } from '@/lib/ui/BlockedCompanies';
 import {
-  BlockedCompaniesSection,
-  useBlocklistSession,
-} from './BlockedCompanies';
-
-import { JobTrackerSection, useTrackerSession } from './JobTracker';
+  JobTrackerSection,
+  TrackerProblem,
+  trackedReadout,
+  useTrackerSession,
+} from './JobTracker';
 
 export default function App() {
   return <PopupApp />;
@@ -60,39 +58,52 @@ export function PopupApp(): ReactElement {
 
   const blocklist = useBlocklistSession();
   const tracker = useTrackerSession();
-  const status = statusLine(
+  const message = messageLine(
     model,
     saveFailed,
     limit.failed ? LIMIT_SAVE_FAILED_TEXT : blocklist.failureText,
   );
 
   return (
-    <main className="flex flex-col px-4 pt-5 pb-4">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-base font-semibold tracking-tight text-balance">
+    <main className="flex flex-col">
+      <header className="flex items-center gap-2 py-2.5 pr-2 pl-3">
+        <h1 className="flex flex-1 items-center gap-2 text-sm font-semibold">
+          <img src={logoUrl} alt="" width={18} height={18} />
           LinkedOut
         </h1>
-        <p
-          role="status"
-          className={`min-h-5 text-sm ${TONE_CLASS[status.tone]}`}
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Open settings"
+          className="text-muted-foreground"
+          onClick={() => {
+            void browser.runtime.openOptionsPage();
+          }}
         >
-          {status.text}
-        </p>
-      </div>
+          <SettingsIcon />
+        </Button>
+      </header>
+      <Readout
+        hidden={report?.kind === 'jobs-list' ? report.hiddenCount : undefined}
+        tracked={trackedReadout(tracker.view)}
+        blocked={blocklist.companies?.length}
+      />
+      <p
+        role="status"
+        className={
+          message.text === ''
+            ? 'sr-only'
+            : `border-t border-border px-3 py-[7px] ${TONE_CLASS[message.tone]}`
+        }
+      >
+        {message.text}
+      </p>
+      <TrackerProblem view={tracker.view} act={tracker.act} />
       {model.phase === 'loading' ? null : (
         <>
-          <HideMenu
-            triggerLabel={model.triggerLabel}
-            rows={model.menu}
-            onSetKind={setKind}
-          />
+          <HideRows rows={model.menu} onSetKind={setKind} />
           <ApplicantLimitSection session={limit} />
-          {blocklist.companies === undefined ? null : (
-            <BlockedCompaniesSection
-              companies={blocklist.companies}
-              onUnblock={blocklist.unblock}
-            />
-          )}
           <JobTrackerSection view={tracker.view} act={tracker.act} />
         </>
       )}
@@ -100,17 +111,52 @@ export function PopupApp(): ReactElement {
   );
 }
 
-type Tone = 'plain' | 'muted' | 'failure';
+function Readout(props: {
+  readonly hidden: number | undefined;
+  readonly tracked:
+    | { readonly added: number; readonly waiting: number }
+    | undefined;
+  readonly blocked: number | undefined;
+}): ReactElement {
+  const { hidden, tracked, blocked } = props;
+  return (
+    <p className="flex flex-wrap gap-x-3.5 px-3 pb-2 text-muted-foreground">
+      <span>
+        Hidden here <Figure>{hidden ?? '–'}</Figure>
+      </span>
+      {tracked === undefined ? null : (
+        <span>
+          Tracked <Figure>{tracked.added}</Figure>
+          {tracked.waiting === 0 ? null : ` · ${tracked.waiting} waiting`}
+        </span>
+      )}
+      {blocked === undefined ? null : (
+        <span>
+          Blocked <Figure>{blocked}</Figure>
+        </span>
+      )}
+    </p>
+  );
+}
+
+function Figure(props: { readonly children: number | string }): ReactElement {
+  return (
+    <span className="font-semibold text-foreground tabular-nums">
+      {props.children}
+    </span>
+  );
+}
+
+type Tone = 'muted' | 'failure';
 
 const TONE_CLASS: Record<Tone, string> = {
-  plain: 'text-foreground',
   muted: 'text-muted-foreground',
   failure: 'text-destructive',
 };
 
 const SAVE_FAILED_TEXT = 'Your choice could not be saved. Try again.';
 
-function statusLine(
+function messageLine(
   model: PopupModel,
   saveFailed: boolean,
   blocklistFailure: string | undefined,
@@ -135,7 +181,7 @@ function statusLine(
       return { text: status.text, tone: 'failure' };
     case 'hiding':
     case 'showing':
-      return { text: status.text, tone: 'plain' };
+      return { text: '', tone: 'muted' };
     case 'paused':
       return { text: status.text, tone: 'muted' };
     case 'elsewhere':
@@ -149,52 +195,24 @@ function unexpectedStatus(value: never): never {
   throw new Error(`Unexpected status: ${JSON.stringify(value)}`);
 }
 
-function HideMenu(props: {
-  readonly triggerLabel: string;
+function HideRows(props: {
   readonly rows: readonly MenuRow[];
   readonly onSetKind: (kind: HideKind, on: boolean) => void;
 }): ReactElement {
   return (
-    <div className="mt-5 flex flex-col gap-1.5">
-      <p className="text-sm font-medium">Hide from results</p>
-      <DropdownMenu modal={false}>
-        <DropdownMenuTrigger asChild>
-          <Button
-            type="button"
-            variant="outline"
-            size="lg"
-            className="w-full justify-between font-normal"
-            aria-label={`Hide from results: ${props.triggerLabel}`}
-          >
-            {props.triggerLabel}
-            <ChevronDownIcon
-              data-icon="inline-end"
-              className="text-muted-foreground transition-transform duration-150 group-aria-expanded/button:rotate-180"
-            />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="ring-inset">
-          {props.rows.map((row) => (
-            <DropdownMenuCheckboxItem
-              key={row.kind}
-              className="pl-[7px] **:data-[slot=dropdown-menu-checkbox-item-indicator]:right-[5px]"
-              checked={row.checked}
-              onSelect={(event) => {
-                event.preventDefault();
-              }}
-              onCheckedChange={(checked) => {
-                if (typeof checked !== 'boolean') {
-                  return;
-                }
-                props.onSetKind(row.kind, checked);
-              }}
-            >
-              {row.label}
-            </DropdownMenuCheckboxItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+    <Group label="Hide from results">
+      {props.rows.map((row) => (
+        <Switch
+          key={row.kind}
+          label={row.label}
+          value={row.checked ? 'Hidden' : 'Shown'}
+          checked={row.checked}
+          onCheckedChange={(checked) => {
+            props.onSetKind(row.kind, checked);
+          }}
+        />
+      ))}
+    </Group>
   );
 }
 

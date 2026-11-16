@@ -1,7 +1,8 @@
-import { useEffect, useId, useRef, useState, type ReactElement } from 'react';
-import { Checkbox } from '@/components/ui/checkbox';
+import { useEffect, useRef, useState, type ReactElement } from 'react';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Group } from './Group';
 import {
   APPLICANT_STOPS,
   offLimit,
@@ -112,7 +113,6 @@ export function ApplicantLimitSection(props: {
   readonly session: LimitSession;
 }): ReactElement | null {
   const { limit, draftMax, setEnabled, previewMax, commitMax } = props.session;
-  const checkId = useId();
   const [typed, setTyped] = useState<string | undefined>(undefined);
   if (limit === undefined) {
     return null;
@@ -135,22 +135,19 @@ export function ApplicantLimitSection(props: {
   }
 
   return (
-    <div className="mt-5 flex flex-col gap-2">
-      <div className="flex items-center gap-2">
-        <Checkbox
-          id={checkId}
-          checked={limit.enabled}
-          onCheckedChange={(checked) => {
-            if (typeof checked === 'boolean') {
-              setEnabled(checked);
-            }
-          }}
-        />
-        <label htmlFor={checkId} className="text-sm font-medium">
-          Hide by applicant count
-        </label>
-      </div>
-      <div className="flex items-center gap-3">
+    <Group label="Applicant count">
+      <Switch
+        label="Limit"
+        value={limit.enabled ? `Hide over ${max}` : 'Off'}
+        checked={limit.enabled}
+        onCheckedChange={setEnabled}
+      />
+      <div
+        className={`flex items-center gap-3 px-3 pt-1 ${limit.enabled ? '' : 'opacity-50'}`}
+      >
+        <span className="w-[104px] shrink-0 text-muted-foreground">
+          Max applicants
+        </span>
         <Slider
           min={0}
           max={APPLICANT_STOPS.length - 1}
@@ -180,7 +177,7 @@ export function ApplicantLimitSection(props: {
         <Input
           aria-label="Applicant limit number"
           inputMode="numeric"
-          className="w-16 shrink-0 text-right"
+          className="w-14 shrink-0 text-right"
           value={shown}
           disabled={!limit.enabled}
           onChange={(event) => {
@@ -199,6 +196,6 @@ export function ApplicantLimitSection(props: {
           }}
         />
       </div>
-    </div>
+    </Group>
   );
 }
