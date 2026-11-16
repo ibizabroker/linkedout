@@ -1,3 +1,5 @@
-# LinkedOut
+<p align="center">
+  <img src="public/icon/128.png" alt="LinkedOut icon" width="128" height="128">
+</p>
 
-A browser extension to fix Linkedin jobs
+<h1 align="center">LinkedOut</h1>
