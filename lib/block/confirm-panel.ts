@@ -6,21 +6,32 @@ h2{margin:0;font-size:14px;font-weight:600}
 p{margin:2px 0 0;color:#6b665e}
 p.error{color:#b42318}
 .actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
-button{height:26px;padding:0 10px;border:1px solid #e8e5df;border-radius:6px;background:#fdfcfa;color:inherit;font:500 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans',Arial,sans-serif;cursor:pointer}
-button:hover{background:#f4f2ee}
-button:focus-visible{outline:2px solid #3b5bdb;outline-offset:1px}
-button.primary{border-color:#3b5bdb;background:#3b5bdb;color:#fff}
-button.primary:hover{background:#3351c4}
+button{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:6px;height:24px;padding:0 9px;overflow:hidden;border:1px solid #e8e5df;border-bottom:2px solid #d6d2ca;border-radius:5px;background:#fff;color:inherit;font:500 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans',Arial,sans-serif;white-space:nowrap;cursor:pointer;transition:transform .12s,border-color .15s}
+button svg{flex:none;color:#0a66c2}
+button:hover{transform:translateY(-1px);border-bottom-color:#0a66c2}
+button:active{transform:translateY(1px)}
+button:focus-visible{outline:2px solid #0a66c2;outline-offset:2px}
+button.neutral svg{color:#6b665e}
+button.neutral:hover{border-bottom-color:#6b665e}
+button:disabled{cursor:default;transform:none}
+.slash{stroke-dasharray:18}
+button:hover .slash{animation:draw .35s ease}
+@keyframes draw{from{stroke-dashoffset:18}to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media (prefers-color-scheme:dark){
 .panel{border-color:#363431;background:#1e1d1b;color:#eceae6;box-shadow:0 6px 16px -6px rgb(0 0 0 / 50%)}
 p{color:#a9a49b}
 p.error{color:#f2826f}
-button{border-color:#363431;background:#1e1d1b}
-button:hover{background:#292825}
-button:focus-visible{outline-color:#8da2f5}
-button.primary{border-color:#8da2f5;background:#8da2f5;color:#16171c}
-button.primary:hover{background:#a3b4f8}
+button{border-color:#363431;border-bottom-color:#0f0e0d;background:#2a2926}
+button svg{color:#70b5f9}
+button:hover{border-bottom-color:#0a66c2}
+button:focus-visible{outline-color:#70b5f9}
+button.neutral svg{color:#a9a49b}
+button.neutral:hover{border-bottom-color:#a9a49b}
 }`;
+
+const BAN_ICON =
+  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path class="slash" d="m5.7 5.7 12.6 12.6"></path></svg>';
 
 let close: (() => void) | undefined;
 
@@ -64,8 +75,8 @@ export function openBlockConfirmation(
 
   const actions = document.createElement('div');
   actions.className = 'actions';
-  const cancel = actionButton('Cancel', '', dismiss);
-  const confirm = actionButton('Block', 'primary', () => {
+  const cancel = actionButton('Cancel', 'neutral', dismiss);
+  const confirm = actionButton('Block', '', () => {
     error.remove();
     confirm.disabled = true;
     onConfirm().then(dismiss, () => {
@@ -116,7 +127,12 @@ function actionButton(label: string, className: string, onClick: () => void): HT
   const button = document.createElement('button');
   button.type = 'button';
   button.className = className;
-  button.textContent = label;
+  if (label === 'Block') {
+    button.insertAdjacentHTML('beforeend', BAN_ICON);
+  }
+  const text = document.createElement('span');
+  text.textContent = label;
+  button.append(text);
   button.addEventListener('click', onClick);
   return button;
 }
