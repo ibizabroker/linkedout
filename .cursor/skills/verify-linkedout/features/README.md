@@ -42,6 +42,6 @@ Keep implementation details out of the map. Name only user paths, stable handles
 
 - [Hide menu](./hide-menu.md) covers the `Hide from results` switch rows: Applied, Viewed, Saved, and Reposted turning hiding on and off, and the readout and message line above them.
 - [Applicant limit](./applicant-limit.md) covers the `Limit` switch, the slider, and the number box: default off, enabling at 100, sync between the two, and persistence.
-- [Blocked companies](./blocked-companies.md) covers the settings page, opened from `Open settings`: the empty state, seeded rows newest first, unblocking, an unreadable list, and the `Blocked` figure in the popup readout.
-- [Job tracker](./job-tracker.md) covers the `Job tracker` group: Connect Google Sheets, the Connecting state, the Sheet and Status rows, Disconnect, the expired sign-in line, and the hidden group in a build without Google settings.
+- [Blocked companies](./blocked-companies.md) covers the settings page, opened from `Open settings`: the sidebar, search, the empty state, seeded rows newest first, unblocking, an unreadable list, and the `Blocked` figure in the popup readout.
+- [Job tracker](./job-tracker.md) covers the `Job tracker` group and the settings page `Account` pane: Connect Google Sheets, the Connecting state, the Sheet and Status rows, Disconnect, the expired sign-in line, and the hidden group in a build without Google settings.
 - [Extension identity](./extension-identity.md) covers confirming the built extension name and the popup and settings page titles.
