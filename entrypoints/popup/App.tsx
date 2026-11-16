@@ -6,9 +6,8 @@ import {
   type ReactElement,
 } from 'react';
 import { browser, type Browser } from 'wxt/browser';
-import { SettingsIcon } from 'lucide-react';
 import logoUrl from '@/assets/icon.svg';
-import { Button } from '@/components/ui/button';
+import { GearIcon } from '@/components/ui/icons';
 import { Switch } from '@/components/ui/switch';
 import {
   UNREADABLE_CHOICE_TEXT,
@@ -41,8 +40,8 @@ import {
   JobTrackerSection,
   TrackerProblem,
   trackedReadout,
-  useTrackerSession,
 } from './JobTracker';
+import { useTrackerSession } from '@/lib/ui/tracker-session';
 
 export default function App() {
   return <PopupApp />;
@@ -71,22 +70,20 @@ export function PopupApp(): ReactElement {
           <img src={logoUrl} alt="" width={18} height={18} />
           LinkedOut
         </h1>
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          size="icon-sm"
+          className="icon-btn"
           aria-label="Open settings"
-          className="text-muted-foreground"
           onClick={() => {
             void browser.runtime.openOptionsPage();
           }}
         >
-          <SettingsIcon />
-        </Button>
+          <GearIcon />
+        </button>
       </header>
       <Readout
         hidden={report?.kind === 'jobs-list' ? report.hiddenCount : undefined}
-        tracked={trackedReadout(tracker.view)}
+        tracked={trackedReadout(tracker)}
         blocked={blocklist.companies?.length}
       />
       <p
@@ -99,12 +96,12 @@ export function PopupApp(): ReactElement {
       >
         {message.text}
       </p>
-      <TrackerProblem view={tracker.view} act={tracker.act} />
+      <TrackerProblem session={tracker} />
       {model.phase === 'loading' ? null : (
         <>
           <HideRows rows={model.menu} onSetKind={setKind} />
           <ApplicantLimitSection session={limit} />
-          <JobTrackerSection view={tracker.view} act={tracker.act} />
+          <JobTrackerSection session={tracker} />
         </>
       )}
     </main>

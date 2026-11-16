@@ -23,12 +23,21 @@ export function Group(props: {
   );
 }
 
+const ROW_SIZE = {
+  none: 'h-7 pr-3',
+  icon: 'h-7 pr-2.5',
+  text: 'h-8 pr-2.5',
+};
+
 export function Row(props: {
   readonly label: string;
   readonly children: ReactNode;
+  readonly keyed?: 'icon' | 'text';
 }): ReactElement {
   return (
-    <div className="flex h-7 items-center pr-2 pl-3">
+    <div
+      className={`flex items-center pl-3 ${ROW_SIZE[props.keyed ?? 'none']}`}
+    >
       <span className="w-[104px] shrink-0 text-muted-foreground">
         {props.label}
       </span>
