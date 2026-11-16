@@ -1,24 +1,25 @@
 const PANEL_CSS = `
 :host{all:initial}
 *{box-sizing:border-box}
-.panel{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:2147483647;width:min(448px,calc(100vw - 32px));padding:16px;border:1px solid oklch(0.922 0 0);border-radius:10px;background:oklch(1 0 0);color:oklch(0.145 0 0);font:400 14px/1.5 system-ui,sans-serif;box-shadow:0 8px 24px oklch(0 0 0 / 14%);outline:none}
-h2{margin:0;font-size:16px;font-weight:600;letter-spacing:-0.025em}
-p{margin:4px 0 0;color:oklch(0.556 0 0)}
-p.error{color:oklch(0.577 0.245 27.325)}
-.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
-button{height:32px;padding:0 12px;border:1px solid oklch(0.922 0 0);border-radius:10px;background:oklch(1 0 0);color:inherit;font:500 14px/1 system-ui,sans-serif;cursor:pointer}
-button:hover{background:oklch(0.97 0 0)}
-button:focus-visible{outline:3px solid oklch(0.708 0 0 / 50%);outline-offset:0}
-button.primary{border-color:transparent;background:oklch(0.205 0 0);color:oklch(0.985 0 0)}
-button.primary:hover{background:oklch(0.205 0 0 / 80%)}
+.panel{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:2147483647;width:min(448px,calc(100vw - 32px));padding:14px 16px;border:1px solid #e8e5df;border-radius:10px;background:#fdfcfa;color:#23211e;font:400 13px/1.45 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans',Arial,sans-serif;box-shadow:0 6px 16px -6px rgb(35 33 30 / 18%);outline:none}
+h2{margin:0;font-size:14px;font-weight:600}
+p{margin:2px 0 0;color:#6b665e}
+p.error{color:#b42318}
+.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+button{height:26px;padding:0 10px;border:1px solid #e8e5df;border-radius:6px;background:#fdfcfa;color:inherit;font:500 12px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue','Noto Sans',Arial,sans-serif;cursor:pointer}
+button:hover{background:#f4f2ee}
+button:focus-visible{outline:2px solid #3b5bdb;outline-offset:1px}
+button.primary{border-color:#3b5bdb;background:#3b5bdb;color:#fff}
+button.primary:hover{background:#3351c4}
 @media (prefers-color-scheme:dark){
-.panel{border-color:oklch(1 0 0 / 10%);background:oklch(0.205 0 0);color:oklch(0.985 0 0)}
-p{color:oklch(0.708 0 0)}
-p.error{color:oklch(0.704 0.191 22.216)}
-button{border-color:oklch(1 0 0 / 15%);background:oklch(1 0 0 / 5%)}
-button:hover{background:oklch(0.269 0 0)}
-button.primary{background:oklch(0.922 0 0);color:oklch(0.205 0 0)}
-button.primary:hover{background:oklch(0.922 0 0 / 80%)}
+.panel{border-color:#363431;background:#1e1d1b;color:#eceae6;box-shadow:0 6px 16px -6px rgb(0 0 0 / 50%)}
+p{color:#a9a49b}
+p.error{color:#f2826f}
+button{border-color:#363431;background:#1e1d1b}
+button:hover{background:#292825}
+button:focus-visible{outline-color:#8da2f5}
+button.primary{border-color:#8da2f5;background:#8da2f5;color:#16171c}
+button.primary:hover{background:#a3b4f8}
 }`;
 
 let close: (() => void) | undefined;
@@ -54,7 +55,7 @@ export function openBlockConfirmation(
 
   const body = document.createElement('p');
   body.textContent =
-    'Their jobs will be hidden from your results. You can unblock them anytime in the LinkedOut popup.';
+    'Their jobs will be hidden from your results. You can unblock them anytime in LinkedOut settings.';
 
   const error = document.createElement('p');
   error.className = 'error';
