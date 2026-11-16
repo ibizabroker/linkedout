@@ -133,7 +133,7 @@ function SearchWell(props: {
         onChange={(event) => {
           props.onQuery(event.target.value);
         }}
-        className="min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden"
+        className="min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:appearance-none"
       />
       <kbd
         aria-hidden="true"
