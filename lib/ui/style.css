@@ -110,6 +110,10 @@
     scrollbar-color: var(--border) transparent;
   }
 
+  .settings {
+    font-size: 0.9375rem;
+  }
+
   ::selection {
     background: var(--foreground);
     color: var(--background);
@@ -170,6 +174,15 @@
   }
   .ink-key[data-icon-only] {
     width: 24px;
+    padding: 0;
+  }
+  .settings .ink-key {
+    height: 30px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+  .settings .ink-key[data-icon-only] {
+    width: 30px;
     padding: 0;
   }
   .ink-key[data-icon-only] svg {

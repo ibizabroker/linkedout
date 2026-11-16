@@ -66,7 +66,7 @@ export function openBlockConfirmation(
 
   const body = document.createElement('p');
   body.textContent =
-    'Their jobs will be hidden from your results. You can unblock them anytime in LinkedOut settings.';
+    'Their jobs will be hidden from your results. You can unblock them anytime in LinkedOut Settings.';
 
   const error = document.createElement('p');
   error.className = 'error';

@@ -35,14 +35,14 @@ export default function App(): ReactElement {
   const pane = paneFromHash(useHash(), accountAvailable);
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-[760px]">
+    <div className="settings flex min-h-screen">
       <nav
         aria-label="Settings"
-        className="flex w-[188px] flex-none flex-col gap-[3px] border-r border-border px-2.5 py-4"
+        className="sticky top-0 flex h-screen w-[248px] flex-none flex-col gap-1 border-r border-border p-4"
       >
-        <div className="flex items-center gap-2 px-[9px] pb-3 font-semibold">
-          <img src={logoUrl} alt="" width={18} height={18} />
-          LinkedOut settings
+        <div className="flex items-center gap-2.5 px-3 pt-1 pb-4 text-base font-semibold">
+          <img src={logoUrl} alt="" width={22} height={22} />
+          LinkedOut Settings
         </div>
         <NavItem
           href="#blocked"
@@ -60,7 +60,7 @@ export default function App(): ReactElement {
           />
         ) : null}
       </nav>
-      <main className="flex min-w-0 flex-1 flex-col px-7 pt-5 pb-6">
+      <main className="flex h-screen min-w-0 max-w-[760px] flex-1 flex-col pt-9 pr-10 pb-8 pl-14">
         {pane === 'account' ? (
           <AccountPane session={tracker} />
         ) : (
@@ -86,12 +86,12 @@ function NavItem(props: {
     <a
       href={props.href}
       aria-current={props.current ? 'page' : undefined}
-      className={`flex h-[31px] items-center gap-2 rounded-md border border-b-2 px-[9px] outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background ${props.current ? 'border-border border-b-key-edge bg-key font-semibold' : 'border-transparent hover:bg-muted'}`}
+      className={`flex h-9 items-center gap-2 rounded-md border border-b-2 px-3 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background ${props.current ? 'border-border border-b-key-edge bg-key font-semibold' : 'border-transparent hover:bg-muted'}`}
     >
       <span className="flex-1">{props.label}</span>
       {props.aside === undefined ? null : (
         <span
-          className={`text-xs font-normal tabular-nums ${props.alert === true ? 'text-destructive' : 'text-muted-foreground'}`}
+          className={`text-[13px] font-normal tabular-nums ${props.alert === true ? 'text-destructive' : 'text-muted-foreground'}`}
         >
           {props.aside}
         </span>

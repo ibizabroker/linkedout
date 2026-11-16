@@ -72,7 +72,7 @@ export function BlockedCompanyList(props: {
       {shown.map(({ name }) => (
         <li
           key={name}
-          className="flex h-8 items-center gap-2 border-b border-border"
+          className="flex h-11 items-center gap-2 border-b border-border"
         >
           <span className="flex-1 truncate">{name}</span>
           <button
@@ -122,7 +122,7 @@ function SearchWell(props: {
     };
   }, []);
   return (
-    <label className="mb-2.5 flex h-8 flex-none items-center gap-2 rounded-md bg-well pr-1.5 pl-2.5 text-muted-foreground shadow-[inset_0_1px_2px_rgb(0_0_0/0.08)] focus-within:ring-2 focus-within:ring-ring">
+    <label className="mb-4 flex h-10 flex-none items-center gap-2.5 rounded-md bg-well pr-2 pl-3 text-muted-foreground shadow-[inset_0_1px_2px_rgb(0_0_0/0.08)] focus-within:ring-2 focus-within:ring-ring">
       <SearchIcon />
       <input
         ref={input}
@@ -154,8 +154,8 @@ export function BlockedCompaniesPane(props: {
   const { companies } = props;
   return (
     <>
-      <h1 className="text-[0.9375rem] font-semibold">Blocked companies</h1>
-      <p className="mb-3 text-muted-foreground">
+      <h1 className="text-xl font-semibold">Blocked companies</h1>
+      <p className="mt-1 mb-5 text-muted-foreground">
         Their jobs are hidden from results. Block more from a job card or the
         job details.
       </p>

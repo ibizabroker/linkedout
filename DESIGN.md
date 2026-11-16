@@ -158,7 +158,7 @@ The platform's own UI font at 13px. No font is bundled.
 
 ### Named Rules
 
-**The Label Column Rule.** Every row's label sits in a fixed column in Pencil (104px in the popup, 120px on the settings page), so values line up and read as a list.
+**The Label Column Rule.** Every row's label sits in a fixed column in Pencil (104px in the popup, 150px on the settings page), so values line up and read as a list.
 
 **The Sentence Case Rule.** Labels and buttons are sentence case. Nothing is uppercase or letter-spaced.
 
@@ -178,11 +178,11 @@ Top to bottom:
 
 Height follows content.
 
-The settings page is a separate tab: a centred frame about 760px wide, with a sidebar on the left and the selected pane on the right.
+The settings page is a separate tab, sized for reading rather than glancing: 15px body text and 20px pane titles. A 248px sidebar runs the full height of the tab's left edge with 16px padding on both sides, and the selected pane sits 56px to its right, capped near 760px.
 
 ## Elevation & Depth
 
-Flat. Structure comes from hairlines and the label column, never from shadows. Keys get their depth from the heavier bottom edge, not a shadow. The search well is sunken with a 1px inner shadow. The only lifted surface is the on-page Block panel, which floats over LinkedIn and needs a soft shadow to separate from the page.
+Flat. Structure comes from hairlines and the label column, never from shadows. Keys are 24px tall in the popup and 30px with 13px labels on the settings page. Keys get their depth from the heavier bottom edge, not a shadow. The search well is sunken with a 1px inner shadow. The only lifted surface is the on-page Block panel, which floats over LinkedIn and needs a soft shadow to separate from the page.
 
 ## Shapes
 
@@ -255,9 +255,9 @@ Disconnect is not in the popup. It lives in the settings page's Account pane.
 
 A sidebar and one pane.
 
-- **Sidebar.** The logo and `LinkedOut settings`, then two items: `Blocked companies` with its count, and `Account` with `On`, `Off`, or `Needs you` in Failure Red. The selected item is drawn as a raised key. Account is left out in a build without Google settings.
-- **Blocked companies.** A title, one line of guidance in Pencil, a sunken search well with a search icon and a `/` key hint (pressing `/` focuses it), then one 32px row per matching company, divided by hairlines: the name and an × icon button named `Unblock <Company>`. Unblocking is immediate. A search with no match reads `No blocked company matches "<text>".` The empty list reads "No blocked companies. Block one from a job card or the job details." A failed unblock shows one Failure Red line under the title and keeps the row. An unreadable list shows "Could not load blocked companies." and no rows.
-- **Account.** A title and one line of guidance, then 38px rows with a 120px label column: `Google account` with the account and a neutral `Disconnect` key (and `Reconnect` before it when sign-in has expired), `Sheet` with its name and the Open sheet key, and `Jobs added` with the count. Not connected, the pane holds the `Google account` row with `Connect Google Sheets` at its right end. A Pencil line under the rows says what disconnecting does.
+- **Sidebar.** The logo and `LinkedOut Settings` (the product's name for the page, so it is title case), then two items: `Blocked companies` with its count, and `Account` with `On`, `Off`, or `Needs you` in Failure Red. The selected item is drawn as a raised key. Account is left out in a build without Google settings.
+- **Blocked companies.** A title, one line of guidance in Pencil, a sunken search well with a search icon and a `/` key hint (pressing `/` focuses it), then one 44px row per matching company, divided by hairlines: the name and an × icon button named `Unblock <Company>`. Unblocking is immediate. A search with no match reads `No blocked company matches "<text>".` The empty list reads "No blocked companies. Block one from a job card or the job details." A failed unblock shows one Failure Red line under the title and keeps the row. An unreadable list shows "Could not load blocked companies." and no rows.
+- **Account.** A title and one line of guidance, then 48px rows with a 150px label column: `Google account` with the account and a neutral `Disconnect` key (and `Reconnect` before it when sign-in has expired), `Sheet` with its name and the Open sheet key, and `Jobs added` with the count. Not connected, the pane holds the `Google account` row with `Connect Google Sheets` at its right end. A Pencil line under the rows says what disconnecting does.
 
 ### Block Control and Confirmation Panel
 

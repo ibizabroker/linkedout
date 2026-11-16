@@ -19,8 +19,8 @@ export function AccountPane(props: {
   const { view } = session;
   return (
     <>
-      <h1 className="text-[0.9375rem] font-semibold">Account</h1>
-      <p className="mb-3 text-muted-foreground">
+      <h1 className="text-xl font-semibold">Account</h1>
+      <p className="mt-1 mb-5 text-muted-foreground">
         Connect Google Sheets to add each job you open to a sheet in your Drive.
       </p>
       <div className="border-t border-border">
@@ -43,7 +43,7 @@ export function AccountPane(props: {
         view.kind === 'connected' ||
         view.kind === 'missing' ? (
           view.error === undefined ? null : (
-            <p role="alert" className="pt-2.5 text-destructive">
+            <p role="alert" className="pt-4 text-destructive">
               {view.error}
             </p>
           )
@@ -106,8 +106,8 @@ function AccountRow(props: {
   readonly children: ReactNode;
 }): ReactElement {
   return (
-    <div className="flex h-[38px] items-center gap-2 border-b border-border">
-      <span className="w-[120px] shrink-0 text-muted-foreground">
+    <div className="flex h-12 items-center gap-3 border-b border-border">
+      <span className="w-[150px] shrink-0 text-muted-foreground">
         {props.label}
       </span>
       {props.children}
@@ -116,5 +116,5 @@ function AccountRow(props: {
 }
 
 function Note(props: { readonly children: ReactNode }): ReactElement {
-  return <p className="pt-2.5 text-muted-foreground">{props.children}</p>;
+  return <p className="pt-4 text-muted-foreground">{props.children}</p>;
 }
