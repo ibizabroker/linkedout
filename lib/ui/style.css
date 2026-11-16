@@ -23,6 +23,12 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-accent-text: var(--accent-text);
+  --color-tint: var(--tint);
+  --color-key: var(--key);
+  --color-key-edge: var(--key-edge);
+  --color-well: var(--well);
+  --color-knob: var(--knob);
   --radius-sm: 4px;
   --radius-md: var(--radius);
   --radius-lg: var(--radius);
@@ -37,7 +43,7 @@
   --card-foreground: #23211e;
   --popover: #fdfcfa;
   --popover-foreground: #23211e;
-  --primary: #3b5bdb;
+  --primary: #0a66c2;
   --primary-foreground: #ffffff;
   --secondary: #f4f2ee;
   --secondary-foreground: #23211e;
@@ -48,7 +54,13 @@
   --destructive: #b42318;
   --border: #e8e5df;
   --input: #d6d2ca;
-  --ring: #3b5bdb;
+  --ring: #0a66c2;
+  --accent-text: #0a66c2;
+  --tint: #e6f0fa;
+  --key: #ffffff;
+  --key-edge: #d6d2ca;
+  --well: #f4f2ee;
+  --knob: #ffffff;
   color-scheme: light;
 }
 
@@ -60,8 +72,8 @@
     --card-foreground: #eceae6;
     --popover: #1e1d1b;
     --popover-foreground: #eceae6;
-    --primary: #8da2f5;
-    --primary-foreground: #16171c;
+    --primary: #0a66c2;
+    --primary-foreground: #ffffff;
     --secondary: #292825;
     --secondary-foreground: #eceae6;
     --muted: #292825;
@@ -71,7 +83,13 @@
     --destructive: #f2826f;
     --border: #363431;
     --input: #4c4945;
-    --ring: #8da2f5;
+    --ring: #70b5f9;
+    --accent-text: #70b5f9;
+    --tint: #16304a;
+    --key: #2a2926;
+    --key-edge: #0f0e0d;
+    --well: #171614;
+    --knob: #eceae6;
     color-scheme: dark;
   }
 }
@@ -95,6 +113,209 @@
   ::selection {
     background: var(--foreground);
     color: var(--background);
+  }
+}
+
+@layer components {
+  .ink-key {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 24px;
+    padding: 0 9px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-bottom: 2px solid var(--key-edge);
+    border-radius: 5px;
+    background: var(--key);
+    color: var(--foreground);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    outline: none;
+    transition:
+      transform 0.12s,
+      border-color 0.15s;
+  }
+  .ink-key > span,
+  .ink-key > svg {
+    position: relative;
+  }
+  .ink-key svg {
+    flex: none;
+    color: var(--accent-text);
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .ink-key[data-tone='neutral'] svg {
+    color: var(--muted-foreground);
+  }
+  .ink-key:hover {
+    transform: translateY(-1px);
+    border-bottom-color: var(--primary);
+  }
+  .ink-key[data-tone='neutral']:hover {
+    border-bottom-color: var(--muted-foreground);
+  }
+  .ink-key:active {
+    transform: translateY(1px);
+  }
+  .ink-key:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  .ink-key[data-icon-only] {
+    width: 24px;
+    padding: 0;
+  }
+  .ink-key[data-icon-only] svg {
+    color: var(--muted-foreground);
+  }
+  .ink-key[data-icon-only]:hover svg {
+    color: var(--accent-text);
+  }
+  .ink-key[data-busy] {
+    cursor: default;
+    transform: none;
+    border-bottom-color: var(--primary);
+  }
+  .ink-key[data-busy]::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--tint);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: ink-key-fill 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  @keyframes ink-key-fill {
+    to {
+      transform: scaleX(0.9);
+    }
+  }
+
+  .icon-btn {
+    display: grid;
+    flex: none;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    outline: none;
+    transition:
+      background 0.15s,
+      color 0.15s,
+      transform 0.1s;
+  }
+  .icon-btn:hover {
+    background: var(--muted);
+    color: var(--foreground);
+  }
+  .icon-btn:active {
+    transform: scale(0.9);
+  }
+  .icon-btn:focus-visible {
+    outline: 2px solid var(--ring);
+  }
+  .icon-btn svg {
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .icon-btn:hover .i-spin-quarter {
+    transform: rotate(90deg);
+  }
+
+  .ink-key:hover .i-ext {
+    transform: translate(1.5px, -1.5px);
+  }
+  .ink-key:hover .i-plus {
+    transform: rotate(90deg);
+  }
+  .ink-key[data-busy] .i-plus {
+    animation: ink-key-spin 0.8s linear infinite;
+  }
+  .i-link g,
+  .i-unlink g {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .i-link .bar,
+  .i-unlink .bar {
+    stroke-dasharray: 8;
+    transition: stroke-dashoffset 0.3s ease;
+  }
+  .i-link .left {
+    transform: translateX(-1.5px);
+  }
+  .i-link .right {
+    transform: translateX(1.5px);
+  }
+  .i-link .bar {
+    stroke-dashoffset: 8;
+  }
+  .ink-key:hover .i-link .left,
+  .ink-key:hover .i-link .right,
+  .ink-key[data-busy] .i-link .left,
+  .ink-key[data-busy] .i-link .right {
+    transform: none;
+  }
+  .ink-key:hover .i-link .bar,
+  .ink-key[data-busy] .i-link .bar {
+    stroke-dashoffset: 0;
+  }
+  .ink-key[data-busy] .i-link .bar {
+    animation: ink-key-throb 0.5s ease-in-out infinite alternate;
+  }
+  .i-unlink .breaks {
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .ink-key:hover .i-unlink .left,
+  .ink-key[data-busy] .i-unlink .left {
+    transform: translateX(-2px);
+  }
+  .ink-key:hover .i-unlink .right,
+  .ink-key[data-busy] .i-unlink .right {
+    transform: translateX(2px);
+  }
+  .ink-key:hover .i-unlink .bar,
+  .ink-key[data-busy] .i-unlink .bar {
+    stroke-dashoffset: 8;
+  }
+  .ink-key:hover .i-unlink .breaks {
+    opacity: 1;
+  }
+  .ink-key[data-busy] .i-unlink .breaks {
+    opacity: 1;
+    animation: ink-key-throb 0.4s ease-in-out infinite alternate;
+  }
+  .i-ban .slash {
+    stroke-dasharray: 18;
+  }
+  .ink-key:hover .i-ban .slash {
+    animation: ink-key-draw 0.35s ease;
+  }
+  @keyframes ink-key-draw {
+    from {
+      stroke-dashoffset: 18;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @keyframes ink-key-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes ink-key-throb {
+    to {
+      opacity: 0.35;
+    }
   }
 }
 
