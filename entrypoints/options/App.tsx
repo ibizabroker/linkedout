@@ -38,7 +38,7 @@ export default function App(): ReactElement {
     <div className="settings flex min-h-screen">
       <nav
         aria-label="Settings"
-        className="sticky top-0 flex h-screen w-[248px] flex-none flex-col gap-1 border-r border-border p-4"
+        className="sticky top-0 flex h-screen w-[280px] flex-none flex-col gap-1 border-r border-border p-4"
       >
         <div className="flex items-center gap-2.5 px-3 pt-1 pb-4 text-base font-semibold">
           <img src={logoUrl} alt="" width={22} height={22} />
