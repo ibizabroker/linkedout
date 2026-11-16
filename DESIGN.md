@@ -1,95 +1,68 @@
 ---
 name: LinkedOut
-description: A neutral shadcn popup that sets which job cards disappear and reads back what this list did.
+description: A ledger-style popup that reads like a short document of what LinkedOut is doing, with colour reserved for what is switched on.
 colors:
-  background: 'oklch(1 0 0)'
-  foreground: 'oklch(0.145 0 0)'
-  popover: 'oklch(1 0 0)'
-  popover-foreground: 'oklch(0.145 0 0)'
-  muted: 'oklch(0.97 0 0)'
-  muted-foreground: 'oklch(0.556 0 0)'
-  accent: 'oklch(0.97 0 0)'
-  accent-foreground: 'oklch(0.205 0 0)'
-  border: 'oklch(0.922 0 0)'
-  ring: 'oklch(0.708 0 0)'
-  destructive: 'oklch(0.577 0.245 27.325)'
-  background-dark: 'oklch(0.145 0 0)'
-  foreground-dark: 'oklch(0.985 0 0)'
-  popover-dark: 'oklch(0.205 0 0)'
-  popover-foreground-dark: 'oklch(0.985 0 0)'
-  muted-dark: 'oklch(0.269 0 0)'
-  muted-foreground-dark: 'oklch(0.708 0 0)'
-  accent-dark: 'oklch(0.269 0 0)'
-  accent-foreground-dark: 'oklch(0.985 0 0)'
-  border-dark: 'oklch(1 0 0 / 10%)'
-  input-dark: 'oklch(1 0 0 / 15%)'
-  ring-dark: 'oklch(0.556 0 0)'
-  destructive-dark: 'oklch(0.704 0.191 22.216)'
+  background: '#FDFCFA'
+  foreground: '#23211E'
+  muted: '#F4F2EE'
+  muted-foreground: '#6B665E'
+  border: '#E8E5DF'
+  input: '#D6D2CA'
+  primary: '#3B5BDB'
+  primary-foreground: '#FFFFFF'
+  ring: '#3B5BDB'
+  destructive: '#B42318'
+  background-dark: '#1E1D1B'
+  foreground-dark: '#ECEAE6'
+  muted-dark: '#292825'
+  muted-foreground-dark: '#A9A49B'
+  border-dark: '#363431'
+  input-dark: '#4C4945'
+  primary-dark: '#8DA2F5'
+  primary-foreground-dark: '#16171C'
+  ring-dark: '#8DA2F5'
+  destructive-dark: '#F2826F'
 typography:
-  title:
-    fontSize: '1rem'
+  name:
+    fontSize: '0.875rem'
     fontWeight: 600
-    lineHeight: 1.5
-    letterSpacing: '-0.025em'
+    lineHeight: 1.45
   body:
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif"
-    fontSize: '0.875rem'
+    fontSize: '0.8125rem'
     fontWeight: 400
-    lineHeight: '1.25rem'
-  label:
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif"
-    fontSize: '0.875rem'
-    fontWeight: 500
-    lineHeight: '1.25rem'
+    lineHeight: 1.45
+  group:
+    fontSize: '0.75rem'
+    fontWeight: 400
+    lineHeight: 1.45
+  figure:
+    fontSize: '0.8125rem'
+    fontWeight: 600
+    fontVariantNumeric: tabular-nums
 rounded:
-  md: '0.5rem'
-  lg: '0.625rem'
+  control: '6px'
+  surface: '10px'
 spacing:
-  stack-gap: '0.25rem'
-  field-gap: '0.375rem'
-  panel: '1rem'
-  section: '1.25rem'
+  inset: '12px'
+  row: '28px'
+  label-column: '104px'
 components:
-  hide-trigger:
-    backgroundColor: '{colors.background}'
-    textColor: '{colors.foreground}'
-    typography: '{typography.body}'
-    rounded: '{rounded.lg}'
-    padding: '0 0.5rem 0 0.625rem'
-    height: '2.25rem'
-    width: '100%'
-  hide-trigger-hover:
+  row:
+    height: '28px'
+    padding: '0 12px'
+    rounded: '{rounded.control}'
+  row-hover:
     backgroundColor: '{colors.muted}'
-    textColor: '{colors.foreground}'
-  hide-trigger-open:
-    backgroundColor: '{colors.muted}'
-    textColor: '{colors.foreground}'
-  hide-menu:
-    backgroundColor: '{colors.popover}'
-    textColor: '{colors.popover-foreground}'
-    rounded: '{rounded.lg}'
-    padding: '0.25rem'
-    width: '100%'
-  hide-menu-row:
-    textColor: '{colors.popover-foreground}'
-    typography: '{typography.body}'
-    rounded: '{rounded.md}'
-    padding: '0.25rem 2rem 0.25rem 7px'
-    height: '1.75rem'
-  hide-menu-row-focus:
-    backgroundColor: '{colors.accent}'
-    textColor: '{colors.accent-foreground}'
-  field-label:
-    textColor: '{colors.foreground}'
-    typography: '{typography.label}'
-  status-plain:
-    textColor: '{colors.foreground}'
-    typography: '{typography.body}'
-  status-muted:
-    textColor: '{colors.muted-foreground}'
-    typography: '{typography.body}'
-  status-failure:
-    textColor: '{colors.destructive}'
+  switch-off:
+    backgroundColor: '{colors.input}'
+    size: '26px × 16px'
+  switch-on:
+    backgroundColor: '{colors.primary}'
+  small-button:
+    height: '26px'
+    padding: '0 10px'
+    rounded: '{rounded.control}'
     typography: '{typography.body}'
 ---
 
@@ -97,181 +70,160 @@ components:
 
 ## Overview
 
-**Creative North Star: "The Single Readout"**
+**Creative North Star: "The Ledger"**
 
-LinkedOut is stock shadcn on the neutral base, used at its smallest honest size: a name, one line of status, and one control. The world is the user's pinned choice. The popup does not decorate that world; it holds to its tokens and lets the status line carry all the meaning a glance needs.
+The popup is a short ledger of what LinkedOut is doing on this page. It is read top to bottom like a document: a line of figures, then a few groups of rows, each row a muted label on the left and its current value on the right. Nothing looks like a form until the pointer reaches it.
 
-Density is that of a browser extension popup, opened for a few seconds in the middle of a job search. Hierarchy comes from weight and tone, not from scale or color. Chroma appears only when something has failed, so red always means the same thing.
+It is opened for a few seconds in the middle of a job search, so it is dense and quiet. Warm paper neutrals carry the structure. Indigo appears only where something is switched on, and red only where something has failed. A seeker can tell what is on from across the screen without reading a word.
+
+LinkedOut sits on top of LinkedIn and must never look like part of it. It avoids LinkedIn's blue, its pill buttons, its type and its card-and-shadow feed.
 
 **Key Characteristics:**
 
-- Achromatic shadcn neutrals, with the destructive red as the only hue.
-- One status line that changes tone, never a second message surface.
-- A 20rem panel with a height floor that reserves room for the portalled menu.
-- Flat at rest. Only the open menu lifts.
-- Light and dark follow the operating system, with no in-product switch.
+- One column, 352px wide, 12px inset.
+- A readout of up to three figures under the name.
+- Label-and-value rows, 28px tall, borderless until hover.
+- Hairline dividers between groups, no shadows in the popup.
+- Indigo means on. Red means failed. Nothing else has hue.
+- Light and dark follow the operating system.
 
 ## Colors
 
-A strictly achromatic palette, zero chroma on every neutral, with one red held back for failure. Values live in `entrypoints/popup/style.css` as shadcn custom properties under the same names; the `-dark` keys above are what those names resolve to under `prefers-color-scheme: dark`.
+Warm, low-chroma paper neutrals with one indigo and one red. Values live as shadcn custom properties in each page's stylesheet, under the names in the front matter. The `-dark` keys are what those names resolve to under `prefers-color-scheme: dark`.
 
 ### Neutral
 
-- **Sheet White / Night Sheet** (`background`, `background-dark`): The panel behind everything, and the trigger's face in light.
-- **Ink / Paper Ink** (`foreground`, `foreground-dark`): The name, field label, trigger text, and the plain status tone.
-- **Faded Ink** (`muted-foreground`, `muted-foreground-dark`): Idle status guidance and the trigger's chevron.
-- **Soft Gray / Raised Gray** (`muted`, `muted-dark`): The trigger when hovered or open.
-- **Menu Sheet** (`popover`, `popover-foreground` and their `-dark` keys): The open menu. Identical to the panel in light, one tonal step up in dark.
-- **Row Highlight** (`accent`, `accent-foreground` and their `-dark` keys): The focused menu row.
-- **Hairline** (`border`, `border-dark`): The trigger's outline in light, and the scrollbar thumb in both schemes.
-- **Field Wash** (`input-dark`): Dark only. The trigger's outline at full strength, its face at 30%, its hover at 50%.
-- **Focus Gray** (`ring`, `ring-dark`): The focus border, and at 50% the 3px focus ring.
+- **Paper / Night Paper** (`background`): The page behind everything.
+- **Ink / Night Ink** (`foreground`): The name, row values, figures.
+- **Pencil** (`muted-foreground`): Row labels, group labels, idle messages. 5.5:1 on Paper, 6.9:1 on Night Paper.
+- **Wash** (`muted`): A row or icon button under the pointer.
+- **Rule** (`border`): Hairline dividers between groups, the outline of small buttons and the number box.
+- **Off Track** (`input`): A switch that is off.
+
+### Accent
+
+- **Indigo** (`primary`, `ring`): A switch that is on, the filled part of the slider, the primary button, and the focus ring. Light `#3B5BDB` passes AA as text and behind white text; dark `#8DA2F5` is used behind dark ink. It is deliberately not LinkedIn's blue.
 
 ### Semantic
 
-- **Failure Red** (`destructive`, `destructive-dark`): Status text when a read, a page check, or a save has failed. Computed 4.76:1 on the light panel and 6.84:1 on the dark one.
+- **Failure Red** (`destructive`): Any failure: the message line, the tracker's expired sign-in, a failed unblock.
 
 ### Named Rules
 
-**The Three Tones Rule.** The status line has exactly three tones. Plain ink states what this list is doing. Faded ink is idle guidance when there is no list to act on. Failure red is any failure. There is no success color; a working list reads in plain ink.
+**The On Rule.** Indigo marks state, not decoration. If something is indigo, it is switched on, it is the action that fixes a problem, or it has focus.
 
-**The Red Means Failed Rule.** Failure Red is the only chroma on the surface. If a popup element has hue and nothing has failed, it is wrong.
+**The Red Means Failed Rule.** Red is only for something that failed. There is no success colour; a list that is working reads in plain ink.
 
-**The Follow the System Rule.** `prefers-color-scheme` alone selects the scheme, for the tokens, for the `dark:` variant, and for the native `color-scheme`. There is no class toggle and no in-product switch.
+**The Follow the System Rule.** `prefers-color-scheme` alone picks light or dark. There is no in-product switch.
 
 ## Typography
 
-**Body Font:** The Tailwind default sans stack, the platform's own UI face. No font is bundled.
-
-**Character:** Plain interface text that sits comfortably beside the browser's own chrome. It carries controls and status; it is not a chosen voice.
+The platform's own UI font at 13px. No font is bundled.
 
 ### Hierarchy
 
-- **Title** (600, 1rem, 1.5, tracking -0.025em): The product name, once, as the panel's only heading. It currently inherits the UI stack; that is a carried condition, not a display-face decision, and no family is recorded for this role.
-- **Body** (400, 0.875rem, 1.25rem): The status line, trigger text, and menu rows. The trigger sets weight 400 explicitly, overriding the button's default 500, so it reads as a value and not as an action.
-- **Label** (500, 0.875rem, 1.25rem): The field label above a control.
+- **Name** (600, 14px): "LinkedOut" in the header, once.
+- **Body** (400, 13px): Row values, messages, buttons.
+- **Group** (400, 12px, Pencil): The small label above each group of rows.
+- **Figure** (600, 13px, tabular): The numbers in the readout, so they do not shift as they change.
 
 ### Named Rules
 
-**The Weight Not Size Rule.** The panel uses two sizes, 1rem and 0.875rem. Everything else in the hierarchy is weight and tone.
+**The Label Column Rule.** Every row's label sits in a 104px column in Pencil, so values line up down the popup and read as a list.
 
-**The Field Label Rule.** A label names the control directly beneath it, in sentence case, because the control's value alone would have no verb. It never sits above a heading, and it is never uppercase or tracked out.
+**The Sentence Case Rule.** Labels and buttons are sentence case. Nothing is uppercase or letter-spaced.
 
 ## Layout
 
-The panel is one column, 20rem wide on `html`, `body`, and the root, with 1rem inline padding, leaving an 18rem measure. Top padding is 1.25rem and bottom padding 1rem. The name and status stack 0.25rem apart; 1.25rem separates that block from the field; the field label sits 0.375rem above its trigger. The Blocked Companies section follows the field 1.25rem below the trigger, and its list sits 0.375rem below its header.
+The popup is one column, 352px wide. The header and readout use a 12px inset; group rows span the full width with 12px inner padding, so their hover wash reaches the edges.
 
-Width is fixed. Height is a floor: `body` carries a 16.5rem `min-height`, and content may push past it. The status line keeps a 1.25rem minimum height, so an empty line while the page report is pending does not move the field below it.
+Top to bottom:
 
-There are no breakpoints. The popup has one width.
+1. **Header.** The logo mark at 18px, the name, and a settings icon button at the far right.
+2. **Readout.** One line of up to three figures with labels: Hidden here, Tracked, Blocked.
+3. **Message line.** Shown only when there is something to say, under a hairline.
+4. **Tracker problem.** Shown only when Google sign-in has expired or the sheet is missing, with the one action that fixes it.
+5. **Hide from results.** Four rows, one per status.
+6. **Applicant count.** The limit row and the slider row.
+7. **Job tracker.** The sheet rows, or the connect row.
 
-### Named Rules
+Height follows content. There is no height floor, because nothing in the popup opens outside its own flow.
 
-**The Reserved Room Rule.** The menu is portalled, so it adds nothing to the document's height, and a popup window sized to its content would clip it. The body's height floor exists to hold the open menu. The closed content ends at 10.375rem including bottom padding; the trigger's bottom edge is at 9.375rem, and the menu begins 0.25rem below it. A menu of n rows ends at 9.625rem + 0.5rem + (n × 1.75rem). The 16.5rem floor holds three rows and leaves 1.125rem below the menu. The Blocked Companies section is in the panel's flow below the trigger, so the open menu covers it and does not move. With the section expanded and empty, the content ends just inside the 16.5rem floor, so the floor still sets the popup height. A longer list grows the panel past the floor, which only adds room below the menu. Below 15.375rem the menu flips above the trigger and covers the status line and label. When a row is added, raise the floor by 1.75rem.
-
-**The Shared Edge Rule.** Menu rows align to the trigger above them. Row text starts 11px from the shared left edge, as the trigger's text does (trigger: 1px border + 10px padding; row: 4px menu padding + 7px). The check centers on the trigger's chevron, both 16px and both ending 9px from the right edge (trigger: 1px + 8px; row: 4px + 5px). The menu takes the trigger's exact width. Those offsets are set where the menu is used, not in the vendored component.
+The settings page is a separate tab: a 560px column, centred, with the same tokens and row style.
 
 ## Elevation & Depth
 
-Flat by default. The panel and trigger have no shadow; the trigger's edge is a hairline. The open menu is the only raised element: a soft shadow plus a hairline ring in ink at 10%, drawn inside the menu's edge. In dark, where a shadow barely reads, the same menu separates by its one-step lighter sheet.
-
-### Shadow Vocabulary
-
-- **Menu Lift** (`box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)`): The open dropdown only.
-
-### Named Rules
-
-**The One Lift Rule.** Only what floats over the panel lifts. Anything in the panel's own flow stays flat.
+Flat. Structure comes from hairlines and the label column, never from shadows. The only lifted surface is the on-page Block panel, which floats over LinkedIn and needs a soft shadow to separate from the page.
 
 ## Shapes
 
-Gently rounded and consistent: 0.625rem on the outer forms, the trigger and the menu, and 0.5rem on the rows nested inside the menu. Everything derives from the single `--radius` custom property. Edges are 1px hairlines. There are no pills, no sharp corners, and no clipped silhouettes. Icons are Lucide line icons at 16px.
+6px corners on controls (rows, buttons, the number box), 10px on surfaces (the Block panel). Switches and the slider thumb are fully round. Icons are Lucide line icons at 16px.
 
 ## Components
 
-### Hide Field
+### Header
 
-A label and a full-width dropdown trigger, quiet enough to read as a current value.
+The logo mark, `LinkedOut` in Name type, and a 28px ghost icon button with the Lucide `Settings` icon, named `Open settings`, which opens the settings page.
 
-- **Shape:** Softly rounded (0.625rem), 2.25rem tall, full width.
-- **Trigger:** Outline button at large size with its text at weight 400, left aligned, and the chevron pushed to the far end in Faded Ink. The text is the selected statuses joined by commas, or "Nothing hidden".
-- **Hover / Open:** Face moves to Soft Gray. Open also turns the chevron 180° over 150ms. Dark uses the Field Wash at 30%, and 50% on hover.
-- **Focus:** Border moves to Focus Gray with a 3px ring at 50%.
-- **Press:** The trigger does not take the button's 1px press nudge, because it opens a menu.
+### Readout
 
-### Hide Menu
+One line: `Hidden here 12   Tracked 38   Blocked 7`. Labels in Pencil, figures in Figure type, 14px apart.
 
-Each status is a checkable row in one menu; the checkbox is the action.
+- **Hidden here** is the count of cards hidden on the current Jobs list. It reads `–` when there is no Jobs list or the page check failed.
+- **Tracked** is the number of jobs added to the sheet, followed by `· N waiting` in Pencil when rows are waiting. It is left out when the tracker is not connected or not in the build.
+- **Blocked** is the number of blocked companies. It is left out when the list cannot be read.
 
-- **Shape:** Softly rounded sheet (0.625rem) with 0.25rem padding, exactly the trigger's width, 0.25rem below it. Rows are 1.75rem tall, softly rounded (0.5rem), and stack flush.
-- **Rows:** Body type, with a 16px check at the row's end when selected and blank space when not. Row alignment follows the Shared Edge Rule.
-- **Focus:** Row Highlight fills the row, and its text and check follow.
-- **Behavior:** Non-modal. Toggling a row keeps the menu open, so several statuses can be set in one visit, and the trigger text and status line update behind it.
-- **Motion:** Opens in 100ms with a fade, a 95% zoom, and a slide from the trigger's side.
+### Message Line
 
-### Applicant Limit
+One line under a hairline, only when needed. Pencil for guidance and pauses ("Open a Jobs search to hide cards", "Reposted check paused by LinkedIn limits"). Failure Red for failures, each saying what failed and then how to recover ("Could not check this list. Reload the tab."). Failures take precedence in this order: a failed save, an unreadable blocklist, an unreadable hide choice, a failed page check. It is a live status region.
 
-A section below the Hide Field that hides jobs with more applicants than a chosen number.
+### Setting Row
 
-- **Layout:** Starts 1.25rem below the Hide Field, like the other sections. A row with a 16px checkbox and the label `Hide by applicant count` in Label type (weight 500), then 0.5rem below it a row with the slider filling the width and a number box, 4rem wide and 2rem tall, right aligned with tabular digits, 0.75rem apart.
-- **Off:** The default. The slider and the number box are disabled at 50% opacity while the checkbox is clear; the number box still shows 100.
-- **Slider:** A 4px track in Soft Gray with the filled part in Primary, and a 16px round thumb with a hairline Primary border. It moves through thirteen stops (10 to 2000), and a number-box value between stops puts the thumb on the nearest stop. Focus gives the thumb a 3px ring at 50%.
-- **Number box:** Outline field with the Hide Field's radius and focus ring. It accepts whole numbers from 1 to 2000; an invalid entry reverts when the box is left.
-- **Behavior:** Dragging, arrow keys, or a valid typed number change the cards at once without saving. Releasing the slider, leaving the box, or pressing Enter saves. The checkbox saves at once. Closing the popup mid-drag drops the unsaved preview.
-- **Failure:** "Your applicant limit could not be saved. Try again." in the status line's destructive tone, with the control returning to the last saved value.
+The core component. A 28px row: label in the 104px column, value text, and a switch at the far right. The whole row is the switch's hit area and carries `role="switch"`. Hover fills the row with Wash; keyboard focus draws a 2px Indigo ring inside the row.
 
-### Status Line
+- **Hide rows.** Label is the status (Applied, Viewed, Saved, Reposted). Value is `Hidden` or `Shown`. Changing a row saves at once.
+- **Limit row.** Label `Limit`, value `Hide over N` or `Off`.
 
-One line directly under the name; the panel's main message.
+### Switch
 
-- **Tones:** Plain for this list's state ("12 cards hidden on this list", "No cards to hide on this list", "Showing every card"). The count is one number for cards hidden for a badge, a repost, an applicant count, or a blocked company. Muted also for "Reposted check paused by LinkedIn limits", which replaces the count while Reposted checks are backing off after LinkedIn throttles them (429, 999, or a network failure); a 403 or server error falls back to slower per-job checks and shows the normal count. "Applicant count check paused by LinkedIn limits" does the same when only the applicant limit needs the request. "Showing every card" appears only when no status is selected, the applicant limit is off, and no card is hidden; with nothing selected and blocked cards hidden, the line still carries the count. Muted for idle guidance ("Open a Jobs search to hide cards"). Destructive for any failure.
-- **Failures:** The line replaces its text rather than adding a surface. A save failure takes precedence over everything else, then a blocklist failure (unblock failed or list unreadable), then an unreadable stored choice, then a failed page check. Every failure line says what failed and then the recovery, in two short sentences ("Could not check this list. Reload the tab."), except an unreadable blocklist, which has no recovery in the popup and says only what failed. Each failure line must fit one line at the 18rem measure, so the Hide trigger does not move and its menu keeps opening below it.
-- **Pending:** Empty, at its reserved height, in the muted tone. The control does not appear until the stored choice has loaded.
-- **Announcement:** A live status region, so the change reaches assistive technology.
+26px × 16px, fully round. Off: Off Track with a Paper knob. On: Indigo with the knob 10px to the right, over 150ms.
 
-### Blocked Companies
+### Slider Row
 
-A collapsible section below the Hide Field. It lists the companies the seeker blocked.
+Label `Max applicants`, a 4px track in Rule with the filled part in Indigo and a 14px round thumb outlined in Indigo, then a 56px number box with tabular digits. It moves through 13 stops from 10 to 2000. The row is at 50% opacity while the limit is off.
 
-- **Header:** A full-width ghost button that reads `Blocked companies (N)` in Label type, with the chevron in Faded Ink at the far end, on the trigger's chevron edge. It has no fill at rest, on hover, or when open, so it reads as a section label and not a field. Open turns the chevron 180° over 150ms, as the trigger does. It carries `aria-expanded` and controls the list region.
-- **Collapsed:** The default each time the popup opens. The list region is hidden.
-- **Empty:** The region shows "No blocked companies. Block one from a job card or the job details." in Body type and the muted tone. It wraps to two lines.
-- **Rows:** One per company, newest first. The name is on the left in Body type and truncates. A 1.75rem ghost icon button with a 16px Lucide `X` is on the right, named `Unblock <Company>`. Rows stack 0.25rem apart. Unblocking is immediate, with no confirmation, and the row leaves when storage changes. A failed unblock keeps the row.
-- **Long lists:** Chrome caps the popup at 600px tall. Past about 12 rows the whole popup scrolls; the Hide menu is unaffected.
-- **Live:** The count and rows follow storage, so a block made on the page while the popup is open appears.
-- **Unreadable:** The header reads `Blocked companies` with no count, and the region is empty, not the empty state. The status line shows the failure: "Could not load blocked companies." Reopening the popup does not help, so this line carries no recovery. A failed unblock shows "Could not unblock that company. Try again." and the row stays, so the name is not repeated. These take precedence over an unreadable hide choice and a failed page check, below a failed save.
+### Job Tracker Rows
+
+- **Connected.** `Sheet` with the sheet's current name and a small `Open` button; `Status` with `N jobs added` (and `N waiting` when rows wait) and a small `Disconnect` button.
+- **Not connected.** One row explaining the tracker, with a small primary `Connect Google Sheets` button.
+- **Sheet missing.** `Status` reads `Sheet not found.` with a small primary `Create a new one` button.
+- **Sign-in expired.** The tracker problem line at the top of the popup reads `Google sign-in expired.` in Failure Red with a small primary `Reconnect` button.
+
+### Small Button
+
+26px tall, 12px medium text, 6px corners. Outline by default (Rule border, Paper face). Primary is Indigo with its foreground.
+
+### Settings Page
+
+The blocked companies, newest first. A page title, one line of guidance in Pencil, then one 30px row per company divided by hairlines: the name, and a 28px ghost icon button with the Lucide `X`, named `Unblock <Company>`. Unblocking is immediate. The empty state is one Pencil line, "No blocked companies. Block one from a job card or the job details." A failed unblock shows one Failure Red line under the title and keeps the row. An unreadable list shows "Could not load blocked companies." and no rows.
 
 ### Block Control and Confirmation Panel
 
-These render on the LinkedIn page, not in the popup.
-
-- **Control:** A 40px round ghost icon button with a 16px Lucide `Ban`, inserted before LinkedIn's `Dismiss` button on each job card and positioned out of flow, centered directly below the `Dismiss` button, so showing it never changes the card's height, title wrap, or the `Dismiss` position. It is named `Block <Company>` with a matching tooltip. It is hidden with `visibility`, and shows only while the card is hovered or has focus inside it, and stays shown while its panel is open.
-- **Detail pane button:** A 24px outline button with a 14px Lucide `Ban` and the text `Block`, inserted after the top-card company link in the job details pane and always visible. It is named `Block <Company>`, uses the current text color for its hairline border, and opens the same panel. An 8px left margin sets its distance from the name, and an auto right margin keeps it beside the name when the company row spreads its children apart, so it never drifts toward LinkedIn's `More options`. It follows the selected job and is absent when the top card has no company link. Once the company is blocked it becomes a disabled `Blocked` label at 60% opacity with no icon, named `Blocked <Company>`, and the pane stays on the same job. It returns to `Block` when the company is unblocked.
-- **Panel:** Fixed 16px above the bottom of the viewport, centered, at most 448px wide, in a shadow root so LinkedIn CSS cannot reach it. It uses the neutral tokens as pixel and oklch values, with a hairline border and a soft shadow, and follows the color scheme. Title `Block <Company>?`, a muted body, then Cancel and a primary Block. Focus moves to the panel on open and returns to the trigger on close. Esc cancels. It never dismisses itself, and only one is open at a time. Block disables itself while the store writes and the panel closes when the write lands. If the store rejects the block, the panel stays open, Block is enabled again, and one line in Failure Red reads "Could not block this company. Try again." below the body, the panel's only failure surface.
-
-### Buttons
-
-The outline variant at large size is rendered as the Hide Field trigger. The ghost variant is rendered as the Blocked Companies header and the row unblock buttons. The vendored `components/ui/button.tsx` keeps shadcn's other variants, which are not part of this record until a surface renders one.
+These render on the LinkedIn page, not in the popup. The card control and the job pane button keep their placement and shape, and draw in the page's current text colour. The confirmation panel lives in a shadow root and uses this system's tokens as literal values: Paper face, Rule border, 10px corners, a soft shadow, the title in 14px semibold, the body in Pencil, and `Cancel` (outline) and `Block` (Indigo) small buttons. It follows the colour scheme.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- **Do** read every color from the shadcn custom properties in `entrypoints/popup/style.css`, so both schemes follow without extra work.
-- **Do** use the Three Tones as the only status treatments: plain for this list's state, muted for idle guidance, destructive for any failure.
-- **Do** add a hideable status as another row in the Hide Menu, then raise the 16.5rem floor per the Reserved Room Rule.
-- **Do** keep status text to one line of the 18rem measure at 0.875rem. "Could not load your choice. Choose again." is near the limit.
-- **Do** keep menu rows on the trigger's text and chevron edges, per the Shared Edge Rule.
-- **Do** keep browser surfaces on the palette: selection inverts ink and sheet, and the scrollbar thumb uses Hairline on a transparent track.
-- **Do** collapse animation and transition durations to 0.01ms under `prefers-reduced-motion: reduce`.
+- **Do** read every colour from the custom properties, so both schemes follow.
+- **Do** put new settings in a Setting Row under the right group.
+- **Do** keep message text to one line at 352px.
+- **Do** collapse motion under `prefers-reduced-motion: reduce`.
 
 ### Don't:
 
-- **Don't** add a success color or any new hue. A list that is working reads in plain ink.
-- **Don't** use Failure Red on the status line for anything that has not failed.
-- **Don't** add a second message surface, such as a banner or toast, alongside the status line.
-- **Don't** write raw color values at a call site, or override a token per scheme outside the stylesheet.
-- **Don't** add a theme switch or class-based dark mode. The operating system decides.
-- **Don't** lift the panel, the trigger, or anything else in the panel's flow with a shadow.
-- **Don't** assume the 16.5rem floor is enough for a longer menu. It holds three rows.
-- **Don't** give the Blocked Companies header a fill or border. It is a section label that opens, not a field.
+- **Don't** use Indigo for anything that is not on, a fix, or focus.
+- **Don't** add a success colour, a banner, or a toast.
+- **Don't** add shadows inside the popup or the settings page.
+- **Don't** borrow LinkedIn's blue, pills, type or card style.
+- **Don't** add dropdowns or menus to the popup; every daily control is one click.
