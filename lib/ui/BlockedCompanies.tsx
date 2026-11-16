@@ -1,6 +1,5 @@
-import { useEffect, useState, type ReactElement } from 'react';
-import { XIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useEffect, useRef, useState, type ReactElement } from 'react';
+import { CloseIcon, SearchIcon } from '@/components/ui/icons';
 import type { StoredBlocklistRead } from '@/lib/block/domain';
 import { requestUnblock, watchBlocklist } from '@/lib/block/store';
 
@@ -43,47 +42,120 @@ export function useBlocklistSession(): {
   return { companies: read.list.entries, unblock, failureText: unblockFailure };
 }
 
+export function matchingCompanies(
+  companies: readonly BlockedCompanyRow[],
+  query: string,
+): readonly BlockedCompanyRow[] {
+  const needle = query.trim().toLowerCase();
+  return companies.filter(({ name }) => name.toLowerCase().includes(needle));
+}
+
 export function BlockedCompanyList(props: {
   readonly companies: readonly BlockedCompanyRow[];
+  readonly query?: string;
   readonly onUnblock: (name: string) => void;
 }): ReactElement {
+  const query = (props.query ?? '').trim();
   if (props.companies.length === 0) {
-    return <p className="py-2 text-muted-foreground">{EMPTY_TEXT}</p>;
+    return <p className="py-2.5 text-muted-foreground">{EMPTY_TEXT}</p>;
+  }
+  const shown = matchingCompanies(props.companies, query);
+  if (shown.length === 0) {
+    return (
+      <p className="py-2.5 text-muted-foreground">
+        No blocked company matches “{query}”.
+      </p>
+    );
   }
   return (
-    <ul className="border-t border-border">
-      {props.companies.map(({ name }) => (
+    <ul>
+      {shown.map(({ name }) => (
         <li
           key={name}
-          className="flex h-[30px] items-center gap-2 border-b border-border"
+          className="flex h-8 items-center gap-2 border-b border-border"
         >
           <span className="flex-1 truncate">{name}</span>
-          <Button
+          <button
             type="button"
-            variant="ghost"
-            size="icon-sm"
+            className="icon-btn"
             aria-label={`Unblock ${name}`}
             onClick={() => {
               props.onUnblock(name);
             }}
           >
-            <XIcon />
-          </Button>
+            <CloseIcon />
+          </button>
         </li>
       ))}
     </ul>
   );
 }
 
-export function BlockedCompaniesPage(props: {
+function isTyping(target: EventTarget | null): boolean {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable || ['INPUT', 'TEXTAREA'].includes(target.tagName))
+  );
+}
+
+function SearchWell(props: {
+  readonly query: string;
+  readonly onQuery: (query: string) => void;
+}): ReactElement {
+  const input = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const onKeydown = (event: KeyboardEvent): void => {
+      if (
+        event.key === '/' &&
+        !event.metaKey &&
+        !event.ctrlKey &&
+        !event.altKey &&
+        !isTyping(event.target)
+      ) {
+        event.preventDefault();
+        input.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', onKeydown);
+    return () => {
+      document.removeEventListener('keydown', onKeydown);
+    };
+  }, []);
+  return (
+    <label className="mb-2.5 flex h-8 flex-none items-center gap-2 rounded-md bg-well pr-1.5 pl-2.5 text-muted-foreground shadow-[inset_0_1px_2px_rgb(0_0_0/0.08)] focus-within:ring-2 focus-within:ring-ring">
+      <SearchIcon />
+      <input
+        ref={input}
+        type="search"
+        placeholder="Search blocked companies"
+        aria-label="Search blocked companies"
+        value={props.query}
+        onChange={(event) => {
+          props.onQuery(event.target.value);
+        }}
+        className="min-w-0 flex-1 bg-transparent text-foreground outline-none placeholder:text-muted-foreground [&::-webkit-search-cancel-button]:hidden"
+      />
+      <kbd
+        aria-hidden="true"
+        className="inline-grid h-5 min-w-5 place-items-center rounded-[4px] border border-b-2 border-border border-b-key-edge bg-key px-1.5 font-[inherit] text-[11px] text-muted-foreground"
+      >
+        /
+      </kbd>
+    </label>
+  );
+}
+
+export function BlockedCompaniesPane(props: {
   readonly companies: readonly BlockedCompanyRow[] | null | undefined;
   readonly failureText: string | undefined;
   readonly onUnblock: (name: string) => void;
 }): ReactElement {
+  const [query, setQuery] = useState('');
+  const { companies } = props;
   return (
-    <main className="mx-auto flex w-[560px] max-w-full flex-col px-4 pt-8 pb-10">
+    <>
       <h1 className="text-[0.9375rem] font-semibold">Blocked companies</h1>
-      <p className="mt-0.5 mb-2 text-muted-foreground">
+      <p className="mb-3 text-muted-foreground">
         Their jobs are hidden from results. Block more from a job card or the
         job details.
       </p>
@@ -92,12 +164,18 @@ export function BlockedCompaniesPage(props: {
           {props.failureText}
         </p>
       )}
-      {props.companies == null ? null : (
-        <BlockedCompanyList
-          companies={props.companies}
-          onUnblock={props.onUnblock}
-        />
+      {companies == null || companies.length === 0 ? null : (
+        <SearchWell query={query} onQuery={setQuery} />
       )}
-    </main>
+      {companies == null ? null : (
+        <div className="min-h-0 flex-1 overflow-auto border-t border-border">
+          <BlockedCompanyList
+            companies={companies}
+            query={query}
+            onUnblock={props.onUnblock}
+          />
+        </div>
+      )}
+    </>
   );
 }

@@ -2,8 +2,9 @@ import { describe, expect, test } from 'bun:test';
 import { renderToStaticMarkup } from 'react-dom/server';
 import {
   BLOCKLIST_UNREADABLE_TEXT,
-  BlockedCompaniesPage,
+  BlockedCompaniesPane,
   BlockedCompanyList,
+  matchingCompanies,
 } from './BlockedCompanies';
 
 const noop = (): void => undefined;
@@ -34,10 +35,10 @@ describe('BlockedCompanyList', () => {
   });
 });
 
-describe('BlockedCompaniesPage', () => {
+describe('BlockedCompaniesPane', () => {
   test('lists the companies under the page title', () => {
     const html = renderToStaticMarkup(
-      <BlockedCompaniesPage
+      <BlockedCompaniesPane
         companies={[{ name: 'CBRE' }, { name: 'Acme' }]}
         failureText={undefined}
         onUnblock={noop}
@@ -51,7 +52,7 @@ describe('BlockedCompaniesPage', () => {
 
   test('shows the failure and no rows or empty state when the list is unreadable', () => {
     const html = renderToStaticMarkup(
-      <BlockedCompaniesPage
+      <BlockedCompaniesPane
         companies={null}
         failureText={BLOCKLIST_UNREADABLE_TEXT}
         onUnblock={noop}
@@ -64,7 +65,7 @@ describe('BlockedCompaniesPage', () => {
 
   test('keeps the row and shows the failure when an unblock fails', () => {
     const html = renderToStaticMarkup(
-      <BlockedCompaniesPage
+      <BlockedCompaniesPane
         companies={[{ name: 'CBRE' }]}
         failureText="Could not unblock that company. Try again."
         onUnblock={noop}
@@ -72,5 +73,61 @@ describe('BlockedCompaniesPage', () => {
     );
     expect(html).toContain('Could not unblock that company. Try again.');
     expect(html).toContain('Unblock CBRE');
+  });
+});
+
+describe('searching blocked companies', () => {
+  const companies = [
+    { name: 'Northwind Talent' },
+    { name: 'Apex Recruiting Group' },
+    { name: 'Contoso Careers' },
+  ];
+
+  test('matches part of a name regardless of case or surrounding spaces', () => {
+    expect(matchingCompanies(companies, ' RECRUIT ')).toEqual([
+      { name: 'Apex Recruiting Group' },
+    ]);
+    expect(matchingCompanies(companies, '')).toEqual(companies);
+  });
+
+  test('lists only the rows that match the query', () => {
+    const html = renderToStaticMarkup(
+      <BlockedCompanyList companies={companies} query="co" onUnblock={noop} />,
+    );
+    expect(html).toContain('Unblock Contoso Careers');
+    expect(html).not.toContain('Unblock Northwind Talent');
+  });
+
+  test('says which query matched nothing and keeps the empty state for an empty list', () => {
+    const none = renderToStaticMarkup(
+      <BlockedCompanyList companies={companies} query="zzz" onUnblock={noop} />,
+    );
+    expect(none).toContain('No blocked company matches “zzz”.');
+    expect(none).not.toContain('Unblock');
+
+    const empty = renderToStaticMarkup(
+      <BlockedCompanyList companies={[]} query="zzz" onUnblock={noop} />,
+    );
+    expect(empty).toContain('No blocked companies.');
+    expect(empty).not.toContain('matches');
+  });
+
+  test('offers the search field only when there is something to search', () => {
+    const withRows = renderToStaticMarkup(
+      <BlockedCompaniesPane
+        companies={companies}
+        failureText={undefined}
+        onUnblock={noop}
+      />,
+    );
+    expect(withRows).toContain('placeholder="Search blocked companies"');
+    const without = renderToStaticMarkup(
+      <BlockedCompaniesPane
+        companies={[]}
+        failureText={undefined}
+        onUnblock={noop}
+      />,
+    );
+    expect(without).not.toContain('Search blocked companies');
   });
 });
