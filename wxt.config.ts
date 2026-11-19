@@ -17,7 +17,8 @@ export default defineConfig({
     }
     return {
       name: 'LinkedOut',
-      description: 'A browser extension to fix Linkedin jobs',
+      description:
+        "Hide LinkedIn jobs you've applied to, viewed or saved, skip reposts and crowded posts, block companies, and track applications.",
       action: {
         default_title: 'LinkedOut',
       },
