@@ -21,7 +21,8 @@ export function AccountPane(props: {
     <>
       <h1 className="text-xl font-semibold">Account</h1>
       <p className="mt-1 mb-5 text-muted-foreground">
-        Connect Google Sheets to add each job you open to a sheet in your Drive.
+        Connect Google Sheets to add each job you apply to as a row in a sheet
+        in your Drive.
       </p>
       <div className="border-t border-border">
         {view.kind === 'disconnected' ? (
