@@ -13,6 +13,7 @@
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
+    "test": "bun test",
     "lint": "oxlint . && bun lint/no-yaml-comments.js",
     "lint:fix": "oxlint --fix .",
     "format": "oxlint --fix . && oxfmt .",

@@ -2,6 +2,8 @@ name: CI
 
 on:
   pull_request:
+  push:
+    branches: [master]
 
 permissions:
   contents: read
@@ -37,5 +39,20 @@ jobs:
       - name: Compile
         run: bun run compile
 
+      - name: Test
+        run: bun run test
+
       - name: Build
         run: bun run build
+
+      - name: Check the build leaves out the tracker
+        run: jq -e '(has("key") or has("oauth2") or (.permissions | index("identity"))) | not' .output/chrome-mv3/manifest.json
+
+      - name: Build with the tracker
+        env:
+          WXT_GOOGLE_CLIENT_ID: ci-placeholder.apps.googleusercontent.com
+          WXT_EXTENSION_KEY: ci-placeholder
+        run: bun run build
+
+      - name: Check the build includes the tracker
+        run: jq -e '.key and .oauth2.client_id and (.oauth2.scopes == ["https://www.googleapis.com/auth/drive.file"]) and (.permissions | index("identity")) and (.permissions | index("alarms"))' .output/chrome-mv3/manifest.json
