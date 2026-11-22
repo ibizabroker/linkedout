@@ -1,506 +1,784 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-06T20:24:56Z",
+  "generatedAt": "2026-11-22T00:06:04Z",
   "title": "Design System: LinkedOut",
   "extensions": {
     "colorMeta": {
       "background": {
         "role": "neutral",
-        "displayName": "Sheet White",
-        "canonical": "oklch(1 0 0)",
+        "displayName": "Paper",
+        "canonical": "oklch(99.1% 0.003 84.6)",
         "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
+          "oklch(15% 0.001 84.6)",
+          "oklch(26% 0.001 84.6)",
+          "oklch(37% 0.002 84.6)",
+          "oklch(48% 0.002 84.6)",
+          "oklch(60% 0.003 84.6)",
+          "oklch(72% 0.002 84.6)",
+          "oklch(84% 0.001 84.6)",
+          "oklch(95% 0.001 84.6)"
         ]
       },
       "foreground": {
         "role": "neutral",
         "displayName": "Ink",
-        "canonical": "oklch(0.145 0 0)",
+        "canonical": "oklch(24.9% 0.006 78.2)",
         "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
-        ]
-      },
-      "popover": {
-        "role": "neutral",
-        "displayName": "Menu Sheet",
-        "canonical": "oklch(1 0 0)",
-        "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
-        ]
-      },
-      "popover-foreground": {
-        "role": "neutral",
-        "displayName": "Menu Ink",
-        "canonical": "oklch(0.145 0 0)",
-        "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
+          "oklch(15% 0.002 78.2)",
+          "oklch(26% 0.003 78.2)",
+          "oklch(37% 0.004 78.2)",
+          "oklch(48% 0.006 78.2)",
+          "oklch(60% 0.006 78.2)",
+          "oklch(72% 0.004 78.2)",
+          "oklch(84% 0.003 78.2)",
+          "oklch(95% 0.002 78.2)"
         ]
       },
       "muted": {
         "role": "neutral",
-        "displayName": "Soft Gray",
-        "canonical": "oklch(0.97 0 0)",
+        "displayName": "Wash",
+        "canonical": "oklch(96.2% 0.006 84.6)",
         "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
+          "oklch(15% 0.002 84.6)",
+          "oklch(26% 0.003 84.6)",
+          "oklch(37% 0.004 84.6)",
+          "oklch(48% 0.005 84.6)",
+          "oklch(60% 0.005 84.6)",
+          "oklch(72% 0.004 84.6)",
+          "oklch(84% 0.003 84.6)",
+          "oklch(95% 0.002 84.6)"
         ]
       },
       "muted-foreground": {
         "role": "neutral",
-        "displayName": "Faded Ink",
-        "canonical": "oklch(0.556 0 0)",
+        "displayName": "Pencil",
+        "canonical": "oklch(51.2% 0.014 79.7)",
         "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
-        ]
-      },
-      "accent": {
-        "role": "neutral",
-        "displayName": "Row Highlight",
-        "canonical": "oklch(0.97 0 0)",
-        "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
-        ]
-      },
-      "accent-foreground": {
-        "role": "neutral",
-        "displayName": "Row Highlight Ink",
-        "canonical": "oklch(0.205 0 0)",
-        "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
+          "oklch(15% 0.004 79.7)",
+          "oklch(26% 0.007 79.7)",
+          "oklch(37% 0.009 79.7)",
+          "oklch(48% 0.012 79.7)",
+          "oklch(60% 0.013 79.7)",
+          "oklch(72% 0.010 79.7)",
+          "oklch(84% 0.007 79.7)",
+          "oklch(95% 0.004 79.7)"
         ]
       },
       "border": {
         "role": "neutral",
-        "displayName": "Hairline",
-        "canonical": "oklch(0.922 0 0)",
+        "displayName": "Rule",
+        "canonical": "oklch(92.3% 0.009 84.6)",
         "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
+          "oklch(15% 0.002 84.6)",
+          "oklch(26% 0.004 84.6)",
+          "oklch(37% 0.006 84.6)",
+          "oklch(48% 0.008 84.6)",
+          "oklch(60% 0.008 84.6)",
+          "oklch(72% 0.006 84.6)",
+          "oklch(84% 0.004 84.6)",
+          "oklch(95% 0.002 84.6)"
+        ]
+      },
+      "input": {
+        "role": "neutral",
+        "displayName": "Off Track",
+        "canonical": "oklch(86.5% 0.012 84.6)",
+        "tonalRamp": [
+          "oklch(15% 0.003 84.6)",
+          "oklch(26% 0.006 84.6)",
+          "oklch(37% 0.008 84.6)",
+          "oklch(48% 0.010 84.6)",
+          "oklch(60% 0.011 84.6)",
+          "oklch(72% 0.008 84.6)",
+          "oklch(84% 0.006 84.6)",
+          "oklch(95% 0.003 84.6)"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Blue",
+        "canonical": "oklch(51.6% 0.163 254.7)",
+        "tonalRamp": [
+          "oklch(15% 0.045 254.7)",
+          "oklch(26% 0.077 254.7)",
+          "oklch(37% 0.110 254.7)",
+          "oklch(48% 0.142 254.7)",
+          "oklch(60% 0.148 254.7)",
+          "oklch(72% 0.113 254.7)",
+          "oklch(84% 0.077 254.7)",
+          "oklch(95% 0.045 254.7)"
+        ]
+      },
+      "primary-foreground": {
+        "role": "neutral",
+        "displayName": "On Blue",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(60% 0.000 89.9)",
+          "oklch(72% 0.000 89.9)",
+          "oklch(84% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "accent-text": {
+        "role": "primary",
+        "displayName": "Blue Text",
+        "canonical": "oklch(51.6% 0.163 254.7)",
+        "tonalRamp": [
+          "oklch(15% 0.045 254.7)",
+          "oklch(26% 0.077 254.7)",
+          "oklch(37% 0.110 254.7)",
+          "oklch(48% 0.142 254.7)",
+          "oklch(60% 0.148 254.7)",
+          "oklch(72% 0.113 254.7)",
+          "oklch(84% 0.077 254.7)",
+          "oklch(95% 0.045 254.7)"
         ]
       },
       "ring": {
-        "role": "neutral",
-        "displayName": "Focus Gray",
-        "canonical": "oklch(0.708 0 0)",
+        "role": "primary",
+        "displayName": "Focus Ring",
+        "canonical": "oklch(51.6% 0.163 254.7)",
         "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
+          "oklch(15% 0.045 254.7)",
+          "oklch(26% 0.077 254.7)",
+          "oklch(37% 0.110 254.7)",
+          "oklch(48% 0.142 254.7)",
+          "oklch(60% 0.148 254.7)",
+          "oklch(72% 0.113 254.7)",
+          "oklch(84% 0.077 254.7)",
+          "oklch(95% 0.045 254.7)"
+        ]
+      },
+      "tint": {
+        "role": "primary",
+        "displayName": "Tint",
+        "canonical": "oklch(95.1% 0.017 248.0)",
+        "tonalRamp": [
+          "oklch(15% 0.005 248.0)",
+          "oklch(26% 0.008 248.0)",
+          "oklch(37% 0.012 248.0)",
+          "oklch(48% 0.015 248.0)",
+          "oklch(60% 0.016 248.0)",
+          "oklch(72% 0.012 248.0)",
+          "oklch(84% 0.008 248.0)",
+          "oklch(95% 0.005 248.0)"
+        ]
+      },
+      "key": {
+        "role": "neutral",
+        "displayName": "Key Face",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(60% 0.000 89.9)",
+          "oklch(72% 0.000 89.9)",
+          "oklch(84% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "key-edge": {
+        "role": "neutral",
+        "displayName": "Key Edge",
+        "canonical": "oklch(86.5% 0.012 84.6)",
+        "tonalRamp": [
+          "oklch(15% 0.003 84.6)",
+          "oklch(26% 0.006 84.6)",
+          "oklch(37% 0.008 84.6)",
+          "oklch(48% 0.010 84.6)",
+          "oklch(60% 0.011 84.6)",
+          "oklch(72% 0.008 84.6)",
+          "oklch(84% 0.006 84.6)",
+          "oklch(95% 0.003 84.6)"
+        ]
+      },
+      "well": {
+        "role": "neutral",
+        "displayName": "Well",
+        "canonical": "oklch(96.2% 0.006 84.6)",
+        "tonalRamp": [
+          "oklch(15% 0.002 84.6)",
+          "oklch(26% 0.003 84.6)",
+          "oklch(37% 0.004 84.6)",
+          "oklch(48% 0.005 84.6)",
+          "oklch(60% 0.005 84.6)",
+          "oklch(72% 0.004 84.6)",
+          "oklch(84% 0.003 84.6)",
+          "oklch(95% 0.002 84.6)"
         ]
       },
       "destructive": {
         "role": "semantic",
         "displayName": "Failure Red",
-        "canonical": "oklch(0.577 0.245 27.325)",
+        "canonical": "oklch(50.0% 0.182 29.5)",
         "tonalRamp": [
-          "oklch(15% 0.034 27.325)",
-          "oklch(26% 0.109 27.325)",
-          "oklch(37% 0.184 27.325)",
-          "oklch(48% 0.245 27.325)",
-          "oklch(60% 0.245 27.325)",
-          "oklch(72% 0.191 27.325)",
-          "oklch(84% 0.109 27.325)",
-          "oklch(95% 0.034 27.325)"
+          "oklch(15% 0.050 29.5)",
+          "oklch(26% 0.086 29.5)",
+          "oklch(37% 0.122 29.5)",
+          "oklch(48% 0.159 29.5)",
+          "oklch(60% 0.166 29.5)",
+          "oklch(72% 0.126 29.5)",
+          "oklch(84% 0.086 29.5)",
+          "oklch(95% 0.050 29.5)"
         ]
       },
       "background-dark": {
         "role": "neutral",
-        "displayName": "Night Sheet",
-        "canonical": "oklch(0.145 0 0)",
+        "displayName": "Night Paper",
+        "canonical": "oklch(23.1% 0.004 84.6)",
         "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
+          "oklch(15% 0.001 84.6)",
+          "oklch(26% 0.002 84.6)",
+          "oklch(37% 0.003 84.6)",
+          "oklch(48% 0.004 84.6)",
+          "oklch(60% 0.004 84.6)",
+          "oklch(72% 0.003 84.6)",
+          "oklch(84% 0.002 84.6)",
+          "oklch(95% 0.001 84.6)"
         ]
       },
       "foreground-dark": {
         "role": "neutral",
-        "displayName": "Paper Ink",
-        "canonical": "oklch(0.985 0 0)",
+        "displayName": "Night Ink",
+        "canonical": "oklch(93.7% 0.006 84.6)",
         "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
-        ]
-      },
-      "popover-dark": {
-        "role": "neutral",
-        "displayName": "Night Menu Sheet",
-        "canonical": "oklch(0.205 0 0)",
-        "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
-        ]
-      },
-      "popover-foreground-dark": {
-        "role": "neutral",
-        "displayName": "Night Menu Ink",
-        "canonical": "oklch(0.985 0 0)",
-        "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
+          "oklch(15% 0.002 84.6)",
+          "oklch(26% 0.003 84.6)",
+          "oklch(37% 0.004 84.6)",
+          "oklch(48% 0.005 84.6)",
+          "oklch(60% 0.005 84.6)",
+          "oklch(72% 0.004 84.6)",
+          "oklch(84% 0.003 84.6)",
+          "oklch(95% 0.002 84.6)"
         ]
       },
       "muted-dark": {
         "role": "neutral",
-        "displayName": "Raised Gray",
-        "canonical": "oklch(0.269 0 0)",
+        "displayName": "Night Wash",
+        "canonical": "oklch(27.7% 0.006 91.6)",
         "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
+          "oklch(15% 0.002 91.6)",
+          "oklch(26% 0.003 91.6)",
+          "oklch(37% 0.004 91.6)",
+          "oklch(48% 0.005 91.6)",
+          "oklch(60% 0.005 91.6)",
+          "oklch(72% 0.004 91.6)",
+          "oklch(84% 0.003 91.6)",
+          "oklch(95% 0.002 91.6)"
         ]
       },
       "muted-foreground-dark": {
         "role": "neutral",
-        "displayName": "Night Faded Ink",
-        "canonical": "oklch(0.708 0 0)",
+        "displayName": "Night Pencil",
+        "canonical": "oklch(72.0% 0.014 82.4)",
         "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
-        ]
-      },
-      "accent-dark": {
-        "role": "neutral",
-        "displayName": "Night Row Highlight",
-        "canonical": "oklch(0.269 0 0)",
-        "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
-        ]
-      },
-      "accent-foreground-dark": {
-        "role": "neutral",
-        "displayName": "Night Row Highlight Ink",
-        "canonical": "oklch(0.985 0 0)",
-        "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
+          "oklch(15% 0.004 82.4)",
+          "oklch(26% 0.007 82.4)",
+          "oklch(37% 0.009 82.4)",
+          "oklch(48% 0.012 82.4)",
+          "oklch(60% 0.013 82.4)",
+          "oklch(72% 0.010 82.4)",
+          "oklch(84% 0.007 82.4)",
+          "oklch(95% 0.004 82.4)"
         ]
       },
       "border-dark": {
         "role": "neutral",
-        "displayName": "Night Hairline",
-        "canonical": "oklch(1 0 0 / 10%)",
+        "displayName": "Night Rule",
+        "canonical": "oklch(32.6% 0.006 78.2)",
         "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
+          "oklch(15% 0.002 78.2)",
+          "oklch(26% 0.003 78.2)",
+          "oklch(37% 0.004 78.2)",
+          "oklch(48% 0.005 78.2)",
+          "oklch(60% 0.005 78.2)",
+          "oklch(72% 0.004 78.2)",
+          "oklch(84% 0.003 78.2)",
+          "oklch(95% 0.002 78.2)"
         ]
       },
       "input-dark": {
         "role": "neutral",
-        "displayName": "Field Wash",
-        "canonical": "oklch(1 0 0 / 15%)",
+        "displayName": "Night Off Track",
+        "canonical": "oklch(40.7% 0.008 75.3)",
         "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
+          "oklch(15% 0.002 75.3)",
+          "oklch(26% 0.004 75.3)",
+          "oklch(37% 0.005 75.3)",
+          "oklch(48% 0.007 75.3)",
+          "oklch(60% 0.007 75.3)",
+          "oklch(72% 0.005 75.3)",
+          "oklch(84% 0.004 75.3)",
+          "oklch(95% 0.002 75.3)"
+        ]
+      },
+      "primary-dark": {
+        "role": "primary",
+        "displayName": "Night Blue",
+        "canonical": "oklch(51.6% 0.163 254.7)",
+        "tonalRamp": [
+          "oklch(15% 0.045 254.7)",
+          "oklch(26% 0.077 254.7)",
+          "oklch(37% 0.110 254.7)",
+          "oklch(48% 0.142 254.7)",
+          "oklch(60% 0.148 254.7)",
+          "oklch(72% 0.113 254.7)",
+          "oklch(84% 0.077 254.7)",
+          "oklch(95% 0.045 254.7)"
+        ]
+      },
+      "primary-foreground-dark": {
+        "role": "neutral",
+        "displayName": "Night On Blue",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(60% 0.000 89.9)",
+          "oklch(72% 0.000 89.9)",
+          "oklch(84% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "accent-text-dark": {
+        "role": "primary",
+        "displayName": "Night Blue Text",
+        "canonical": "oklch(75.5% 0.121 249.4)",
+        "tonalRamp": [
+          "oklch(15% 0.033 249.4)",
+          "oklch(26% 0.057 249.4)",
+          "oklch(37% 0.081 249.4)",
+          "oklch(48% 0.106 249.4)",
+          "oklch(60% 0.110 249.4)",
+          "oklch(72% 0.084 249.4)",
+          "oklch(84% 0.057 249.4)",
+          "oklch(95% 0.033 249.4)"
         ]
       },
       "ring-dark": {
-        "role": "neutral",
-        "displayName": "Night Focus Gray",
-        "canonical": "oklch(0.556 0 0)",
+        "role": "primary",
+        "displayName": "Night Focus Ring",
+        "canonical": "oklch(75.5% 0.121 249.4)",
         "tonalRamp": [
-          "oklch(15% 0 0)",
-          "oklch(26% 0 0)",
-          "oklch(37% 0 0)",
-          "oklch(48% 0 0)",
-          "oklch(60% 0 0)",
-          "oklch(72% 0 0)",
-          "oklch(84% 0 0)",
-          "oklch(95% 0 0)"
+          "oklch(15% 0.033 249.4)",
+          "oklch(26% 0.057 249.4)",
+          "oklch(37% 0.081 249.4)",
+          "oklch(48% 0.106 249.4)",
+          "oklch(60% 0.110 249.4)",
+          "oklch(72% 0.084 249.4)",
+          "oklch(84% 0.057 249.4)",
+          "oklch(95% 0.033 249.4)"
+        ]
+      },
+      "tint-dark": {
+        "role": "primary",
+        "displayName": "Night Tint",
+        "canonical": "oklch(30.2% 0.057 250.3)",
+        "tonalRamp": [
+          "oklch(15% 0.016 250.3)",
+          "oklch(26% 0.027 250.3)",
+          "oklch(37% 0.039 250.3)",
+          "oklch(48% 0.050 250.3)",
+          "oklch(60% 0.052 250.3)",
+          "oklch(72% 0.040 250.3)",
+          "oklch(84% 0.027 250.3)",
+          "oklch(95% 0.016 250.3)"
+        ]
+      },
+      "key-dark": {
+        "role": "neutral",
+        "displayName": "Night Key Face",
+        "canonical": "oklch(28.1% 0.006 91.6)",
+        "tonalRamp": [
+          "oklch(15% 0.002 91.6)",
+          "oklch(26% 0.003 91.6)",
+          "oklch(37% 0.004 91.6)",
+          "oklch(48% 0.005 91.6)",
+          "oklch(60% 0.005 91.6)",
+          "oklch(72% 0.004 91.6)",
+          "oklch(84% 0.003 91.6)",
+          "oklch(95% 0.002 91.6)"
+        ]
+      },
+      "key-edge-dark": {
+        "role": "neutral",
+        "displayName": "Night Key Edge",
+        "canonical": "oklch(16.5% 0.003 67.6)",
+        "tonalRamp": [
+          "oklch(15% 0.001 67.6)",
+          "oklch(26% 0.001 67.6)",
+          "oklch(37% 0.002 67.6)",
+          "oklch(48% 0.002 67.6)",
+          "oklch(60% 0.002 67.6)",
+          "oklch(72% 0.002 67.6)",
+          "oklch(84% 0.001 67.6)",
+          "oklch(95% 0.001 67.6)"
+        ]
+      },
+      "well-dark": {
+        "role": "neutral",
+        "displayName": "Night Well",
+        "canonical": "oklch(20.1% 0.004 84.6)",
+        "tonalRamp": [
+          "oklch(15% 0.001 84.6)",
+          "oklch(26% 0.002 84.6)",
+          "oklch(37% 0.003 84.6)",
+          "oklch(48% 0.004 84.6)",
+          "oklch(60% 0.004 84.6)",
+          "oklch(72% 0.003 84.6)",
+          "oklch(84% 0.002 84.6)",
+          "oklch(95% 0.001 84.6)"
         ]
       },
       "destructive-dark": {
         "role": "semantic",
         "displayName": "Night Failure Red",
-        "canonical": "oklch(0.704 0.191 22.216)",
+        "canonical": "oklch(72.7% 0.141 30.9)",
         "tonalRamp": [
-          "oklch(15% 0.027 22.216)",
-          "oklch(26% 0.085 22.216)",
-          "oklch(37% 0.143 22.216)",
-          "oklch(48% 0.191 22.216)",
-          "oklch(60% 0.191 22.216)",
-          "oklch(72% 0.149 22.216)",
-          "oklch(84% 0.085 22.216)",
-          "oklch(95% 0.027 22.216)"
+          "oklch(15% 0.038 30.9)",
+          "oklch(26% 0.067 30.9)",
+          "oklch(37% 0.095 30.9)",
+          "oklch(48% 0.123 30.9)",
+          "oklch(60% 0.128 30.9)",
+          "oklch(72% 0.097 30.9)",
+          "oklch(84% 0.067 30.9)",
+          "oklch(95% 0.038 30.9)"
+        ]
+      },
+      "window": {
+        "role": "neutral",
+        "displayName": "Window",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(26% 0.000 89.9)",
+          "oklch(37% 0.000 89.9)",
+          "oklch(48% 0.000 89.9)",
+          "oklch(60% 0.000 89.9)",
+          "oklch(72% 0.000 89.9)",
+          "oklch(84% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "window-dark": {
+        "role": "neutral",
+        "displayName": "Night Window",
+        "canonical": "oklch(25.2% 0.004 84.6)",
+        "tonalRamp": [
+          "oklch(15% 0.001 84.6)",
+          "oklch(26% 0.002 84.6)",
+          "oklch(37% 0.003 84.6)",
+          "oklch(48% 0.003 84.6)",
+          "oklch(60% 0.004 84.6)",
+          "oklch(72% 0.003 84.6)",
+          "oklch(84% 0.002 84.6)",
+          "oklch(95% 0.001 84.6)"
         ]
       }
     },
     "typographyMeta": {
-      "title": {
-        "displayName": "Title",
-        "purpose": "The product name, once, as the panel's only heading."
+      "name": {
+        "displayName": "Name",
+        "purpose": "\"LinkedOut\" in the popup header, once."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Status line, trigger text, and menu rows."
+        "purpose": "Popup row values and messages."
       },
-      "label": {
-        "displayName": "Label",
-        "purpose": "The field label above a control."
+      "group": {
+        "displayName": "Group",
+        "purpose": "The small Pencil label above each popup group."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "Readout numbers, tabular."
+      },
+      "key": {
+        "displayName": "Key",
+        "purpose": "Popup key labels."
+      },
+      "display": {
+        "displayName": "Display",
+        "purpose": "Website homepage headline, once."
+      },
+      "page-title": {
+        "displayName": "Page Title",
+        "purpose": "The privacy page's title."
+      },
+      "section-heading": {
+        "displayName": "Section Heading",
+        "purpose": "Website section headings."
+      },
+      "tally": {
+        "displayName": "Tally",
+        "purpose": "The website tally line."
+      },
+      "tally-phone": {
+        "displayName": "Tally (phone)",
+        "purpose": "The tally line below 900px, one figure per line."
+      },
+      "detail-heading": {
+        "displayName": "Detail Heading",
+        "purpose": "The job title in the demo details pane."
+      },
+      "prose-heading": {
+        "displayName": "Prose Heading",
+        "purpose": "Privacy page section headings."
+      },
+      "subheading": {
+        "displayName": "Subheading",
+        "purpose": "Small display headings such as About the job."
+      },
+      "site-body": {
+        "displayName": "Site Body",
+        "purpose": "Website body text in the platform UI font."
+      },
+      "brand": {
+        "displayName": "Brand",
+        "purpose": "The name beside the logo in the website top bar and footer."
+      },
+      "key-site": {
+        "displayName": "Site Key",
+        "purpose": "Website key labels."
+      },
+      "key-hero": {
+        "displayName": "Hero Key",
+        "purpose": "The Add to Chrome key label."
       }
     },
     "shadows": [
       {
-        "name": "menu-lift",
-        "value": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-        "purpose": "The open dropdown only, with a 1px inset ring of foreground at 10%."
+        "name": "block-panel-lift",
+        "value": "0 6px 16px -6px rgb(35 33 30 / 18%)",
+        "purpose": "The on-page Block confirmation panel, the extension's only lifted surface. Dark: 0 6px 16px -6px rgb(0 0 0 / 50%)."
+      },
+      {
+        "name": "window-lift",
+        "value": "0 18px 50px -24px rgb(35 33 30 / 28%)",
+        "purpose": "Website demo frame. Dark: 0 18px 50px -24px rgb(0 0 0 / 60%). Removed on phones."
+      },
+      {
+        "name": "popup-lift",
+        "value": "0 16px 40px -18px rgb(35 33 30 / 35%)",
+        "purpose": "Website popup over the demo list. Dark: 0 16px 40px -18px rgb(0 0 0 / 70%). Removed on phones."
+      },
+      {
+        "name": "well-inset",
+        "value": "inset 0 1px 2px rgb(0 0 0 / 0.08)",
+        "purpose": "The sunken search well on the settings page."
       }
     ],
     "motion": [
       {
-        "name": "menu-enter",
-        "value": "100ms",
-        "purpose": "Menu open and close: fade, 95% zoom, slide from the trigger's side."
+        "name": "site-ease",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Every website transition and animation."
       },
       {
-        "name": "control-state",
-        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
-        "purpose": "Trigger state changes and the chevron's 180 degree turn."
+        "name": "key-travel",
+        "value": "translateY(-1px) hover, translateY(1px) press, 120ms",
+        "purpose": "Keys, tabs and the toolbar icon move when pressed."
+      },
+      {
+        "name": "popup-drop",
+        "value": "350ms, from translateY(-12px) scale(0.97), origin top right",
+        "purpose": "The website popup on load; closes to -8px and 97% over 200ms."
+      },
+      {
+        "name": "card-fold",
+        "value": "grid-template-rows 1fr to 0fr with opacity, 300ms",
+        "purpose": "A demo job card hiding and returning."
+      },
+      {
+        "name": "strike-draw",
+        "value": "width 0 to 100%, 400ms",
+        "purpose": "The tally line's blue strike across a cleared figure; the still showing count eases over 400ms."
+      },
+      {
+        "name": "tab-in",
+        "value": "translateY(6px) and opacity, 300ms; panel fade 180ms",
+        "purpose": "A demo tab appearing and the panel switch."
+      },
+      {
+        "name": "hint-pulse",
+        "value": "1.8s ease-in-out infinite",
+        "purpose": "The blue ring on the popup's Applied row until the first switch is flipped."
+      },
+      {
+        "name": "row-in",
+        "value": "Tint to transparent, 1.6s ease-out",
+        "purpose": "A new row in the demo sheet."
       },
       {
         "name": "reduced-motion",
-        "value": "0.01ms",
-        "purpose": "All animation and transition durations under prefers-reduced-motion: reduce."
+        "value": "animation: none; transition: none",
+        "purpose": "All website motion under prefers-reduced-motion: reduce; the extension stops its icon motion likewise."
       }
     ],
-    "breakpoints": []
+    "breakpoints": [
+      {
+        "name": "no-details",
+        "value": "max-width: 1279px"
+      },
+      {
+        "name": "phone",
+        "value": "max-width: 899px"
+      },
+      {
+        "name": "touch",
+        "value": "hover: none"
+      }
+    ]
   },
   "components": [
     {
-      "name": "Hide Trigger",
+      "name": "Key",
       "kind": "button",
-      "refersTo": "hide-trigger",
-      "description": "Outline button at large size that shows the current selection and opens the Hide Menu.",
-      "html": "<button type=\"button\" class=\"ds-hide-trigger\" aria-haspopup=\"menu\" aria-expanded=\"false\">Applied<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg></button>",
-      "css": ".ds-hide-trigger { display: inline-flex; align-items: center; justify-content: space-between; gap: 0.375rem; width: 100%; height: 2.25rem; padding: 0 0.5rem 0 0.625rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--background); color: var(--foreground); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; font-size: 0.875rem; font-weight: 400; line-height: 1.25rem; white-space: nowrap; outline: none; transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-hide-trigger svg { flex-shrink: 0; color: var(--muted-foreground); transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-hide-trigger:hover, .ds-hide-trigger[aria-expanded=\"true\"] { background: var(--muted); color: var(--foreground); } .ds-hide-trigger[aria-expanded=\"true\"] svg { transform: rotate(180deg); } .ds-hide-trigger:focus-visible { border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent); } @media (prefers-color-scheme: dark) { .ds-hide-trigger { border-color: var(--input); background: color-mix(in oklab, var(--input) 30%, transparent); } .ds-hide-trigger:hover { background: color-mix(in oklab, var(--input) 50%, transparent); } }"
+      "refersTo": "key",
+      "description": "The only button style: neutral face, heavier bottom edge, blue icon; lifts on hover, sinks on press.",
+      "html": "<button type=\"button\" class=\"ds-key ds-key--small\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg>New sheet</button>",
+      "css": ".ds-key { display: inline-flex; align-items: center; gap: 8px; height: 28px; padding: 0 11px; border: 1px solid #E8E5DF; border-bottom: 2px solid #D6D2CA; border-radius: 5px; background: #FFFFFF; color: #23211E; font: 500 13px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; white-space: nowrap; cursor: pointer; transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), border-bottom-color 0.15s; } .ds-key svg { width: 14px; height: 14px; color: #0A66C2; } .ds-key:hover { transform: translateY(-1px); border-bottom-color: #0A66C2; } .ds-key:active { transform: translateY(1px); } .ds-key:focus-visible { outline: 2px solid #0A66C2; outline-offset: 2px; } .ds-key--neutral svg { color: #6B665E; } .ds-key--neutral:hover { border-bottom-color: #6B665E; } .ds-key--small { height: 24px; padding: 0 9px; font-size: 12px; } .ds-key--hero { height: 48px; padding: 0 22px; border-bottom-width: 3px; border-radius: 6px; font-size: 16px; font-weight: 600; } .ds-key--hero svg { width: 18px; height: 18px; }"
     },
     {
-      "name": "Hide Field",
+      "name": "Neutral Key",
+      "kind": "button",
+      "refersTo": "key-site",
+      "description": "A key for actions that fix nothing (Cancel, Disconnect, Reset demo): Pencil icon and Pencil hover edge.",
+      "html": "<button type=\"button\" class=\"ds-key ds-key--neutral\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\"/><path d=\"M3 3v5h5\"/></svg>Reset demo</button>",
+      "css": ".ds-key { display: inline-flex; align-items: center; gap: 8px; height: 28px; padding: 0 11px; border: 1px solid #E8E5DF; border-bottom: 2px solid #D6D2CA; border-radius: 5px; background: #FFFFFF; color: #23211E; font: 500 13px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; white-space: nowrap; cursor: pointer; transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), border-bottom-color 0.15s; } .ds-key svg { width: 14px; height: 14px; color: #0A66C2; } .ds-key:hover { transform: translateY(-1px); border-bottom-color: #0A66C2; } .ds-key:active { transform: translateY(1px); } .ds-key:focus-visible { outline: 2px solid #0A66C2; outline-offset: 2px; } .ds-key--neutral svg { color: #6B665E; } .ds-key--neutral:hover { border-bottom-color: #6B665E; } .ds-key--small { height: 24px; padding: 0 9px; font-size: 12px; } .ds-key--hero { height: 48px; padding: 0 22px; border-bottom-width: 3px; border-radius: 6px; font-size: 16px; font-weight: 600; } .ds-key--hero svg { width: 18px; height: 18px; }"
+    },
+    {
+      "name": "Hero Key",
+      "kind": "button",
+      "refersTo": "key-hero",
+      "description": "Website only. The Add to Chrome key at 48px with a 3px edge; still a neutral face.",
+      "html": "<a class=\"ds-key ds-key--hero\" href=\"#\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15.39 4.39a1 1 0 0 0 1.68-.47 2.5 2.5 0 1 1 3.01 3.01 1 1 0 0 0-.47 1.68l1.68 1.68a2.4 2.4 0 0 1 0 3.42l-1.68 1.68a1 1 0 0 1-1.68-.47 2.5 2.5 0 1 0-3.01 3.01 1 1 0 0 1 .47 1.68l-1.68 1.68a2.4 2.4 0 0 1-3.42 0l-1.68-1.68a1 1 0 0 0-1.68.47 2.5 2.5 0 1 1-3.01-3.01 1 1 0 0 0 .47-1.68l-1.68-1.68a2.4 2.4 0 0 1 0-3.42l1.68-1.68a1 1 0 0 1 1.68.47 2.5 2.5 0 1 0 3.01-3.01 1 1 0 0 1-.47-1.68l1.68-1.68a2.4 2.4 0 0 1 3.42 0z\"/></svg>Add to Chrome</a>",
+      "css": ".ds-key { display: inline-flex; align-items: center; gap: 8px; height: 28px; padding: 0 11px; border: 1px solid #E8E5DF; border-bottom: 2px solid #D6D2CA; border-radius: 5px; background: #FFFFFF; color: #23211E; font: 500 13px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; white-space: nowrap; cursor: pointer; transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), border-bottom-color 0.15s; } .ds-key svg { width: 14px; height: 14px; color: #0A66C2; } .ds-key:hover { transform: translateY(-1px); border-bottom-color: #0A66C2; } .ds-key:active { transform: translateY(1px); } .ds-key:focus-visible { outline: 2px solid #0A66C2; outline-offset: 2px; } .ds-key--neutral svg { color: #6B665E; } .ds-key--neutral:hover { border-bottom-color: #6B665E; } .ds-key--small { height: 24px; padding: 0 9px; font-size: 12px; } .ds-key--hero { height: 48px; padding: 0 22px; border-bottom-width: 3px; border-radius: 6px; font-size: 16px; font-weight: 600; } .ds-key--hero svg { width: 18px; height: 18px; } .ds-key { text-decoration: none; }"
+    },
+    {
+      "name": "Setting Row",
       "kind": "custom",
-      "refersTo": "field-label",
-      "description": "A sentence-case label above the full-width trigger it names.",
-      "html": "<div class=\"ds-field\"><p class=\"ds-field-label\">Hide from results</p><button type=\"button\" class=\"ds-hide-trigger\" aria-haspopup=\"menu\" aria-expanded=\"false\">Applied<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg></button></div>",
-      "css": ".ds-field { display: flex; flex-direction: column; gap: 0.375rem; } .ds-field-label { margin: 0; color: var(--foreground); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.25rem; } .ds-hide-trigger { display: inline-flex; align-items: center; justify-content: space-between; gap: 0.375rem; width: 100%; height: 2.25rem; padding: 0 0.5rem 0 0.625rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--background); color: var(--foreground); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; font-size: 0.875rem; font-weight: 400; line-height: 1.25rem; white-space: nowrap; outline: none; transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-hide-trigger svg { flex-shrink: 0; color: var(--muted-foreground); transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-hide-trigger:hover, .ds-hide-trigger[aria-expanded=\"true\"] { background: var(--muted); color: var(--foreground); } .ds-hide-trigger[aria-expanded=\"true\"] svg { transform: rotate(180deg); } .ds-hide-trigger:focus-visible { border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent); } @media (prefers-color-scheme: dark) { .ds-hide-trigger { border-color: var(--input); background: color-mix(in oklab, var(--input) 30%, transparent); } .ds-hide-trigger:hover { background: color-mix(in oklab, var(--input) 50%, transparent); } }"
+      "refersTo": "row",
+      "description": "A 28px label-and-value row whose whole width is the switch.",
+      "html": "<div class=\"ds-row\" role=\"switch\" aria-checked=\"true\" tabindex=\"0\"><span class=\"ds-row-label\">Applied</span><span class=\"ds-row-value\">Hidden</span><span class=\"ds-switch\"></span></div>",
+      "css": ".ds-row { display: flex; align-items: center; width: 352px; height: 28px; padding: 0 12px; border-radius: 6px; background: #FDFCFA; color: #23211E; font: 400 13px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; cursor: pointer; outline: none; } .ds-row:hover { background: #F4F2EE; } .ds-row:focus-visible { box-shadow: inset 0 0 0 2px #0A66C2; } .ds-row-label { width: 104px; color: #6B665E; } .ds-row-value { flex: 1; } .ds-switch { position: relative; width: 26px; height: 16px; border-radius: 999px; background: #D6D2CA; transition: background 0.15s; } .ds-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 999px; background: #FFFFFF; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); } .ds-row[aria-checked='true'] .ds-switch { background: #0A66C2; } .ds-row[aria-checked='true'] .ds-switch::after { transform: translateX(10px); }"
     },
     {
-      "name": "Hide Menu",
+      "name": "Tally Line",
       "kind": "custom",
-      "refersTo": "hide-menu",
-      "description": "The portalled menu of checkable status rows, aligned to the trigger's text and chevron.",
-      "html": "<div class=\"ds-hide-menu\" role=\"menu\"><div class=\"ds-hide-row\" role=\"menuitemcheckbox\" aria-checked=\"true\" tabindex=\"0\">Applied<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M20 6 9 17l-5-5\"/></svg></div></div>",
-      "css": ".ds-hide-menu { width: 18rem; padding: 0.25rem; border-radius: var(--radius); background: var(--popover); color: var(--popover-foreground); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 10%, transparent), 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); } .ds-hide-row { position: relative; display: flex; align-items: center; padding: 0.25rem 2rem 0.25rem 7px; border-radius: calc(var(--radius) * 0.8); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; font-size: 0.875rem; line-height: 1.25rem; cursor: default; outline: none; user-select: none; } .ds-hide-row svg { position: absolute; right: 5px; } .ds-hide-row:hover, .ds-hide-row:focus-visible { background: var(--accent); color: var(--accent-foreground); }"
+      "refersTo": "tally",
+      "description": "Website only. One line of figures between hairlines; cleared groups are struck in blue; still showing is the only blue text.",
+      "html": "<div class=\"ds-tally\"><p class=\"ds-tally-line\"><span class=\"ds-seg\"><span class=\"ds-seg-text\"><b>12</b> jobs</span></span><span class=\"ds-seg\" data-cleared=\"true\"><span class=\"ds-seg-text\"><b>3</b> applied</span></span><span class=\"ds-seg\"><span class=\"ds-seg-text\"><b>4</b> viewed</span></span><span class=\"ds-seg ds-worth\"><span class=\"ds-seg-text\"><b>9</b> still showing</span></span></p></div>",
+      "css": ".ds-tally { padding-block: 14px; border-block: 1px solid #E8E5DF; background: #FDFCFA; } .ds-tally-line { display: flex; flex-wrap: wrap; margin: 0; color: #6B665E; font: 500 22px/1.3 'Schibsted Grotesk', system-ui, sans-serif; } .ds-tally-line b { color: #23211E; font-weight: 700; font-variant-numeric: tabular-nums; } .ds-seg + .ds-seg::before { content: '·'; margin-inline: 0.55em; } .ds-seg-text { position: relative; white-space: nowrap; } .ds-seg-text::after { content: ''; position: absolute; left: 0; top: 54%; width: 0; height: 2px; background: #0A66C2; transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1); } .ds-seg[data-cleared='true'] .ds-seg-text::after { width: 100%; } .ds-worth, .ds-worth b { color: #0A66C2; }"
     },
     {
-      "name": "Status Line",
-      "kind": "custom",
-      "refersTo": "status-plain",
-      "description": "One line in three tones: plain for this list's state, muted for idle guidance, destructive for any failure.",
-      "html": "<p class=\"ds-status ds-status-plain\" role=\"status\">12 cards hidden on this list</p><p class=\"ds-status ds-status-muted\">Open a Jobs search to hide cards</p><p class=\"ds-status ds-status-failure\">Could not check this list. Reload the tab.</p>",
-      "css": ".ds-status { min-height: 1.25rem; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; font-size: 0.875rem; line-height: 1.25rem; } .ds-status-plain { color: var(--foreground); } .ds-status-muted { color: var(--muted-foreground); } .ds-status-failure { color: var(--destructive); }"
+      "name": "Demo Window Bar",
+      "kind": "nav",
+      "refersTo": "window-bar",
+      "description": "Website only. The browser frame's Wash bar: dots, tabs that join the page, a round address bar and the toolbar icon.",
+      "html": "<div class=\"ds-window\"><div class=\"ds-bar\"><span class=\"ds-dots\"><i></i><i></i><i></i></span><div class=\"ds-tabs\" role=\"tablist\"><button class=\"ds-tab\" role=\"tab\" aria-selected=\"true\">Jobs</button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\">LinkedOut Settings</button></div><div class=\"ds-address\">jobs.example/search?keywords=frontend</div></div><div class=\"ds-body\"></div></div>",
+      "css": ".ds-window { width: 640px; border: 1px solid #E8E5DF; border-radius: 10px; background: #FFFFFF; box-shadow: 0 18px 50px -24px rgb(35 33 30 / 28%); overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; } .ds-bar { display: flex; align-items: flex-end; gap: 14px; height: 44px; padding: 0 14px; border-bottom: 1px solid #E8E5DF; background: #F4F2EE; } .ds-dots { display: flex; gap: 6px; align-self: center; } .ds-dots i { width: 10px; height: 10px; border-radius: 999px; background: #D6D2CA; } .ds-tabs { display: flex; gap: 2px; } .ds-tab { height: 32px; padding: 0 14px; border: 1px solid transparent; border-bottom: 0; border-radius: 6px 6px 0 0; background: transparent; color: #6B665E; font: 500 12.5px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; cursor: pointer; transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s; } .ds-tab:hover { color: #23211E; } .ds-tab:active { transform: translateY(1px); } .ds-tab:focus-visible { outline: 2px solid #0A66C2; outline-offset: 2px; } .ds-tab[aria-selected='true'] { height: 33px; margin-bottom: -1px; border-color: #E8E5DF; background: #FFFFFF; color: #23211E; } .ds-address { flex: 1; align-self: center; max-width: 430px; margin-left: auto; padding: 5px 12px; overflow: hidden; border: 1px solid #E8E5DF; border-radius: 999px; background: #FFFFFF; color: #6B665E; font-size: 12px; line-height: 16px; text-overflow: ellipsis; white-space: nowrap; } .ds-body { height: 120px; }"
     },
     {
-      "name": "Popup Panel",
+      "name": "Job Card",
       "kind": "card",
-      "refersTo": "hide-trigger",
-      "description": "The whole surface: name, status line, and Hide Field in a 20rem panel with a 13rem height floor.",
-      "html": "<main class=\"ds-panel\"><div class=\"ds-panel-head\"><h1 class=\"ds-panel-title\">LinkedOut</h1><p class=\"ds-status ds-status-plain\" role=\"status\">12 cards hidden on this list</p></div><div class=\"ds-field ds-panel-field\"><p class=\"ds-field-label\">Hide from results</p><button type=\"button\" class=\"ds-hide-trigger\" aria-haspopup=\"menu\" aria-expanded=\"false\">Applied<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg></button></div></main>",
-      "css": ".ds-panel { box-sizing: border-box; display: flex; flex-direction: column; width: 20rem; min-height: 13rem; padding: 1.25rem 1rem 1rem; background: var(--background); color: var(--foreground); } .ds-panel-head { display: flex; flex-direction: column; gap: 0.25rem; } .ds-panel-title { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; font-size: 1rem; font-weight: 600; line-height: 1.5; letter-spacing: -0.025em; } .ds-panel-field { margin-top: 1.25rem; } .ds-status { min-height: 1.25rem; margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; font-size: 0.875rem; line-height: 1.25rem; } .ds-status-plain { color: var(--foreground); } .ds-status-muted { color: var(--muted-foreground); } .ds-status-failure { color: var(--destructive); } .ds-field { display: flex; flex-direction: column; gap: 0.375rem; } .ds-field-label { margin: 0; color: var(--foreground); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; font-size: 0.875rem; font-weight: 500; line-height: 1.25rem; } .ds-hide-trigger { display: inline-flex; align-items: center; justify-content: space-between; gap: 0.375rem; width: 100%; height: 2.25rem; padding: 0 0.5rem 0 0.625rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--background); color: var(--foreground); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; font-size: 0.875rem; font-weight: 400; line-height: 1.25rem; white-space: nowrap; outline: none; transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-hide-trigger svg { flex-shrink: 0; color: var(--muted-foreground); transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1); } .ds-hide-trigger:hover, .ds-hide-trigger[aria-expanded=\"true\"] { background: var(--muted); color: var(--foreground); } .ds-hide-trigger[aria-expanded=\"true\"] svg { transform: rotate(180deg); } .ds-hide-trigger:focus-visible { border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent); } @media (prefers-color-scheme: dark) { .ds-hide-trigger { border-color: var(--input); background: color-mix(in oklab, var(--input) 30%, transparent); } .ds-hide-trigger:hover { background: color-mix(in oklab, var(--input) 50%, transparent); } }"
+      "refersTo": "job-card",
+      "description": "Website only. A demo list row: monogram, title, company, Pencil meta and status words; Block appears on hover.",
+      "html": "<div class=\"ds-card\"><button type=\"button\" class=\"ds-card-main\"><span class=\"ds-mono\">HP</span><span class=\"ds-card-text\"><span class=\"ds-card-title\">Senior Frontend Engineer</span><span class=\"ds-card-company\">Harbor &amp; Pine Software</span><span class=\"ds-card-meta\">Austin, TX · 2 days ago · 212 applicants</span><span class=\"ds-card-badges\">Viewed</span></span></button><div class=\"ds-card-actions\"><button type=\"button\" class=\"ds-key ds-key--small\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m4.9 4.9 14.2 14.2\"/></svg>Block</button></div></div>",
+      "css": ".ds-key { display: inline-flex; align-items: center; gap: 8px; height: 28px; padding: 0 11px; border: 1px solid #E8E5DF; border-bottom: 2px solid #D6D2CA; border-radius: 5px; background: #FFFFFF; color: #23211E; font: 500 13px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; white-space: nowrap; cursor: pointer; transition: transform 0.12s cubic-bezier(0.16, 1, 0.3, 1), border-bottom-color 0.15s; } .ds-key svg { width: 14px; height: 14px; color: #0A66C2; } .ds-key:hover { transform: translateY(-1px); border-bottom-color: #0A66C2; } .ds-key:active { transform: translateY(1px); } .ds-key:focus-visible { outline: 2px solid #0A66C2; outline-offset: 2px; } .ds-key--neutral svg { color: #6B665E; } .ds-key--neutral:hover { border-bottom-color: #6B665E; } .ds-key--small { height: 24px; padding: 0 9px; font-size: 12px; } .ds-key--hero { height: 48px; padding: 0 22px; border-bottom-width: 3px; border-radius: 6px; font-size: 16px; font-weight: 600; } .ds-key--hero svg { width: 18px; height: 18px; } .ds-card { position: relative; width: 404px; border-bottom: 1px solid #E8E5DF; border-radius: 6px; background: #FFFFFF; } .ds-card:hover { background: color-mix(in srgb, #F4F2EE 55%, #FFFFFF); } .ds-card-main { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; width: 100%; padding: 12px; border: 0; border-radius: 6px; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; } .ds-card-main:focus-visible { outline: 2px solid #0A66C2; outline-offset: -2px; } .ds-mono { display: grid; width: 40px; height: 40px; place-items: center; border: 1px solid #E8E5DF; border-radius: 6px; background: #FFFFFF; color: #6B665E; font: 700 13px/1 'Schibsted Grotesk', system-ui, sans-serif; } .ds-card-text { display: grid; gap: 1px; min-width: 0; font: 400 12px/1.45 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; } .ds-card-title { padding-right: 84px; color: #23211E; font-size: 14px; font-weight: 600; } .ds-card-company { color: #23211E; font-size: 13px; } .ds-card-meta, .ds-card-badges { color: #6B665E; font-variant-numeric: tabular-nums; } .ds-card-badges { font-weight: 500; } .ds-card-actions { position: absolute; top: 10px; right: 10px; opacity: 0; transition: opacity 0.15s; } .ds-card:hover .ds-card-actions, .ds-card:focus-within .ds-card-actions { opacity: 1; }"
+    },
+    {
+      "name": "Sheet Grid",
+      "kind": "custom",
+      "refersTo": "sheet-cell",
+      "description": "Website only. The tracker sheet: 28px hairline cells, Wash header and row numbers, tabular 12.5px text.",
+      "html": "<table class=\"ds-sheet\"><thead><tr><th class=\"ds-rownum\"></th><th>Date applied</th><th>Company</th><th>Status</th></tr></thead><tbody><tr class=\"ds-fresh\"><th class=\"ds-rownum\">2</th><td>21 Nov 2026</td><td>Alder Health Systems</td><td><select><option>Applied</option></select></td></tr></tbody></table>",
+      "css": ".ds-sheet { border-collapse: separate; border-spacing: 0; background: #FFFFFF; color: #23211E; font: 400 12.5px/1 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', 'Noto Sans', Arial, sans-serif; font-variant-numeric: tabular-nums; } .ds-sheet th, .ds-sheet td { height: 28px; padding: 0 10px; border-right: 1px solid #E8E5DF; border-bottom: 1px solid #E8E5DF; font-weight: 400; text-align: left; white-space: nowrap; } .ds-sheet thead th { background: #F4F2EE; color: #6B665E; font-weight: 600; } .ds-sheet .ds-rownum { min-width: 40px; background: #F4F2EE; color: #6B665E; text-align: center; } .ds-sheet select { height: 22px; padding: 0 4px; border: 1px solid #E8E5DF; border-radius: 5px; background: #FFFFFF; color: #23211E; font: inherit; } .ds-fresh td { animation: ds-row-in 1.6s ease-out; } @keyframes ds-row-in { from { background: #E6F0FA; } } @media (prefers-reduced-motion: reduce) { .ds-fresh td { animation: none; } }"
     }
   ],
   "narrative": {
-    "northStar": "The Single Readout",
-    "overview": "LinkedOut is stock shadcn on the neutral base, used at its smallest honest size: a name, one line of status, and one control. The world is the user's pinned choice. The popup does not decorate that world; it holds to its tokens and lets the status line carry all the meaning a glance needs.\n\nDensity is that of a browser extension popup, opened for a few seconds in the middle of a job search. Hierarchy comes from weight and tone, not from scale or color. Chroma appears only when something has failed, so red always means the same thing.",
+    "northStar": "The Ledger",
+    "overview": "**Creative North Star: \"The Ledger\"**\n\nThe popup is a short ledger of what LinkedOut is doing on this page. It reads top to bottom like a document: a line of figures, then a few groups of rows. Each row is a muted label on the left and its current value on the right. Nothing looks like a form until the pointer reaches it.\n\nIt is opened for a few seconds in the middle of a job search, so it is dense and quiet. Warm paper neutrals carry the structure. Blue appears only where something is switched on or where an action fixes something, and red only where something has failed. A seeker can tell what is on from across the screen without reading a word.\n\nButtons are small keys. They have a neutral face, a heavier bottom edge, and a blue icon. A key lifts when the pointer reaches it and sinks when pressed. Each icon acts out its verb: links close on Connect, part on Disconnect, a plus turns on New sheet.\n\nThe website extends the same ledger to a page. It shows the product working rather than describing it: a headline, one tally line of figures between hairlines, then a browser frame holding a working copy of the Jobs list, the real popup, the Settings page and the tracker sheet. The site adds one bundled display face for headings and the tally, a larger key for its one call to action, and a soft lift under the frame and the popup. Everything else is the extension's paper, ink, pencil, rules and keys.",
     "keyCharacteristics": [
-      "Achromatic shadcn neutrals, with the destructive red as the only hue.",
-      "One status line that changes tone, never a second message surface.",
-      "A 20rem panel with a height floor that reserves room for the portalled menu.",
-      "Flat at rest. Only the open menu lifts.",
-      "Light and dark follow the operating system, with no in-product switch."
+      "One column, 352px wide, 12px inset.",
+      "A readout of up to three figures under the name.",
+      "Label-and-value rows, 28px tall, borderless until hover.",
+      "Hairline dividers between groups, no shadows in the popup.",
+      "Blue means on, or the fix. Red means failed. Nothing else has hue.",
+      "Keys, not filled buttons: the face stays neutral, the icon carries the blue.",
+      "Light and dark follow the operating system."
     ],
     "rules": [
       {
-        "name": "The Three Tones Rule",
-        "body": "The status line has exactly three tones. Plain ink states what this list is doing. Faded ink is idle guidance when there is no list to act on. Failure red is any failure. There is no success color; a working list reads in plain ink.",
+        "name": "The On Rule",
+        "body": "Blue marks state, not decoration. If something is blue, it is switched on, it is the action that fixes a problem, or it has focus.",
+        "section": "colors"
+      },
+      {
+        "name": "The Quiet Key Rule",
+        "body": "No button is solid blue. A key's face stays neutral; only its icon, and its edge under the pointer, turn blue.",
         "section": "colors"
       },
       {
         "name": "The Red Means Failed Rule",
-        "body": "Failure Red is the only chroma on the surface. If a popup element has hue and nothing has failed, it is wrong.",
+        "body": "Red is only for something that failed. There is no success colour; a list that is working reads in plain ink.",
         "section": "colors"
       },
       {
         "name": "The Follow the System Rule",
-        "body": "`prefers-color-scheme` alone selects the scheme, for the tokens, for the `dark:` variant, and for the native `color-scheme`. There is no class toggle and no in-product switch.",
+        "body": "`prefers-color-scheme` alone picks light or dark. There is no in-product switch.",
         "section": "colors"
       },
       {
-        "name": "The Weight Not Size Rule",
-        "body": "The panel uses two sizes, 1rem and 0.875rem. Everything else in the hierarchy is weight and tone.",
+        "name": "The Label Column Rule",
+        "body": "Every row's label sits in a fixed column in Pencil (104px in the popup, 150px on the settings page), so values line up and read as a list.",
         "section": "typography"
       },
       {
-        "name": "The Field Label Rule",
-        "body": "A label names the control directly beneath it, in sentence case, because the control's value alone would have no verb. It never sits above a heading, and it is never uppercase or tracked out.",
+        "name": "The Sentence Case Rule",
+        "body": "Labels and buttons are sentence case. Nothing is uppercase or letter-spaced. On the website the only uppercase text is the two-letter job monograms, which are initials.",
         "section": "typography"
       },
       {
-        "name": "The Reserved Room Rule",
-        "body": "The menu is portalled, so it adds nothing to the document's height, and a popup window sized to its content would clip it. The body's height floor exists to hold the open menu. The closed content ends at 10.375rem including bottom padding; the trigger's bottom edge is at 9.375rem, and the menu begins 0.25rem below it. A menu of n rows ends at 9.625rem + 0.5rem + (n × 1.75rem). The 13rem floor holds one row. When rows are added, raise the floor with them.",
-        "section": "layout"
+        "name": "The Display Stays on the Site Rule",
+        "body": "Schibsted Grotesk is for website headings, the tally line and monograms. Body text, controls and every extension surface use the platform UI font.",
+        "section": "typography"
       },
       {
-        "name": "The Shared Edge Rule",
-        "body": "Menu rows align to the trigger above them. Row text starts 11px from the shared left edge, as the trigger's text does (trigger: 1px border + 10px padding; row: 4px menu padding + 7px). The check centers on the trigger's chevron, both 16px and both ending 9px from the right edge (trigger: 1px + 8px; row: 4px + 5px). The menu takes the trigger's exact width. Those offsets are set where the menu is used, not in the vendored component.",
-        "section": "layout"
-      },
-      {
-        "name": "The One Lift Rule",
-        "body": "Only what floats over the panel lifts. Anything in the panel's own flow stays flat.",
+        "name": "The Lifted Window Rule",
+        "body": "On the website only the demo frame and the popup in it lift. The page around them stays flat.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "Do read every color from the shadcn custom properties in `entrypoints/popup/style.css`, so both schemes follow without extra work.",
-      "Do use the Three Tones as the only status treatments: plain for this list's state, muted for idle guidance, destructive for any failure.",
-      "Do add a hideable status as another row in the Hide Menu, then raise the 13rem floor per the Reserved Room Rule.",
-      "Do keep status text to one line of the 18rem measure at 0.875rem. \"Could not load your choice. Choose again.\" is near the limit.",
-      "Do keep menu rows on the trigger's text and chevron edges, per the Shared Edge Rule.",
-      "Do keep browser surfaces on the palette: selection inverts ink and sheet, and the scrollbar thumb uses Hairline on a transparent track.",
-      "Do collapse animation and transition durations to 0.01ms under `prefers-reduced-motion: reduce`."
+      "Do read every colour from the custom properties, so both schemes follow.",
+      "Do put new settings in a Setting Row under the right group.",
+      "Do put a row's action at its right end.",
+      "Do keep message text to one line at 352px.",
+      "Do give every key icon a motion that says its verb, and stop it under reduced motion.",
+      "Do set website headings and the tally line in Schibsted Grotesk, and everything else on the site in the platform UI font.",
+      "Do show the real popup and Settings page in the website's demo rather than redrawn copies.",
+      "Do keep `still showing` the only blue text on the homepage, with the tally's strikes in the same blue."
     ],
     "donts": [
-      "Don't add a success color or any new hue. A list that is working reads in plain ink.",
-      "Don't use Failure Red on the status line for anything that has not failed.",
-      "Don't add a second message surface, such as a banner or toast, alongside the status line.",
-      "Don't write raw color values at a call site, or override a token per scheme outside the stylesheet.",
-      "Don't add a theme switch or class-based dark mode. The operating system decides.",
-      "Don't lift the panel, the trigger, or anything else in the panel's flow with a shadow.",
-      "Don't assume the 13rem floor is enough for a longer menu. It holds one row."
+      "Don't fill a button with blue, or fill one blue on hover.",
+      "Don't use blue for anything that is not on, a fix, or focus.",
+      "Don't add a success colour, a banner, or a toast.",
+      "Don't add shadows inside the popup or the settings page.",
+      "Don't borrow LinkedIn's pills, type or card style.",
+      "Don't add dropdowns or menus to the popup; every daily control is one click.",
+      "Don't use the display face inside the extension.",
+      "Don't add a shadow on the website beyond the demo frame and the popup in it.",
+      "Don't fill the Add to Chrome key with blue; it is a Key at hero size."
     ]
   }
 }

@@ -12,6 +12,9 @@
     "build:firefox": "wxt build -b firefox",
     "zip": "wxt zip",
     "zip:firefox": "wxt zip -b firefox",
+    "site:dev": "vite --config site/vite.config.ts",
+    "site:build": "vite build --config site/vite.config.ts",
+    "site:preview": "vite preview --config site/vite.config.ts",
     "compile": "tsc --noEmit",
     "test": "bun test",
     "lint": "oxlint . && bun lint/no-yaml-comments.js",
@@ -22,6 +25,7 @@
     "postinstall": "wxt prepare"
   },
   "dependencies": {
+    "@fontsource/schibsted-grotesk": "^5.3.0",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.5.2",
     "lucide-react": "^1.70.0",
@@ -35,6 +39,7 @@
     "@tailwindcss/vite": "^4.3.4",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.2.1",
     "@wxt-dev/module-react": "^1.1.5",
     "linkedom": "^0.18.12",
     "oxfmt": "^0.76.0",

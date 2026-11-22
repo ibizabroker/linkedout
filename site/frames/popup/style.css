@@ -1,0 +1,4 @@
+@import '../../../entrypoints/popup/style.css';
+@source '../../../components';
+@source '../../../entrypoints';
+@source '../../../lib';

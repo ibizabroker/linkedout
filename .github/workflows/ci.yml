@@ -56,3 +56,6 @@ jobs:
 
       - name: Check the build includes the tracker
         run: jq -e '.key and .oauth2.client_id and (.oauth2.scopes == ["https://www.googleapis.com/auth/drive.file"]) and (.permissions | index("identity")) and (.permissions | index("alarms"))' .output/chrome-mv3/manifest.json
+
+      - name: Build site
+        run: bun run site:build

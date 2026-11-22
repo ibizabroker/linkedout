@@ -9,29 +9,18 @@
       content="A Chrome extension that hides LinkedIn jobs you've applied to, viewed or saved, skips reposts and crowded posts, blocks companies, and tracks applications."
     />
     <meta name="google-site-verification" content="Kj0ayyJWDKK31vqE5ksIafznHvftEdQ7r5JXrDo-5CA" />
-    <link rel="icon" href="icon.png" />
-    <link rel="stylesheet" href="site.css" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="LinkedOut" />
+    <meta
+      property="og:description"
+      content="A Chrome extension that hides LinkedIn jobs you've applied to, viewed or saved, skips reposts and crowded posts, blocks companies, and tracks applications."
+    />
+    <meta property="og:image" content="https://ibizabroker.github.io/linkedout/icon.png" />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" href="/icon.png" />
   </head>
   <body>
-    <main>
-      <header>
-        <span class="brand"><img src="icon.png" alt="" width="28" height="28" />LinkedOut</span>
-      </header>
-
-      <h1>LinkedIn Jobs, without the noise.</h1>
-      <p>
-        LinkedOut is a Chrome extension for job seekers. It hides jobs you've applied to, viewed or
-        saved, skips reposts and posts with too many applicants, lets you block companies, and can
-        log every application to a Google Sheet in your own Drive.
-      </p>
-
-      <ul class="links">
-        <li><a href="https://github.com/ibizabroker/linkedout">Source on GitHub</a></li>
-        <li><a href="https://github.com/ibizabroker/linkedout/issues">Support</a></li>
-        <li><a href="privacy/">Privacy policy</a></li>
-      </ul>
-
-      <p class="muted">LinkedOut is not affiliated with or endorsed by LinkedIn.</p>
-    </main>
+    <div id="root"></div>
+    <script type="module" src="./home/main.tsx"></script>
   </body>
 </html>

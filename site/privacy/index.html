@@ -4,104 +4,129 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>LinkedOut Privacy Policy</title>
-    <link rel="icon" href="../icon.png" />
-    <link rel="stylesheet" href="../site.css" />
+    <link rel="icon" href="/icon.png" />
+    <link rel="stylesheet" href="../styles/site.css" />
   </head>
   <body>
-    <main>
-      <header>
+    <div class="wrap">
+      <header class="topbar">
         <a class="brand" href="../"
-          ><img src="../icon.png" alt="" width="28" height="28" />LinkedOut</a
+          ><img src="/icon.png" alt="" width="28" height="28" />LinkedOut</a
         >
+        <nav class="nav" aria-label="Site">
+          <a href="./" aria-current="page">Privacy</a>
+          <a href="https://github.com/ibizabroker/linkedout">GitHub</a>
+        </nav>
       </header>
+    </div>
+    <main class="wrap">
+      <div class="prose">
+        <h1>Privacy policy</h1>
+        <p class="muted">Effective 19 November 2026</p>
 
-      <h1>Privacy policy</h1>
-      <p class="muted">Effective 19 November 2026</p>
+        <p>
+          LinkedOut is a Chrome extension that filters and tracks LinkedIn job listings. It has no
+          servers of its own. Everything it keeps stays in your browser or in your own Google Drive.
+        </p>
 
-      <p>
-        LinkedOut is a Chrome extension that filters and tracks LinkedIn job listings. It has no
-        servers of its own. Everything it keeps stays in your browser or in your own Google Drive.
-      </p>
+        <h2>What LinkedOut reads</h2>
+        <ul>
+          <li>
+            <strong>LinkedIn job pages.</strong> On <code>www.linkedin.com</code>, LinkedOut reads
+            job cards and job details so it can hide jobs you chose to hide, add Block buttons, and
+            record jobs you apply to.
+          </li>
+          <li>
+            <strong>LinkedIn job facts.</strong> To check whether a job was reposted, how many
+            people applied, and the details the tracker records, LinkedOut asks LinkedIn for them
+            from your browser, using your own LinkedIn session. Nothing goes through a third party.
+          </li>
+          <li>
+            <strong>The current tab's address</strong>, when you open the LinkedOut popup, to tell
+            whether you are on a LinkedIn Jobs page.
+          </li>
+        </ul>
 
-      <h2>What LinkedOut reads</h2>
-      <ul>
-        <li>
-          <strong>LinkedIn job pages.</strong> On <code>www.linkedin.com</code>, LinkedOut reads job
-          cards and job details so it can hide jobs you chose to hide, add Block buttons, and record
-          jobs you apply to.
-        </li>
-        <li>
-          <strong>LinkedIn job facts.</strong> To check whether a job was reposted, how many people
-          applied, and the details the tracker records, LinkedOut asks LinkedIn for them from your
-          browser, using your own LinkedIn session. Nothing goes through a third party.
-        </li>
-        <li>
-          <strong>The current tab's address</strong>, when you open the LinkedOut popup, to tell
-          whether you are on a LinkedIn Jobs page.
-        </li>
-      </ul>
+        <h2>What LinkedOut stores on your device</h2>
+        <p>
+          Your settings (which jobs to hide and the applicant limit), the companies you blocked, a
+          short-lived cache of job facts, and, when the tracker is connected, the sheet's ID and a
+          queue of rows waiting to be written. This lives in Chrome's extension storage on your
+          device. Uninstalling LinkedOut deletes it.
+        </p>
 
-      <h2>What LinkedOut stores on your device</h2>
-      <p>
-        Your settings (which jobs to hide and the applicant limit), the companies you blocked, a
-        short-lived cache of job facts, and, when the tracker is connected, the sheet's ID and a
-        queue of rows waiting to be written. This lives in Chrome's extension storage on your
-        device. Uninstalling LinkedOut deletes it.
-      </p>
+        <h2>Google Sheets job tracker (optional)</h2>
+        <p>
+          If you connect the tracker, you sign in with Google through Chrome, and LinkedOut creates
+          a spreadsheet called "LinkedOut Job Tracker" in your Google Drive. When you apply to a
+          job, it adds a row with: applied on, company, job title, status, location, workplace,
+          applied via, applicants when applied, reposted, last update, notes, job link and job ID.
+        </p>
+        <p>
+          LinkedOut asks for one Google permission, <code>drive.file</code>. It can only see and
+          change files that LinkedOut itself created. It cannot read anything else in your Drive.
+          Chrome keeps the sign-in token; LinkedOut uses it only to write to that spreadsheet.
+        </p>
+        <p>
+          LinkedOut's use and transfer of information received from Google APIs will adhere to the
+          <a href="https://developers.google.com/terms/api-services-user-data-policy"
+            >Google API Services User Data Policy</a
+          >, including the Limited Use requirements.
+        </p>
 
-      <h2>Google Sheets job tracker (optional)</h2>
-      <p>
-        If you connect the tracker, you sign in with Google through Chrome, and LinkedOut creates a
-        spreadsheet called "LinkedOut Job Tracker" in your Google Drive. When you apply to a job, it
-        adds a row with: applied on, company, job title, status, location, workplace, applied via,
-        applicants when applied, reposted, last update, notes, job link and job ID.
-      </p>
-      <p>
-        LinkedOut asks for one Google permission, <code>drive.file</code>. It can only see and
-        change files that LinkedOut itself created. It cannot read anything else in your Drive.
-        Chrome keeps the sign-in token; LinkedOut uses it only to write to that spreadsheet.
-      </p>
-      <p>
-        LinkedOut's use and transfer of information received from Google APIs will adhere to the
-        <a href="https://developers.google.com/terms/api-services-user-data-policy"
-          >Google API Services User Data Policy</a
-        >, including the Limited Use requirements.
-      </p>
+        <h2>What LinkedOut does not do</h2>
+        <ul>
+          <li>
+            It does not send your data to the developer or to any server other than LinkedIn and
+            Google, as described above.
+          </li>
+          <li>It has no analytics, tracking, or ads.</li>
+          <li>
+            It does not sell, share, or transfer your data, and does not use it for anything
+            unrelated to the features above.
+          </li>
+        </ul>
 
-      <h2>What LinkedOut does not do</h2>
-      <ul>
-        <li>
-          It does not send your data to the developer or to any server other than LinkedIn and
-          Google, as described above.
-        </li>
-        <li>It has no analytics, tracking, or ads.</li>
-        <li>
-          It does not sell, share, or transfer your data, and does not use it for anything unrelated
-          to the features above.
-        </li>
-      </ul>
+        <h2>Your choices</h2>
+        <ul>
+          <li>
+            <strong>Disconnect</strong> in LinkedOut Settings → Account revokes LinkedOut's Google
+            access and clears the tracker's local data. You can also remove access at
+            <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>.
+          </li>
+          <li>The spreadsheet is yours. Delete it from Google Drive whenever you like.</li>
+          <li>Uninstalling LinkedOut removes everything it stored on your device.</li>
+        </ul>
 
-      <h2>Your choices</h2>
-      <ul>
-        <li>
-          <strong>Disconnect</strong> in LinkedOut Settings → Account revokes LinkedOut's Google
-          access and clears the tracker's local data. You can also remove access at
-          <a href="https://myaccount.google.com/permissions">myaccount.google.com/permissions</a>.
-        </li>
-        <li>The spreadsheet is yours. Delete it from Google Drive whenever you like.</li>
-        <li>Uninstalling LinkedOut removes everything it stored on your device.</li>
-      </ul>
+        <h2>Changes and contact</h2>
+        <p>
+          If this policy changes, the new version will be posted here with a new effective date.
+          Questions: open an issue at
+          <a href="https://github.com/ibizabroker/linkedout/issues"
+            >github.com/ibizabroker/linkedout</a
+          >.
+        </p>
 
-      <h2>Changes and contact</h2>
-      <p>
-        If this policy changes, the new version will be posted here with a new effective date.
-        Questions: open an issue at
-        <a href="https://github.com/ibizabroker/linkedout/issues"
-          >github.com/ibizabroker/linkedout</a
-        >.
-      </p>
-
-      <p class="muted">LinkedOut is not affiliated with or endorsed by LinkedIn.</p>
+        <p class="muted">LinkedOut is not affiliated with or endorsed by LinkedIn.</p>
+      </div>
     </main>
+    <footer class="footer">
+      <div class="wrap">
+        <div class="footer-main">
+          <a class="brand" href="../"
+            ><img src="/icon.png" alt="" width="28" height="28" />LinkedOut</a
+          >
+          <nav class="footer-links" aria-label="Footer">
+            <a href="https://chromewebstore.google.com/detail/fpbfombjfoakhodoebmgnmfjjeflmpbi"
+              >Add to Chrome</a
+            >
+            <a href="https://github.com/ibizabroker/linkedout">GitHub</a>
+            <a href="./">Privacy</a>
+            <a href="https://github.com/ibizabroker/linkedout/issues">Report an issue</a>
+          </nav>
+        </div>
+        <p class="footer-note">MIT licensed · Not affiliated with or endorsed by LinkedIn</p>
+      </div>
+    </footer>
   </body>
 </html>
