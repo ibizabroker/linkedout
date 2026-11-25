@@ -76,7 +76,7 @@ export function Figures(props: {
           Last updated {relativeTime(props.cache.readAt, now)}
         </p>
       ) : null}
-      <dl className="grid grid-cols-4 gap-4 border-t border-border pt-4">
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-t border-border pt-4 sm:grid-cols-4 sm:gap-4">
         <Headline label="Today" value={summary.today} />
         <Headline label="This week" value={summary.thisWeek} />
         <Headline label="This month" value={summary.thisMonth} />
@@ -133,11 +133,11 @@ function BestRow(props: {
   readonly value: string;
 }): ReactElement {
   return (
-    <div className="flex h-11 items-center gap-3 border-b border-border">
-      <dt className="w-[150px] shrink-0 text-muted-foreground">
+    <div className="flex min-h-11 items-center gap-3 border-b border-border py-2">
+      <dt className="w-[116px] shrink-0 text-muted-foreground sm:w-[150px]">
         {props.label}
       </dt>
-      <dd className="tabular-nums">{props.value}</dd>
+      <dd className="min-w-0 tabular-nums">{props.value}</dd>
     </div>
   );
 }

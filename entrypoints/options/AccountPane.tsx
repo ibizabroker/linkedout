@@ -63,7 +63,7 @@ function Connected(props: {
   return (
     <>
       <AccountRow label="Google account">
-        <span className="flex-1">Connected</span>
+        <span className="min-w-0 flex-1">Connected</span>
         {expired ? <ReconnectKey session={session} /> : null}
         <DisconnectKey session={session} />
       </AccountRow>
@@ -107,8 +107,8 @@ function AccountRow(props: {
   readonly children: ReactNode;
 }): ReactElement {
   return (
-    <div className="flex h-12 items-center gap-3 border-b border-border">
-      <span className="w-[150px] shrink-0 text-muted-foreground">
+    <div className="flex min-h-12 flex-wrap items-center gap-x-3 border-b border-border py-2.5 sm:py-2 sm:flex-nowrap">
+      <span className="w-full shrink-0 text-muted-foreground sm:w-[150px]">
         {props.label}
       </span>
       {props.children}
