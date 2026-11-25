@@ -25,8 +25,9 @@
         <p class="muted">Effective 19 November 2026</p>
 
         <p>
-          LinkedOut is a Chrome extension that filters and tracks LinkedIn job listings. It has no
-          servers of its own. Everything it keeps stays in your browser or in your own Google Drive.
+          LinkedOut is a Chrome and Firefox extension that filters and tracks LinkedIn job listings.
+          It has no servers of its own. Everything it keeps stays in your browser or in your own
+          Google Drive.
         </p>
 
         <h2>What LinkedOut reads</h2>
@@ -51,16 +52,16 @@
         <p>
           Your settings (which jobs to hide and the applicant limit), the companies you blocked, a
           short-lived cache of job facts, and, when the tracker is connected, the sheet's ID and a
-          queue of rows waiting to be written. This lives in Chrome's extension storage on your
-          device. Uninstalling LinkedOut deletes it.
+          queue of rows waiting to be written. This lives in your browser's extension storage on
+          your device. Uninstalling LinkedOut deletes it.
         </p>
 
         <h2>Google Sheets job tracker (optional)</h2>
         <p>
-          If you connect the tracker, you sign in with Google through Chrome, and LinkedOut creates
-          a spreadsheet called "LinkedOut Job Tracker" in your Google Drive. When you apply to a
-          job, it adds a row with: applied on, company, job title, status, location, workplace,
-          applied via, applicants when applied, reposted, last update, notes, job link and job ID.
+          If you connect the tracker, you sign in with Google, and LinkedOut creates a spreadsheet
+          called "LinkedOut Job Tracker" in your Google Drive. When you apply to a job, it adds a
+          row with: applied on, company, job title, status, location, workplace, applied via,
+          applicants when applied, reposted, last update, notes, job link and job ID.
         </p>
         <p>
           LinkedOut keeps a local copy of the application dates from your sheet on your device, to
@@ -68,8 +69,12 @@
         </p>
         <p>
           LinkedOut asks for one Google permission, <code>drive.file</code>. It can only see and
-          change files that LinkedOut itself created. It cannot read anything else in your Drive.
-          Chrome keeps the sign-in token; LinkedOut uses it only to write to that spreadsheet.
+          change files that LinkedOut itself created. It cannot read anything else in your Drive. On
+          Chrome, Chrome keeps the sign-in token. On Firefox, you sign in through a Google window
+          opened by Firefox, LinkedOut keeps the access token in the extension's local storage, and
+          Disconnect deletes it. Firefox also asks you to allow sending job details to your sheet,
+          and Disconnect withdraws that permission. LinkedOut uses the token only to read and write
+          that spreadsheet.
         </p>
         <p>
           LinkedOut's use and transfer of information received from Google APIs will adhere to the
