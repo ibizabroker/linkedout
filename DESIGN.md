@@ -323,7 +323,7 @@ Top to bottom:
 
 Height follows content.
 
-The settings page is a separate tab, sized for reading rather than glancing: 15px body text and 20px pane titles. A 280px sidebar runs the full height of the tab's left edge with 16px padding on both sides, and the selected pane sits 56px to its right, capped near 760px.
+The settings page is a separate tab, sized for reading rather than glancing: 15px body text and 20px pane titles. A 280px sidebar runs the full height of the tab's left edge with 16px padding on both sides, and the selected pane is a column capped near 760px, centred in the space to its right with at least 56px on each side. The tab itself never scrolls. The pane area scrolls, and its scrollbar appears only when the content is taller than the window, so the sidebar's hairline always runs top to bottom.
 
 ### Website
 
