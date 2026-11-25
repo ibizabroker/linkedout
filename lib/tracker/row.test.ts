@@ -10,7 +10,7 @@ import {
   workplaceFromPage,
   type JobFacts,
 } from './job-facts.ts';
-import { buildRow } from './row.ts';
+import { appliedAtOf, buildRow } from './row.ts';
 
 const detailsById = parseApplicationDetails(details);
 const postingsById = parsePostingDetails(postings);
@@ -116,5 +116,17 @@ describe('row builder', () => {
 
   test('a missing applicant count leaves the cell empty', () => {
     expect(buildRow({ ...factsFor('4480699030'), applicants: null }, 0, 0)[7]).toBe('');
+  });
+});
+
+describe('applied time of a row', () => {
+  test('is the instant the row was built from, to the second', () => {
+    const appliedAt = new Date(2026, 10, 14, 18, 9, 39).getTime();
+    const row = buildRow(
+      factsFor('4480699030'),
+      appliedAt,
+      new Date(appliedAt).getTimezoneOffset(),
+    );
+    expect(appliedAtOf(row)).toBe(appliedAt);
   });
 });

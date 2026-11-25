@@ -1,10 +1,11 @@
 import { browser } from 'wxt/browser';
+import { addAppliedTime } from '../stats/cache.ts';
 import { decideApplication, type Verdict } from './decision.ts';
 import { flushOutbox } from './flush.ts';
 import { appendRow } from './google.ts';
 import type { JobFacts } from './job-facts.ts';
 import { enqueue, isKnown, retryDelayMinutes } from './outbox.ts';
-import { buildRow } from './row.ts';
+import { appliedAtOf, buildRow } from './row.ts';
 import { readSnapshot, writeAuthExpired, writeSync } from './snapshot.ts';
 
 export const FLUSH_ALARM = 'linkedout-tracker-flush';
@@ -35,7 +36,13 @@ export async function flush(): Promise<void> {
     return;
   }
   const { state, outcome } = await flushOutbox(sync, {
-    append: (row) => appendRow(connection.sheet, row),
+    append: async (row) => {
+      const result = await appendRow(connection.sheet, row);
+      if (result === 'ok') {
+        await addAppliedTime(appliedAtOf(row)).catch(() => undefined);
+      }
+      return result;
+    },
     persist: writeSync,
   });
   if (outcome.kind === 'drained') {

@@ -112,6 +112,12 @@ export function startTrackerOwner(): void {
     return result;
   });
 
+  browser.runtime.onInstalled.addListener(({ reason }) => {
+    if (reason === 'update') {
+      void schedule(refreshStats).catch(() => undefined);
+    }
+  });
+
   if (oauthConfigured()) {
     browser.alarms.onAlarm.addListener((alarm) => {
       if (alarm.name === FLUSH_ALARM) {

@@ -49,3 +49,10 @@ export function writeStats(times: readonly number[], readAt: number): Promise<vo
 export function clearStats(): Promise<void> {
   return browser.storage.local.remove(STATS_KEY);
 }
+
+export async function addAppliedTime(time: number): Promise<void> {
+  const cache = await readStats();
+  if (cache !== null && Number.isFinite(time)) {
+    await writeStats(withTime(cache.times, time), cache.readAt);
+  }
+}

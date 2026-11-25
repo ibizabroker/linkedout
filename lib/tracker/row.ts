@@ -1,4 +1,4 @@
-import { COLUMNS, type Column } from './columns.ts';
+import { COLUMNS, columnIndex, type Column } from './columns.ts';
 import type { JobFacts } from './job-facts.ts';
 
 export type SheetCell = string | number;
@@ -26,6 +26,10 @@ export function buildRow(facts: JobFacts, appliedAt: number, utcOffsetMinutes: n
     'Job ID': facts.jobId,
   };
   return COLUMNS.map((column) => cells[column]);
+}
+
+export function appliedAtOf(row: SheetRow): number {
+  return new Date(String(row[columnIndex('Applied on')]).replace(' ', 'T')).getTime();
 }
 
 function localDateTime(epochMs: number, utcOffsetMinutes: number): string {
