@@ -146,7 +146,7 @@ function unexpectedKind(kind: never): never {
 
 const SERIAL_EPOCH_DAYS = 25569;
 
-function sheetsSerial(local: string): number | undefined {
+export function sheetsSerial(local: string): number | undefined {
   const match = /^(\d{4})-(\d{2})-(\d{2})(?: (\d{2}):(\d{2}):(\d{2}))?$/.exec(local);
   if (match === null) {
     return undefined;
