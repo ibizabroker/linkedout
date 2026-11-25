@@ -438,12 +438,21 @@ Actions sit at the right end of their row.
 
 Disconnect is not in the popup. It lives in the settings page's Account pane.
 
+### Stats Strip
+
+One line of Pencil text directly under the Status row, 28px tall, 12px from the left edge: `Today 3 · This week 11 · Last week 9`, with the numbers in Figure type. No arrows, no colour, no comparison marks. It is left out when the tracker is not connected and while LinkedOut has no copy of the sheet's dates.
+
+### Bar Chart
+
+A hand-drawn SVG that fills the pane's width, with no library, gridlines or legend. Bars sit on one hairline baseline in Pencil, and the current day or week is drawn in Ink so this week reads against the weeks before it. Every non-empty bar carries its figure above it (a weekly chart shows every figure, including zero). The axis labels are short dates in Pencil, one under each Monday on the daily chart and under every week on the weekly chart. All colour comes from the custom properties, so both schemes follow, and the bars use no blue. Each bar has a title such as `Week of Nov 16: 10 applications`, and the chart has a visually hidden table with one row per bar as its text alternative.
+
 ### Settings Page
 
 A sidebar and one pane.
 
-- **Sidebar.** The logo and `LinkedOut Settings` (the product's name for the page, so it is title case), then two items: `Blocked companies` with its count, and `Account` with `On`, `Off`, or `Needs you` in Failure Red. The selected item is drawn as a raised key. Account is left out in a build without Google settings.
+- **Sidebar.** The logo and `LinkedOut Settings` (the product's name for the page, so it is title case), then up to three items: `Blocked companies` with its count, `Stats` with no figure, and `Account` with `On`, `Off`, or `Needs you` in Failure Red. The selected item is drawn as a raised key. Stats and Account are left out in a build without Google settings.
 - **Blocked companies.** A title, one line of guidance in Pencil, a sunken search well with a search icon and a `/` key hint (pressing `/` focuses it), then one 44px row per matching company, divided by hairlines: the name and an × icon button named `Unblock <Company>`. Unblocking is immediate. A search with no match reads `No blocked company matches "<text>".` The empty list reads "No blocked companies. Block one from a job card or the job details." A failed unblock shows one Failure Red line under the title and keeps the row. An unreadable list shows "Could not load blocked companies." and no rows.
+- **Stats.** A title and one line of guidance, then four headline figures in a row (Today, This week, This month, All time: a Pencil label over the figure in 20px semibold with tabular digits), the two bar charts each under a small Pencil heading, and the bests as 44px rows with a 150px label column. A `Last updated …` line in Pencil sits above the figures only when the latest read failed and the saved numbers are on screen. Not connected, the pane shows one line of guidance with the `Connect Google Sheets` key at its right end.
 - **Account.** A title and one line of guidance, then 48px rows with a 150px label column: `Google account` with the account and a neutral `Disconnect` key (and `Reconnect` before it when sign-in has expired), `Sheet` with its name and the Open sheet key, and `Jobs added` with the count. Not connected, the pane holds the `Google account` row with `Connect Google Sheets` at its right end. A Pencil line under the rows says what disconnecting does.
 
 ### Website Keys
@@ -509,6 +518,7 @@ These render on the LinkedIn page, not in the popup. The card control and the jo
 - **Don't** fill a button with blue, or fill one blue on hover.
 - **Don't** use blue for anything that is not on, a fix, or focus.
 - **Don't** add a success colour, a banner, or a toast.
+- **Don't** add goals, streaks, badges, arrows or colour to the stats.
 - **Don't** add shadows inside the popup or the settings page.
 - **Don't** borrow LinkedIn's pills, type or card style.
 - **Don't** add dropdowns or menus to the popup; every daily control is one click.
