@@ -1,4 +1,4 @@
-import { useId, useState, type KeyboardEvent, type ReactElement } from 'react';
+import { useState, type KeyboardEvent, type ReactElement } from 'react';
 import { compareToAverage, formatAverage } from '@/lib/stats/comparison';
 import type { StatsBar } from '@/lib/stats/bars';
 import { scaleFor } from '@/lib/stats/scale';
@@ -24,7 +24,6 @@ export function BarChart(props: {
   readonly average: number;
 }): ReactElement {
   const { title, unit, bars, average } = props;
-  const titleId = useId();
   const values = bars.map((bar) => bar.value);
   const { top, capped, ticks } = scaleFor(values);
   const base = HEIGHT - BOTTOM;
@@ -69,10 +68,9 @@ export function BarChart(props: {
         <svg
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
           role="img"
-          aria-labelledby={titleId}
+          aria-label={title}
           className="block h-auto w-full text-[11px]"
         >
-          <title id={titleId}>{title}</title>
           {ticks.map((tick) => (
             <g key={tick}>
               <line
@@ -114,7 +112,6 @@ export function BarChart(props: {
                 onPointerEnter={() => setActive(index)}
                 onPointerLeave={() => setActive(null)}
               >
-                <title>{`${bar.label}: ${bar.value} ${unit}`}</title>
                 <rect
                   x={x}
                   y={TOP - 10}
@@ -193,17 +190,19 @@ export function BarChart(props: {
           />
         ) : null}
       </div>
-      <table className="sr-only">
-        <caption>{title}</caption>
-        <tbody>
-          {bars.map((bar) => (
-            <tr key={bar.label}>
-              <th scope="row">{bar.label}</th>
-              <td>{`${bar.value} ${unit}`}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="sr-only">
+        <table>
+          <caption>{title}</caption>
+          <tbody>
+            {bars.map((bar) => (
+              <tr key={bar.label}>
+                <th scope="row">{bar.label}</th>
+                <td>{`${bar.value} ${unit}`}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </figure>
   );
 }

@@ -18,16 +18,15 @@ describe('Bar chart', () => {
     />,
   );
 
-  test('gives every bar a title and a row in the text alternative', () => {
-    expect(html).toContain('<title>Wed 5 Nov: 5 applications</title>');
-    expect(html).toContain('<title>Tue 4 Nov: 0 applications</title>');
+  test('gives every bar a row in the text alternative and no native tooltip', () => {
+    expect(html).not.toContain('<title>');
     expect(html).toContain(
       '<th scope="row">Mon 3 Nov</th><td>2 applications</td>',
     );
   });
 
   test('names the chart for assistive technology', () => {
-    expect(html).toContain('role="img"');
+    expect(html).toContain('role="img" aria-label="Applications per day"');
     expect(html).toContain('<caption>Applications per day</caption>');
   });
 
