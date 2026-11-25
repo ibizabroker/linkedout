@@ -108,7 +108,11 @@ export function BarChart(props: {
             const labelled =
               bar.current === true || index === tallest || broken;
             return (
-              <g key={bar.label}>
+              <g
+                key={bar.label}
+                onPointerEnter={() => setActive(index)}
+                onPointerLeave={() => setActive(null)}
+              >
                 <title>{`${bar.label}: ${bar.value} ${unit}`}</title>
                 <rect
                   x={x}
@@ -116,8 +120,6 @@ export function BarChart(props: {
                   width={slot}
                   height={base - TOP + 10}
                   className="fill-transparent"
-                  onPointerEnter={() => setActive(index)}
-                  onPointerLeave={() => setActive(null)}
                 />
                 {bar.value > 0 ? (
                   <path
@@ -172,8 +174,9 @@ export function BarChart(props: {
               <text
                 x={LEFT + 4}
                 y={y(average) - 5}
-                stroke="none"
-                className="tabular-nums"
+                strokeWidth={3}
+                paintOrder="stroke"
+                className="stroke-background tabular-nums"
               >
                 {`avg ${average.toFixed(1)}`}
               </text>
