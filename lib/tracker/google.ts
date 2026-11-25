@@ -56,13 +56,17 @@ export class GoogleApiError extends Error {
 }
 
 const SIGN_IN_TIMEOUT_MS = 120_000;
+const SILENT_RENEWAL_TIMEOUT_MS = 30_000;
 
-function interactiveTimeout(): { readonly promise: Promise<never>; readonly stop: () => void } {
+function signInTimeout(ms: number): {
+  readonly promise: Promise<never>;
+  readonly stop: () => void;
+} {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const promise = new Promise<never>((_, reject) => {
     timer = setTimeout(() => {
       reject(new SignInError('cancelled', 'Sign-in timed out'));
-    }, SIGN_IN_TIMEOUT_MS);
+    }, ms);
   });
   return { promise, stop: () => clearTimeout(timer) };
 }
@@ -71,7 +75,7 @@ async function getToken(interactive: boolean): Promise<string> {
   if (import.meta.env.FIREFOX) {
     return getFirefoxToken(interactive);
   }
-  const timeout = interactive ? interactiveTimeout() : undefined;
+  const timeout = interactive ? signInTimeout(SIGN_IN_TIMEOUT_MS) : undefined;
   try {
     const request = browser.identity.getAuthToken({ interactive });
     const { token } = await (timeout === undefined
@@ -113,12 +117,10 @@ async function getFirefoxToken(interactive: boolean): Promise<string> {
     state,
   });
 
-  const timeout = interactive ? interactiveTimeout() : undefined;
+  const timeout = signInTimeout(interactive ? SIGN_IN_TIMEOUT_MS : SILENT_RENEWAL_TIMEOUT_MS);
   try {
     const request = browser.identity.launchWebAuthFlow({ url, interactive });
-    const redirectUrl = await (timeout === undefined
-      ? request
-      : Promise.race([request, timeout.promise]));
+    const redirectUrl = await Promise.race([request, timeout.promise]);
     if (redirectUrl === undefined) {
       throw new SignInError('failed', 'No redirect URL returned');
     }
@@ -135,7 +137,7 @@ async function getFirefoxToken(interactive: boolean): Promise<string> {
     const message = error instanceof Error ? error.message : 'Sign-in failed';
     throw new SignInError(classifySignInError(message), message);
   } finally {
-    timeout?.stop();
+    timeout.stop();
   }
 }
 
