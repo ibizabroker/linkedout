@@ -22,6 +22,12 @@ describe('Chart scale', () => {
     expect(scale.ticks.at(-1)).toBe(scale.top);
   });
 
+  test('does not cap a small spike that fits on a linear axis', () => {
+    const scale = scaleFor([0, 1, 6]);
+    expect(scale.capped).toBe(false);
+    expect(scale.top >= 6).toBe(true);
+  });
+
   test('does not cap when only one bar is above zero', () => {
     expect(scaleFor([0, 0, 9]).capped).toBe(false);
   });

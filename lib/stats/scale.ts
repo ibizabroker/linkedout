@@ -1,6 +1,7 @@
 const CAP_RATIO = 3;
 const CAP_HEADROOM = 1.4;
 const MIN_CAPPED_TOP = 4;
+const MIN_CAPPED_PEAK = 20;
 const TICK_COUNT = 3;
 
 export type Scale = {
@@ -29,7 +30,7 @@ function ticksUpTo(max: number): number[] {
 
 export function scaleFor(values: readonly number[]): Scale {
   const [peak = 0, second = 0] = [...values].sort((a, b) => b - a);
-  if (second > 0 && peak > second * CAP_RATIO) {
+  if (second > 0 && peak > MIN_CAPPED_PEAK && peak > second * CAP_RATIO) {
     const top = Math.max(MIN_CAPPED_TOP, Math.ceil(second * CAP_HEADROOM));
     return { top, capped: true, ticks: ticksUpTo(top) };
   }
