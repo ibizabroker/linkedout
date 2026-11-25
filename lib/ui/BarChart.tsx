@@ -99,26 +99,6 @@ export function BarChart(props: {
             y2={base + 0.5}
             className="stroke-border"
           />
-          {average > 0 && average <= top ? (
-            <g className="fill-primary stroke-primary">
-              <line
-                x1={LEFT}
-                x2={WIDTH}
-                y1={y(average)}
-                y2={y(average)}
-                strokeWidth={1.5}
-                strokeDasharray="5 4"
-              />
-              <text
-                x={LEFT + 4}
-                y={y(average) - 5}
-                stroke="none"
-                className="tabular-nums"
-              >
-                {`avg ${average.toFixed(1)}`}
-              </text>
-            </g>
-          ) : null}
           {bars.map((bar, index) => {
             const x = LEFT + index * slot;
             const width = slot * BAR_SHARE;
@@ -179,6 +159,26 @@ export function BarChart(props: {
               </g>
             );
           })}
+          {average > 0 && average <= top ? (
+            <g className="pointer-events-none fill-primary stroke-primary">
+              <line
+                x1={LEFT}
+                x2={WIDTH}
+                y1={y(average)}
+                y2={y(average)}
+                strokeWidth={1.5}
+                strokeDasharray="5 4"
+              />
+              <text
+                x={LEFT + 4}
+                y={y(average) - 5}
+                stroke="none"
+                className="tabular-nums"
+              >
+                {`avg ${average.toFixed(1)}`}
+              </text>
+            </g>
+          ) : null}
         </svg>
         {active !== null && activeBar !== undefined ? (
           <Tooltip
