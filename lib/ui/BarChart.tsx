@@ -1,9 +1,18 @@
-import { useState, type KeyboardEvent, type ReactElement } from 'react';
+import {
+  useLayoutEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactElement,
+  type RefObject,
+} from 'react';
 import { compareToAverage, formatAverage } from '@/lib/stats/comparison';
 import type { StatsBar } from '@/lib/stats/bars';
 import { scaleFor } from '@/lib/stats/scale';
 
-const WIDTH = 640;
+const MAX_WIDTH = 640;
+const MIN_WIDTH = 260;
+const LABEL_GAP = 46;
 const HEIGHT = 190;
 const TOP = 22;
 const BOTTOM = 24;
@@ -18,6 +27,43 @@ function barPath(x: number, width: number, top: number, base: number): string {
   return `M${x},${base} V${top + radius} Q${x},${top} ${x + radius},${top} H${x + width - radius} Q${x + width},${top} ${x + width},${top + radius} V${base} Z`;
 }
 
+function useChartWidth(): readonly [RefObject<HTMLDivElement | null>, number] {
+  const ref = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(MAX_WIDTH);
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (element === null || typeof ResizeObserver === 'undefined') {
+      return;
+    }
+    const measure = (): void => {
+      setWidth(Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, element.clientWidth)));
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+  return [ref, width];
+}
+
+function visibleAxisLabels(
+  bars: readonly StatsBar[],
+  slot: number,
+): ReadonlySet<number> {
+  const labelled = bars.flatMap((bar, index) =>
+    bar.axisLabel === undefined ? [] : [index],
+  );
+  const gap = Math.min(
+    ...labelled.slice(1).map((index, at) => index - (labelled[at] ?? 0)),
+  );
+  const step = Number.isFinite(gap) ? Math.ceil(LABEL_GAP / (gap * slot)) : 1;
+  return new Set(
+    labelled.filter((_, at) => (labelled.length - 1 - at) % step === 0),
+  );
+}
+
 export function BarChart(props: {
   readonly title: string;
   readonly unit: string;
@@ -25,10 +71,12 @@ export function BarChart(props: {
   readonly average: number;
 }): ReactElement {
   const { title, unit, bars, average } = props;
+  const [frame, chartWidth] = useChartWidth();
   const values = bars.map((bar) => bar.value);
   const { top, capped, ticks } = scaleFor(values);
   const base = HEIGHT - BOTTOM;
-  const slot = (WIDTH - LEFT - RIGHT) / bars.length;
+  const slot = (chartWidth - LEFT - RIGHT) / bars.length;
+  const axisLabels = visibleAxisLabels(bars, slot);
   const y = (value: number): number =>
     base - (Math.min(value, top) / top) * (base - TOP);
   const showAverage = average > 0 && average <= top;
@@ -62,6 +110,7 @@ export function BarChart(props: {
   return (
     <figure>
       <div
+        ref={frame}
         role="group"
         aria-label={`${title}. Use the left and right arrow keys to step through the bars.`}
         tabIndex={0}
@@ -71,7 +120,7 @@ export function BarChart(props: {
         className="relative rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <svg
-          viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
+          viewBox={`0 0 ${chartWidth} ${HEIGHT}`}
           role="img"
           aria-label={title}
           className="block h-auto w-full text-[11px]"
@@ -80,7 +129,7 @@ export function BarChart(props: {
             <line
               key={tick}
               x1={LEFT}
-              x2={WIDTH}
+              x2={chartWidth}
               y1={y(tick) + 0.5}
               y2={y(tick) + 0.5}
               strokeDasharray="2 3"
@@ -100,7 +149,7 @@ export function BarChart(props: {
           ))}
           <line
             x1={LEFT}
-            x2={WIDTH}
+            x2={chartWidth}
             y1={base + 0.5}
             y2={base + 0.5}
             className="stroke-border"
@@ -153,7 +202,8 @@ export function BarChart(props: {
                     {bar.value}
                   </text>
                 ) : null}
-                {bar.axisLabel === undefined ? null : (
+                {bar.axisLabel === undefined ||
+                !axisLabels.has(index) ? null : (
                   <text
                     x={x + slot / 2}
                     y={HEIGHT - 7}
@@ -170,7 +220,7 @@ export function BarChart(props: {
             <g className="pointer-events-none fill-primary stroke-primary">
               <line
                 x1={LEFT}
-                x2={WIDTH}
+                x2={chartWidth}
                 y1={y(average)}
                 y2={y(average)}
                 strokeWidth={1.5}
@@ -191,7 +241,7 @@ export function BarChart(props: {
           <Tooltip
             bar={activeBar}
             average={average}
-            left={((LEFT + (active + 0.5) * slot) / WIDTH) * 100}
+            left={((LEFT + (active + 0.5) * slot) / chartWidth) * 100}
             top={(y(activeBar.value) / HEIGHT) * 100}
           />
         ) : null}
