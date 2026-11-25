@@ -1,3 +1,4 @@
+import { pageFetch } from '../page-fetch.ts';
 import { MAX_POSTINGS_PER_REQUEST, csrfTokenFrom } from '../hide/job-postings.ts';
 import { MAX_APPLICATION_AGE_MS } from './decision.ts';
 import {
@@ -34,7 +35,7 @@ export async function fetchJobFacts(
   ) {
     return undefined;
   }
-  const fetchJson = deps.fetchJson ?? fetch;
+  const fetchJson = deps.fetchJson ?? pageFetch;
   const get = async (path: string, urnType: string, ids: readonly string[]): Promise<unknown> => {
     const response = await fetchJson(voyagerBatchUrl(path, urnType, ids), {
       credentials: 'include',

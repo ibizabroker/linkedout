@@ -1,3 +1,4 @@
+import { pageFetch } from '@/lib/page-fetch';
 import type { Applicants } from '@/lib/hide/applicants';
 
 export const MAX_POSTINGS_PER_REQUEST = 25;
@@ -69,7 +70,7 @@ export async function fetchJobPostings(
   jobIds: readonly string[],
   deps: { readonly fetchJson?: typeof fetch; readonly cookie?: () => string } = {},
 ): Promise<PostingsOutcome> {
-  const fetchJson = deps.fetchJson ?? fetch;
+  const fetchJson = deps.fetchJson ?? pageFetch;
   const token = csrfTokenFrom((deps.cookie ?? (() => document.cookie))());
   if (
     token === undefined ||
