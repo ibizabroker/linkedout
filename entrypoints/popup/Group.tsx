@@ -45,3 +45,13 @@ export function Row(props: {
     </div>
   );
 }
+
+export function Figure(props: {
+  readonly children: number | string;
+}): ReactElement {
+  return (
+    <span className="font-semibold text-foreground tabular-nums">
+      {props.children}
+    </span>
+  );
+}

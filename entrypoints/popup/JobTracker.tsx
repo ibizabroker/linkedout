@@ -1,11 +1,14 @@
-import type { ReactElement } from 'react';
-import { Group, Row } from './Group';
+import { useEffect, useState, type ReactElement } from 'react';
+import { Figure, Group, Row } from './Group';
 import {
   ConnectKey,
   NewSheetKey,
   OpenSheetKey,
   ReconnectKey,
 } from '@/lib/ui/TrackerKeys';
+import { summarize } from '@/lib/stats/calendar';
+import { requestStatsRefresh } from '@/lib/tracker/store';
+import { useStatsCache } from '@/lib/ui/stats-session';
 import {
   isConnectedView,
   isSignInExpired,
@@ -74,6 +77,7 @@ function Body(props: {
           <Row label="Status">
             <span className="flex-1 truncate">{syncText(view.sync)}</span>
           </Row>
+          <StatsStrip />
         </>
       );
     case 'missing':
@@ -89,6 +93,44 @@ function Body(props: {
     default:
       return unexpectedView(view);
   }
+}
+
+function StatsStrip(): ReactElement | null {
+  const cache = useStatsCache();
+  const [now] = useState(Date.now);
+  const missing = cache === null;
+  useEffect(() => {
+    if (missing) {
+      void requestStatsRefresh().catch(() => undefined);
+    }
+  }, [missing]);
+  if (cache === undefined || cache === null) {
+    return null;
+  }
+  return <StatsLine {...summarize(cache.times, now)} />;
+}
+
+export function StatsLine(props: {
+  readonly today: number;
+  readonly thisWeek: number;
+  readonly lastWeek: number;
+}): ReactElement {
+  const { today, thisWeek, lastWeek } = props;
+  return (
+    <p className="flex h-7 items-center gap-x-1 pr-3 pl-3 text-muted-foreground">
+      <span>
+        Today <Figure>{today}</Figure>
+      </span>
+      <span aria-hidden="true">·</span>
+      <span>
+        This week <Figure>{thisWeek}</Figure>
+      </span>
+      <span aria-hidden="true">·</span>
+      <span>
+        Last week <Figure>{lastWeek}</Figure>
+      </span>
+    </p>
+  );
 }
 
 function unexpectedView(value: never): never {

@@ -34,7 +34,7 @@ import {
   useApplicantLimitSession,
 } from './ApplicantLimit';
 import { requestHideSet, watchHideSet } from '@/lib/hide/store';
-import { Group } from './Group';
+import { Figure, Group } from './Group';
 import { useBlocklistSession } from '@/lib/ui/BlockedCompanies';
 import {
   JobTrackerSection,
@@ -133,14 +133,6 @@ function Readout(props: {
         </span>
       )}
     </p>
-  );
-}
-
-function Figure(props: { readonly children: number | string }): ReactElement {
-  return (
-    <span className="font-semibold text-foreground tabular-nums">
-      {props.children}
-    </span>
   );
 }
 

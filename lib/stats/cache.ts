@@ -56,3 +56,36 @@ export async function addAppliedTime(time: number): Promise<void> {
     await writeStats(withTime(cache.times, time), cache.readAt);
   }
 }
+
+export function watchStats(onRead: (cache: StatsCache) => void): () => void {
+  let stopped = false;
+
+  void readStats().then(
+    (cache) => {
+      if (!stopped) {
+        onRead(cache);
+      }
+    },
+    () => {
+      if (!stopped) {
+        onRead(null);
+      }
+    },
+  );
+
+  const onChanged: Parameters<typeof browser.storage.onChanged.addListener>[0] = (
+    changes,
+    areaName,
+  ) => {
+    const change = changes[STATS_KEY];
+    if (areaName === 'local' && change !== undefined) {
+      onRead(parseStats(change.newValue));
+    }
+  };
+  browser.storage.onChanged.addListener(onChanged);
+
+  return () => {
+    stopped = true;
+    browser.storage.onChanged.removeListener(onChanged);
+  };
+}
