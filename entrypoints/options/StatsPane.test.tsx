@@ -53,8 +53,8 @@ describe('Stats bests', () => {
     const html = renderToStaticMarkup(
       <Figures cache={{ times, readAt: now }} />,
     );
-    expect(html).toContain('avg 7');
-    expect(html).not.toContain('avg 0.6');
+    expect(html).toContain('Average 7 applications');
+    expect(html).not.toContain('Average 0.6');
     expect(/Weekly average[^]*?>7</.test(html)).toBe(true);
   });
 

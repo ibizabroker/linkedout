@@ -163,7 +163,8 @@ export function BarChart(props: {
             );
           })}
           {average > 0 && average <= top ? (
-            <g className="pointer-events-none fill-primary stroke-primary">
+            <g className="pointer-events-none stroke-primary">
+              <title>{`Average ${formatAverage(average)} ${unit}`}</title>
               <line
                 x1={LEFT}
                 x2={WIDTH}
@@ -172,15 +173,6 @@ export function BarChart(props: {
                 strokeWidth={1.5}
                 strokeDasharray="5 4"
               />
-              <text
-                x={LEFT + 4}
-                y={y(average) - 5}
-                strokeWidth={3}
-                paintOrder="stroke"
-                className="stroke-background tabular-nums"
-              >
-                {`avg ${formatAverage(average)}`}
-              </text>
             </g>
           ) : null}
         </svg>

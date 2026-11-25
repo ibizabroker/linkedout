@@ -51,15 +51,16 @@ describe('Bar chart', () => {
 
   test('draws gridlines with their tick labels and an average line', () => {
     expect(html).toContain('stroke-dasharray="2 3"');
-    expect(html).toContain('avg 2.3');
+    expect(html).toContain('Average 2.3 applications');
+    expect(html).not.toContain('avg ');
   });
 
   test('draws the average it is given, not the mean of its bars', () => {
     const given = renderToStaticMarkup(
       <BarChart title="t" unit="applications" bars={bars} average={0.6} />,
     );
-    expect(given).toContain('avg 0.6');
-    expect(given).not.toContain('avg 2.3');
+    expect(given).toContain('Average 0.6 applications');
+    expect(given).not.toContain('Average 2.3');
   });
 
   test('drops the line when the average is zero or above the top', () => {
@@ -72,7 +73,7 @@ describe('Bar chart', () => {
           average={average}
         />,
       );
-      expect(html).not.toContain('avg ');
+      expect(html).not.toContain('Average ');
     }
   });
 
