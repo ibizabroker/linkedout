@@ -7,7 +7,6 @@ export type Scale = {
   readonly top: number;
   readonly capped: boolean;
   readonly ticks: readonly number[];
-  readonly average: number;
 };
 
 function tickStep(max: number): number {
@@ -30,13 +29,11 @@ function ticksUpTo(max: number): number[] {
 
 export function scaleFor(values: readonly number[]): Scale {
   const [peak = 0, second = 0] = [...values].sort((a, b) => b - a);
-  const average =
-    values.length === 0 ? 0 : values.reduce((sum, value) => sum + value, 0) / values.length;
   if (second > 0 && peak > second * CAP_RATIO) {
     const top = Math.max(MIN_CAPPED_TOP, Math.ceil(second * CAP_HEADROOM));
-    return { top, capped: true, ticks: ticksUpTo(top), average };
+    return { top, capped: true, ticks: ticksUpTo(top) };
   }
   const step = tickStep(Math.max(1, peak));
   const top = Math.ceil(Math.max(1, peak) / step) * step;
-  return { top, capped: false, ticks: ticksUpTo(top), average };
+  return { top, capped: false, ticks: ticksUpTo(top) };
 }

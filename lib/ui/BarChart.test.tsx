@@ -10,7 +10,12 @@ const bars = [
 
 describe('Bar chart', () => {
   const html = renderToStaticMarkup(
-    <BarChart title="Applications per day" unit="applications" bars={bars} />,
+    <BarChart
+      title="Applications per day"
+      unit="applications"
+      bars={bars}
+      average={7 / 3}
+    />,
   );
 
   test('gives every bar a title and a row in the text alternative', () => {
@@ -49,11 +54,34 @@ describe('Bar chart', () => {
     expect(html).toContain('avg 2.3');
   });
 
+  test('draws the average it is given, not the mean of its bars', () => {
+    const given = renderToStaticMarkup(
+      <BarChart title="t" unit="applications" bars={bars} average={0.6} />,
+    );
+    expect(given).toContain('avg 0.6');
+    expect(given).not.toContain('avg 2.3');
+  });
+
+  test('drops the line when the average is zero or above the top', () => {
+    for (const average of [0, 50]) {
+      const html = renderToStaticMarkup(
+        <BarChart
+          title="t"
+          unit="applications"
+          bars={bars}
+          average={average}
+        />,
+      );
+      expect(html).not.toContain('avg ');
+    }
+  });
+
   test('breaks a bar that is far above the rest and labels its real value', () => {
     const spike = renderToStaticMarkup(
       <BarChart
         title="t"
         unit="applications"
+        average={1}
         bars={[
           ...[2, 1, 3, 2, 1].map((value, i) => ({ label: `d${i}`, value })),
           { label: 'today', value: 100, current: true },

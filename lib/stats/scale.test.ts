@@ -30,11 +30,6 @@ describe('Chart scale', () => {
     const scale = scaleFor([0, 0, 0]);
     expect(scale.capped).toBe(false);
     expect(scale.top).toBe(1);
-    expect(scale.average).toBe(0);
-  });
-
-  test('averages every value shown', () => {
-    expect(scaleFor([1, 2, 3, 6]).average).toBe(3);
   });
 
   test('only offers whole-number ticks', () => {

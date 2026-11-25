@@ -1,9 +1,10 @@
 import { useState, type ReactElement, type ReactNode } from 'react';
 import { dailyBars, longDate, shortDate, weeklyBars } from '@/lib/stats/bars';
 import { relativeTime } from '@/lib/stats/relative';
-import { bests } from '@/lib/stats/series';
+import { bests, type Bests } from '@/lib/stats/series';
 import { summarize } from '@/lib/stats/calendar';
 import type { StatsCache } from '@/lib/stats/cache';
+import { formatAverage } from '@/lib/stats/comparison';
 import { BarChart } from '@/lib/ui/BarChart';
 import { ConnectKey } from '@/lib/ui/TrackerKeys';
 import { useStatsCache, useStatsRefresh } from '@/lib/ui/stats-session';
@@ -67,6 +68,7 @@ export function Figures(props: {
     );
   }
   const summary = summarize(props.cache.times, now);
+  const best = bests(props.cache.times, now);
   return (
     <>
       {props.stale === true ? (
@@ -85,6 +87,7 @@ export function Figures(props: {
           title="Applications per day, last 30 days"
           unit="applications"
           bars={dailyBars(props.cache.times, now)}
+          average={best.dailyAverage}
         />
       </ChartSection>
       <ChartSection heading="Per week, last 12 weeks">
@@ -92,18 +95,16 @@ export function Figures(props: {
           title="Applications per week, last 12 weeks"
           unit="applications"
           bars={weeklyBars(props.cache.times, now)}
+          average={best.weeklyAverage}
         />
       </ChartSection>
-      <BestsList times={props.cache.times} now={now} />
+      <BestsList best={best} />
     </>
   );
 }
 
-function BestsList(props: {
-  readonly times: readonly number[];
-  readonly now: number;
-}): ReactElement {
-  const { bestDay, bestWeek, weeklyAverage } = bests(props.times, props.now);
+function BestsList(props: { readonly best: Bests }): ReactElement {
+  const { bestDay, bestWeek, weeklyAverage } = props.best;
   return (
     <dl className="mt-8 border-t border-border">
       <BestRow
@@ -122,10 +123,7 @@ function BestsList(props: {
             : `${bestWeek.count} · week of ${shortDate(bestWeek.weekStart)}`
         }
       />
-      <BestRow
-        label="Weekly average"
-        value={String(Math.round(weeklyAverage * 10) / 10)}
-      />
+      <BestRow label="Weekly average" value={formatAverage(weeklyAverage)} />
     </dl>
   );
 }

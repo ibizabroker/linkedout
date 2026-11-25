@@ -1,5 +1,5 @@
 import { useId, useState, type KeyboardEvent, type ReactElement } from 'react';
-import { compareToAverage } from '@/lib/stats/comparison';
+import { compareToAverage, formatAverage } from '@/lib/stats/comparison';
 import type { StatsBar } from '@/lib/stats/bars';
 import { scaleFor } from '@/lib/stats/scale';
 
@@ -21,11 +21,12 @@ export function BarChart(props: {
   readonly title: string;
   readonly unit: string;
   readonly bars: readonly StatsBar[];
+  readonly average: number;
 }): ReactElement {
-  const { title, unit, bars } = props;
+  const { title, unit, bars, average } = props;
   const titleId = useId();
   const values = bars.map((bar) => bar.value);
-  const { top, capped, ticks, average } = scaleFor(values);
+  const { top, capped, ticks } = scaleFor(values);
   const base = HEIGHT - BOTTOM;
   const slot = (WIDTH - LEFT - RIGHT) / bars.length;
   const y = (value: number): number =>
@@ -178,7 +179,7 @@ export function BarChart(props: {
                 paintOrder="stroke"
                 className="stroke-background tabular-nums"
               >
-                {`avg ${average.toFixed(1)}`}
+                {`avg ${formatAverage(average)}`}
               </text>
             </g>
           ) : null}

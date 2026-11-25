@@ -7,3 +7,7 @@ export function compareToAverage(value: number, average: number): string | undef
   }
   return `${Math.round((1 - value / average) * 100)}% below average`;
 }
+
+export function formatAverage(average: number): string {
+  return String(Math.round(average * 10) / 10);
+}

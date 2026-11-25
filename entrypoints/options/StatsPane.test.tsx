@@ -47,6 +47,17 @@ describe('Stats bests', () => {
     expect(html).toContain('Weekly average');
   });
 
+  test('the weekly chart line and the Weekly average row agree', () => {
+    const now = Date.now();
+    const times = Array.from({ length: 7 }, (_, i) => now - i);
+    const html = renderToStaticMarkup(
+      <Figures cache={{ times, readAt: now }} />,
+    );
+    expect(html).toContain('avg 7');
+    expect(html).not.toContain('avg 0.6');
+    expect(/Weekly average[^]*?>7</.test(html)).toBe(true);
+  });
+
   test('shows dashes with no applications', () => {
     const html = renderToStaticMarkup(
       <Figures cache={{ times: [], readAt: 0 }} />,
