@@ -60,9 +60,9 @@ describe('Bar chart', () => {
         ]}
       />,
     );
-    expect(spike).toContain('stroke-background');
+    expect(spike).toContain('class="stroke-background"');
     expect(spike).toContain('>100</text>');
-    expect(html).not.toContain('stroke-background');
+    expect(html).not.toContain('class="stroke-background"');
   });
 
   test('is one keyboard stop that names how to step through the bars', () => {
