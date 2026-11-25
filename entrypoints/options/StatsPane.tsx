@@ -2,7 +2,7 @@ import { useState, type ReactElement } from 'react';
 import { summarize } from '@/lib/stats/calendar';
 import type { StatsCache } from '@/lib/stats/cache';
 import { ConnectKey } from '@/lib/ui/TrackerKeys';
-import { useStatsCache } from '@/lib/ui/stats-session';
+import { useStatsCache, useStatsRefresh } from '@/lib/ui/stats-session';
 import { isConnectedView, type TrackerSession } from '@/lib/ui/tracker-session';
 
 export function StatsPane(props: {
@@ -32,6 +32,7 @@ export function StatsPane(props: {
 
 function Connected(): ReactElement | null {
   const cache = useStatsCache();
+  useStatsRefresh(true);
   if (cache === undefined) {
     return null;
   }
