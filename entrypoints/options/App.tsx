@@ -43,40 +43,42 @@ export default function App(): ReactElement {
   const pane = paneFromHash(useHash(), accountAvailable);
 
   return (
-    <div className="settings flex h-screen">
+    <div className="settings flex h-screen flex-col md:flex-row">
       <nav
         aria-label="Settings"
-        className="flex w-[280px] flex-none flex-col gap-1 border-r border-border p-4"
+        className="flex flex-none flex-col gap-1 border-b border-border px-2 py-3 md:w-[280px] md:border-r md:border-b-0 md:p-4"
       >
-        <div className="flex items-center gap-2.5 px-3 pt-1 pb-4 text-base font-semibold">
+        <div className="flex items-center gap-2.5 px-3 pb-2 text-base font-semibold md:pt-1 md:pb-4">
           <img src={logoUrl} alt="" width={22} height={22} />
           LinkedOut Settings
         </div>
-        <NavItem
-          href="#blocked"
-          current={pane === 'blocked'}
-          label="Blocked companies"
-          aside={blocklist.companies?.length?.toString()}
-        />
-        {accountAvailable ? (
-          <>
-            <NavItem
-              href="#stats"
-              current={pane === 'stats'}
-              label="Stats"
-              aside={undefined}
-            />
-            <NavItem
-              href="#account"
-              current={pane === 'account'}
-              label="Account"
-              aside={status?.text}
-              alert={status?.needsYou}
-            />
-          </>
-        ) : null}
+        <div className="flex flex-wrap gap-0.5 md:gap-1 md:flex-col md:flex-nowrap">
+          <NavItem
+            href="#blocked"
+            current={pane === 'blocked'}
+            label="Blocked companies"
+            aside={blocklist.companies?.length?.toString()}
+          />
+          {accountAvailable ? (
+            <>
+              <NavItem
+                href="#stats"
+                current={pane === 'stats'}
+                label="Stats"
+                aside={undefined}
+              />
+              <NavItem
+                href="#account"
+                current={pane === 'account'}
+                label="Account"
+                aside={status?.text}
+                alert={status?.needsYou}
+              />
+            </>
+          ) : null}
+        </div>
       </nav>
-      <main className="relative min-w-0 flex-1 overflow-y-auto px-14 pt-9 pb-8">
+      <main className="relative min-w-0 flex-1 overflow-y-auto px-5 pt-6 pb-8 sm:px-8 md:pt-9 lg:px-14">
         <div className="mx-auto flex min-h-full max-w-[760px] flex-col">
           {pane === 'account' ? (
             <AccountPane session={tracker} />
@@ -106,12 +108,12 @@ function NavItem(props: {
     <a
       href={props.href}
       aria-current={props.current ? 'page' : undefined}
-      className={`flex h-9 items-center gap-2 rounded-md border border-b-2 px-3 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background ${props.current ? 'border-border border-b-key-edge bg-key font-semibold' : 'border-transparent hover:bg-muted'}`}
+      className={`flex h-9 flex-none items-center gap-1.5 rounded-md whitespace-nowrap md:flex-auto md:gap-2 md:px-3 border border-b-2 px-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background ${props.current ? 'border-border border-b-key-edge bg-key font-semibold' : 'border-transparent hover:bg-muted'}`}
     >
-      <span className="flex-1">{props.label}</span>
+      <span className="md:flex-1">{props.label}</span>
       {props.aside === undefined ? null : (
         <span
-          className={`text-[13px] font-normal tabular-nums ${props.alert === true ? 'text-destructive' : 'text-muted-foreground'}`}
+          className={`text-[13px] font-normal tabular-nums ${props.alert === true ? 'text-destructive' : 'hidden text-muted-foreground sm:inline'}`}
         >
           {props.aside}
         </span>
