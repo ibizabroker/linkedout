@@ -1,5 +1,6 @@
 import { browser } from 'wxt/browser';
 import { parseStoredTracker, serializeTracker, type Connection } from './domain.ts';
+import { firefoxGoogleClientId } from './oauth.ts';
 import {
   emptySync,
   parseSync,
@@ -9,6 +10,9 @@ import {
 } from './outbox.ts';
 
 export function oauthConfigured(): boolean {
+  if (import.meta.env.FIREFOX) {
+    return firefoxGoogleClientId() !== undefined;
+  }
   return browser.runtime.getManifest().oauth2 !== undefined;
 }
 

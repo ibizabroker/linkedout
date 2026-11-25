@@ -12,6 +12,13 @@ import {
 import { parseAppliedTimes } from '../stats/sheet-values.ts';
 import type { SheetRow } from './row.ts';
 import {
+  FIREFOX_TOKEN_KEY,
+  buildGoogleAuthUrl,
+  firefoxGoogleClientId,
+  parseCachedToken,
+  parseGoogleAuthRedirect,
+} from './oauth.ts';
+import {
   appendCellsBody,
   appliedOnUrl,
   batchUpdateUrl,
@@ -61,6 +68,9 @@ function interactiveTimeout(): { readonly promise: Promise<never>; readonly stop
 }
 
 async function getToken(interactive: boolean): Promise<string> {
+  if (import.meta.env.FIREFOX) {
+    return getFirefoxToken(interactive);
+  }
   const timeout = interactive ? interactiveTimeout() : undefined;
   try {
     const request = browser.identity.getAuthToken({ interactive });
@@ -82,6 +92,61 @@ async function getToken(interactive: boolean): Promise<string> {
   }
 }
 
+async function getFirefoxToken(interactive: boolean): Promise<string> {
+  if (!interactive) {
+    const stored = await browser.storage.local.get(FIREFOX_TOKEN_KEY);
+    const cached = parseCachedToken(stored[FIREFOX_TOKEN_KEY]);
+    if (cached !== undefined) {
+      return cached;
+    }
+  }
+
+  const clientId = firefoxGoogleClientId();
+  if (clientId === undefined) {
+    throw new SignInError('failed', 'Google client ID is not configured');
+  }
+
+  const state = crypto.randomUUID();
+  const url = buildGoogleAuthUrl({
+    clientId,
+    redirectUri: browser.identity.getRedirectURL(),
+    state,
+  });
+
+  const timeout = interactive ? interactiveTimeout() : undefined;
+  try {
+    const request = browser.identity.launchWebAuthFlow({ url, interactive });
+    const redirectUrl = await (timeout === undefined
+      ? request
+      : Promise.race([request, timeout.promise]));
+    if (redirectUrl === undefined) {
+      throw new SignInError('failed', 'No redirect URL returned');
+    }
+    const result = parseGoogleAuthRedirect(redirectUrl, state);
+    if (!result.ok) {
+      throw new SignInError(result.failure, result.message);
+    }
+    await browser.storage.local.set({ [FIREFOX_TOKEN_KEY]: result.cached });
+    return result.cached.token;
+  } catch (error) {
+    if (error instanceof SignInError) {
+      throw error;
+    }
+    const message = error instanceof Error ? error.message : 'Sign-in failed';
+    throw new SignInError(classifySignInError(message), message);
+  } finally {
+    timeout?.stop();
+  }
+}
+
+async function removeCachedToken(token: string): Promise<void> {
+  if (import.meta.env.FIREFOX) {
+    await browser.storage.local.remove(FIREFOX_TOKEN_KEY);
+    return;
+  }
+  await browser.identity.removeCachedAuthToken({ token });
+}
+
 async function send(interactive: boolean, url: string, init: RequestInit = {}): Promise<Response> {
   const attempt = async (token: string): Promise<Response> =>
     fetch(url, {
@@ -93,7 +158,7 @@ async function send(interactive: boolean, url: string, init: RequestInit = {}): 
   if (response.status !== 401) {
     return response;
   }
-  await browser.identity.removeCachedAuthToken({ token });
+  await removeCachedToken(token);
   return attempt(await getToken(interactive));
 }
 
@@ -212,6 +277,17 @@ export async function renewSignIn(): Promise<void> {
 }
 
 export async function signOut(): Promise<void> {
+  if (import.meta.env.FIREFOX) {
+    const stored = await browser.storage.local.get(FIREFOX_TOKEN_KEY);
+    const token = parseCachedToken(stored[FIREFOX_TOKEN_KEY], 0);
+    await browser.storage.local.remove(FIREFOX_TOKEN_KEY).catch(() => undefined);
+    if (token !== undefined) {
+      await fetch(`${REVOKE_URL}?${new URLSearchParams({ token })}`, { method: 'POST' }).catch(
+        () => undefined,
+      );
+    }
+    return;
+  }
   let token: string | undefined;
   try {
     token = (await browser.identity.getAuthToken({ interactive: false })).token;

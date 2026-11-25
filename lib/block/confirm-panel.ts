@@ -1,3 +1,5 @@
+import { createBanIcon } from '@/lib/block/ban-icon';
+
 const PANEL_CSS = `
 :host{all:initial}
 *{box-sizing:border-box}
@@ -29,9 +31,6 @@ button:focus-visible{outline-color:#70b5f9}
 button.neutral svg{color:#a9a49b}
 button.neutral:hover{border-bottom-color:#a9a49b}
 }`;
-
-const BAN_ICON =
-  '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path class="slash" d="m5.7 5.7 12.6 12.6"></path></svg>';
 
 let close: (() => void) | undefined;
 
@@ -128,7 +127,14 @@ function actionButton(label: string, className: string, onClick: () => void): HT
   button.type = 'button';
   button.className = className;
   if (label === 'Block') {
-    button.insertAdjacentHTML('beforeend', BAN_ICON);
+    button.append(
+      createBanIcon(document, {
+        size: 14,
+        radius: 9,
+        slashPath: 'm5.7 5.7 12.6 12.6',
+        slashClass: 'slash',
+      }),
+    );
   }
   const text = document.createElement('span');
   text.textContent = label;

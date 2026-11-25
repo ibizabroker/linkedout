@@ -8,7 +8,7 @@ Thanks for helping. This guide covers how to set up the project, how the code is
 - **New features and larger changes:** Open an issue first and describe the problem you want to solve. This saves you from building something that doesn't fit the product.
 - **Small fixes** such as typos and obvious bugs can go straight to a pull request.
 
-LinkedOut targets Chrome. The Firefox scripts exist, but Firefox is not tested or supported yet.
+LinkedOut targets Chrome and Firefox.
 
 ## Set up
 

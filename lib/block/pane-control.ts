@@ -1,3 +1,4 @@
+import { createBanIcon } from '@/lib/block/ban-icon';
 import { findTopCardCompany, paneButtonView } from '@/lib/block/pane-company';
 import { emptyBlocklist, isBlocked, type Blocklist } from '@/lib/block/domain';
 import { requestBlock, watchBlocklist } from '@/lib/block/store';
@@ -7,8 +8,6 @@ const PANE = '[data-sdui-screen$="SemanticJobDetails"]';
 const CONTROL_ATTR = 'data-linkedout-pane-block';
 const STYLE_ID = 'linkedout-pane-block-style';
 const SEARCH_PREFIXES = ['/jobs/search', '/jobs/search-results'] as const;
-const BAN_ICON =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>';
 const CSS =
   `[${CONTROL_ATTR}]{display:inline-flex;align-items:center;gap:4px;height:24px;margin-left:8px;margin-right:auto;padding:0 8px;border:1px solid color-mix(in srgb,currentColor 25%,transparent);border-radius:6px;background:transparent;color:inherit;font:500 12px/1 system-ui,sans-serif;white-space:nowrap;cursor:pointer}` +
   `[${CONTROL_ATTR}]:hover:not(:disabled){background:color-mix(in srgb,currentColor 10%,transparent)}` +
@@ -79,8 +78,11 @@ function applyView(button: HTMLButtonElement, name: string, blocked: boolean): v
   button.setAttribute('aria-label', view.label);
   button.setAttribute('title', view.label);
   button.disabled = view.disabled;
-  button.innerHTML = view.disabled ? '' : BAN_ICON;
-  button.append(view.text);
+  if (view.disabled) {
+    button.replaceChildren(view.text);
+  } else {
+    button.replaceChildren(createBanIcon(button.ownerDocument, { size: 14 }), view.text);
+  }
   button.dataset.name = name;
 }
 

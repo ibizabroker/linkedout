@@ -1,3 +1,4 @@
+import { createBanIcon } from '@/lib/block/ban-icon';
 import { pickCompanyName } from '@/lib/block/company-name';
 import { openBlockConfirmation } from '@/lib/block/confirm-panel';
 import { requestBlock } from '@/lib/block/store';
@@ -6,8 +7,6 @@ const DISMISS = 'button[aria-label^="Dismiss "][aria-label$=" job"]';
 const CONTROL_ATTR = 'data-linkedout-block';
 const CARD_ATTR = 'data-linkedout-card';
 const OPEN_ATTR = 'data-linkedout-open';
-const BAN_ICON =
-  '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/></svg>';
 
 export const BLOCK_CONTROL_CSS =
   `:has(> [${CONTROL_ATTR}]){position:relative}` +
@@ -43,7 +42,7 @@ export function syncBlockControl(card: Element, name: string | undefined): void 
   button.setAttribute(CONTROL_ATTR, '');
   button.setAttribute('aria-label', label);
   button.setAttribute('title', label);
-  button.innerHTML = BAN_ICON;
+  button.append(createBanIcon(card.ownerDocument, { size: 16 }));
   button.addEventListener('click', (event) => {
     event.preventDefault();
     event.stopPropagation();
