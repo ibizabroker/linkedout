@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 import { COLUMNS, STATUSES } from './columns.ts';
 import {
   appendCellsBody,
+  appliedOnUrl,
   parseApplicationsSheetId,
   createFileBody,
   findTrackerUrl,
@@ -218,5 +219,13 @@ describe('appending a row', () => {
     expect(parseApplicationsSheetId(tabs([0, 'Notes'], [5, 'Applications']))).toBe(5);
     expect(parseApplicationsSheetId(tabs([3, 'Renamed']))).toBe(3);
     expect(parseApplicationsSheetId({})).toBeUndefined();
+  });
+});
+
+describe('applied-on read', () => {
+  test('asks for only the Applied on column of the Applications tab, as serial numbers', () => {
+    expect(appliedOnUrl('abc')).toBe(
+      'https://sheets.googleapis.com/v4/spreadsheets/abc/values/Applications!A%3AA?valueRenderOption=UNFORMATTED_VALUE&dateTimeRenderOption=SERIAL_NUMBER',
+    );
   });
 });

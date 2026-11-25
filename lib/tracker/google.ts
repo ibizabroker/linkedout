@@ -9,9 +9,11 @@ import {
   type SignInFailure,
   type TrackerSheet,
 } from './domain.ts';
+import { parseAppliedTimes } from '../stats/sheet-values.ts';
 import type { SheetRow } from './row.ts';
 import {
   appendCellsBody,
+  appliedOnUrl,
   batchUpdateUrl,
   createFileBody,
   createFileUrl,
@@ -186,6 +188,22 @@ export async function appendRow(sheet: TrackerSheet, row: SheetRow): Promise<App
   } catch (error) {
     console.warn('[linkedout] append failed', error);
     return error instanceof SignInError ? 'auth-expired' : 'error';
+  }
+}
+
+export type AppliedTimesResult =
+  | { readonly result: 'ok'; readonly times: readonly number[] }
+  | { readonly result: Exclude<AppendResult, 'ok'> };
+
+export async function readAppliedTimes(sheet: TrackerSheet): Promise<AppliedTimesResult> {
+  try {
+    const response = await send(false, appliedOnUrl(sheet.spreadsheetId));
+    const result = classifyAppend(response.status);
+    return result === 'ok'
+      ? { result, times: parseAppliedTimes(await response.json()) }
+      : { result };
+  } catch (error) {
+    return { result: error instanceof SignInError ? 'auth-expired' : 'error' };
   }
 }
 

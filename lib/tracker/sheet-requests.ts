@@ -156,6 +156,16 @@ export function sheetsSerial(local: string): number | undefined {
   return ms / 86_400_000 + SERIAL_EPOCH_DAYS;
 }
 
+export function appliedOnUrl(id: string): string {
+  const letter = String.fromCharCode(65 + columnIndex('Applied on'));
+  const range = encodeURIComponent(`${APPLICATIONS_TAB}!${letter}:${letter}`);
+  const query = new URLSearchParams({
+    valueRenderOption: 'UNFORMATTED_VALUE',
+    dateTimeRenderOption: 'SERIAL_NUMBER',
+  });
+  return `${SHEETS}/${encodeURIComponent(id)}/values/${range}?${query}`;
+}
+
 export function sheetTabsUrl(id: string): string {
   const fields = 'sheets.properties(sheetId,title)';
   return `${SHEETS}/${encodeURIComponent(id)}?${new URLSearchParams({ fields })}`;
