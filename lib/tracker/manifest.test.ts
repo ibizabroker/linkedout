@@ -37,14 +37,17 @@ describe('firefoxTrackerManifest', () => {
 });
 
 describe('firefoxBrowserSettings', () => {
-  test('uses default gecko id and declares no data collection', () => {
+  test('uses default gecko id and requires no data collection and offers browsingActivity as optional', () => {
     expect(firefoxBrowserSettings({})).toEqual({
       gecko: {
         id: 'linkedout@ibizabroker.github.io',
+        strict_min_version: '140.0',
         data_collection_permissions: {
           required: ['none'],
+          optional: ['browsingActivity'],
         },
       },
+      gecko_android: { strict_min_version: '142.0' },
     });
   });
 
@@ -52,10 +55,13 @@ describe('firefoxBrowserSettings', () => {
     expect(firefoxBrowserSettings({ WXT_FIREFOX_EXTENSION_ID: ' custom@example.com ' })).toEqual({
       gecko: {
         id: 'custom@example.com',
+        strict_min_version: '140.0',
         data_collection_permissions: {
           required: ['none'],
+          optional: ['browsingActivity'],
         },
       },
+      gecko_android: { strict_min_version: '142.0' },
     });
   });
 });
