@@ -27,15 +27,16 @@ describe('Bar chart', () => {
   });
 
   test('marks only the current bar in the foreground colour', () => {
-    expect(html.match(/<path d="[^"]*" class="fill-foreground"/g)?.length).toBe(
-      1,
-    );
+    expect(
+      html.match(/<path d="[^"]*" class="[^"]*fill-foreground [^"]*"/g)?.length,
+    ).toBe(1);
   });
 
   test('draws no bar for a zero value', () => {
     expect(
-      html.match(/<path d="[^"]*" class="fill-(foreground|muted-foreground)"/g)
-        ?.length,
+      html.match(
+        /<path d="[^"]*" class="[^"]*fill-(foreground|muted-foreground) [^"]*"/g,
+      )?.length,
     ).toBe(2);
   });
 
@@ -62,5 +63,14 @@ describe('Bar chart', () => {
     expect(spike).toContain('stroke-background');
     expect(spike).toContain('>100</text>');
     expect(html).not.toContain('stroke-background');
+  });
+
+  test('is one keyboard stop that names how to step through the bars', () => {
+    expect(html).toContain('tabindex="0"');
+    expect(html).toContain('arrow keys');
+  });
+
+  test('shows no tooltip until a bar is hovered or focused', () => {
+    expect(html).not.toContain('applied</strong>');
   });
 });
