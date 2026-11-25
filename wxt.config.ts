@@ -9,6 +9,7 @@ import {
 
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
+  zip: { excludeSources: ['docs/**'] },
   vite: () => ({
     plugins: [tailwindcss()],
   }),
