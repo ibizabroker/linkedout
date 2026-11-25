@@ -8,6 +8,7 @@ const HEIGHT = 190;
 const TOP = 22;
 const BOTTOM = 24;
 const LEFT = 30;
+const RIGHT = 12;
 const CORNER = 3;
 const BAR_SHARE = 0.66;
 
@@ -26,7 +27,7 @@ export function BarChart(props: {
   const values = bars.map((bar) => bar.value);
   const { top, capped, ticks, average } = scaleFor(values);
   const base = HEIGHT - BOTTOM;
-  const slot = (WIDTH - LEFT) / bars.length;
+  const slot = (WIDTH - LEFT - RIGHT) / bars.length;
   const y = (value: number): number =>
     base - (Math.min(value, top) / top) * (base - TOP);
   const tallest = values.indexOf(Math.max(...values));
