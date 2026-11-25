@@ -23,7 +23,7 @@ export function BarChart(props: {
   const { title, unit, bars } = props;
   const titleId = useId();
   const values = bars.map((bar) => bar.value);
-  const { top, capped, ticks } = scaleFor(values);
+  const { top, capped, ticks, average } = scaleFor(values);
   const base = HEIGHT - BOTTOM;
   const slot = (WIDTH - LEFT) / bars.length;
   const y = (value: number): number =>
@@ -66,6 +66,26 @@ export function BarChart(props: {
           y2={base + 0.5}
           className="stroke-border"
         />
+        {average > 0 && average <= top ? (
+          <g className="fill-primary stroke-primary">
+            <line
+              x1={LEFT}
+              x2={WIDTH}
+              y1={y(average)}
+              y2={y(average)}
+              strokeWidth={1.5}
+              strokeDasharray="5 4"
+            />
+            <text
+              x={LEFT + 4}
+              y={y(average) - 5}
+              stroke="none"
+              className="tabular-nums"
+            >
+              {`avg ${average.toFixed(1)}`}
+            </text>
+          </g>
+        ) : null}
         {bars.map((bar, index) => {
           const x = LEFT + index * slot;
           const width = slot * BAR_SHARE;
@@ -91,6 +111,13 @@ export function BarChart(props: {
                       ? 'fill-foreground'
                       : 'fill-muted-foreground'
                   }
+                />
+              ) : null}
+              {broken ? (
+                <path
+                  d={`M${left - 2},${barTop + 21} L${left + width + 2},${barTop + 15} M${left - 2},${barTop + 26} L${left + width + 2},${barTop + 20}`}
+                  strokeWidth={3}
+                  className="stroke-background"
                 />
               ) : null}
               {labelled && bar.value > 0 ? (

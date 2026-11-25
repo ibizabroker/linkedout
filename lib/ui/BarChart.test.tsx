@@ -43,11 +43,12 @@ describe('Bar chart', () => {
     expect(html.match(/font-semibold/g)?.length).toBe(1);
   });
 
-  test('draws dashed gridlines at the axis ticks', () => {
+  test('draws gridlines with their tick labels and an average line', () => {
     expect(html).toContain('stroke-dasharray="2 3"');
+    expect(html).toContain('avg 2.3');
   });
 
-  test('draws a bar above the cap to the top of the plot', () => {
+  test('breaks a bar that is far above the rest and labels its real value', () => {
     const spike = renderToStaticMarkup(
       <BarChart
         title="t"
@@ -58,6 +59,8 @@ describe('Bar chart', () => {
         ]}
       />,
     );
+    expect(spike).toContain('stroke-background');
     expect(spike).toContain('>100</text>');
+    expect(html).not.toContain('stroke-background');
   });
 });
