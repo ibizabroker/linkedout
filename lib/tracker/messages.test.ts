@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { sheetFromId } from './domain.ts';
-import { parseActionReply, parseCheckReply, parseRequest } from './messages.ts';
+import { parseActionReply, parseCheckReply, parseRequest, parseStatsReply } from './messages.ts';
 
 describe('tracker requests', () => {
   test('a known action in a tracker message parses', () => {
@@ -42,5 +42,25 @@ describe('tracker replies', () => {
     expect(parseCheckReply({ status: 'missing' })).toBe('missing');
     expect(parseCheckReply({ status: 'ok' })).toBe('ok');
     expect(parseCheckReply({ status: 'done' })).toBeUndefined();
+  });
+});
+
+describe('stats refresh', () => {
+  test('the refresh request parses', () => {
+    expect(parseRequest({ type: 'linkedout/tracker', action: 'refresh-stats' })).toBe(
+      'refresh-stats',
+    );
+  });
+
+  test('a done reply carries the cache, a failed reply nothing', () => {
+    const stats = { version: 1, times: [1, 2], readAt: 3 };
+    expect(parseStatsReply({ status: 'done', stats })).toEqual({ status: 'done', stats });
+    expect(parseStatsReply({ status: 'failed' })).toEqual({ status: 'failed' });
+  });
+
+  test('a done reply without a valid cache is rejected', () => {
+    expect(parseStatsReply({ status: 'done' })).toBeUndefined();
+    expect(parseStatsReply({ status: 'done', stats: { times: [] } })).toBeUndefined();
+    expect(parseStatsReply(undefined)).toBeUndefined();
   });
 });

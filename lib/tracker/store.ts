@@ -1,9 +1,11 @@
 import { browser } from 'wxt/browser';
 import { parseFactsMessage } from './facts-message.ts';
+import { clearStats, serializeStats, writeStats } from '../stats/cache.ts';
 import { sheetFromId, type CheckResult } from './domain.ts';
 import {
   SignInError,
   checkSheet,
+  readAppliedTimes,
   connectSheet,
   recreateSheet,
   renewSignIn,
@@ -14,7 +16,9 @@ import {
   parseActionReply,
   parseCheckReply,
   parseRequest,
+  parseStatsReply,
   type ActionReply,
+  type StatsReply,
   type TrackerAction,
   type UserAction,
 } from './messages.ts';
@@ -51,6 +55,14 @@ export async function requestTrackerCheck(): Promise<CheckResult> {
   return result;
 }
 
+export async function requestStatsRefresh(): Promise<StatsReply> {
+  const reply = parseStatsReply(await send('refresh-stats'));
+  if (reply === undefined) {
+    throw new Error('Rejected tracker reply');
+  }
+  return reply;
+}
+
 export function startTrackerOwner(): void {
   let queue: Promise<unknown> = Promise.resolve();
 
@@ -73,6 +85,9 @@ export function startTrackerOwner(): void {
         const result = schedule(runCheck);
         scheduleFlush();
         return result;
+      }
+      if (action === 'refresh-stats') {
+        return schedule(refreshStats);
       }
       const result = schedule(() => runAction(action));
       void result.then((reply) => {
@@ -114,6 +129,7 @@ async function runAction(action: UserAction): Promise<ActionReply> {
   try {
     if (action === 'disconnect') {
       await signOut();
+      await clearStats();
       await clearSync();
       await writeConnection(null);
       return { status: 'done', sheet: null };
@@ -132,12 +148,29 @@ async function runAction(action: UserAction): Promise<ActionReply> {
       await writeSync(forNewSheet((await readSnapshot()).sync));
     }
     await writeConnection({ sheet, connectedAt: await connectedAtFor(action) });
+    await (action === 'recreate' ? writeStats([], Date.now()) : refreshStats()).catch(
+      () => undefined,
+    );
     return { status: 'done', sheet };
   } catch (error) {
     return error instanceof SignInError && error.failure === 'cancelled'
       ? { status: 'cancelled' }
       : { status: 'failed' };
   }
+}
+
+async function refreshStats(): Promise<StatsReply> {
+  const { connection } = await readSnapshot();
+  if (connection === null) {
+    return { status: 'failed' };
+  }
+  const read = await readAppliedTimes(connection.sheet);
+  if (read.result !== 'ok') {
+    return { status: 'failed' };
+  }
+  const readAt = Date.now();
+  await writeStats(read.times, readAt);
+  return { status: 'done', stats: serializeStats(read.times, readAt) };
 }
 
 async function runCheck(): Promise<{ readonly status: CheckResult }> {
