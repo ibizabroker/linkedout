@@ -43,10 +43,10 @@ export default function App(): ReactElement {
   const pane = paneFromHash(useHash(), accountAvailable);
 
   return (
-    <div className="settings flex min-h-screen">
+    <div className="settings flex h-screen">
       <nav
         aria-label="Settings"
-        className="sticky top-0 flex h-screen w-[280px] flex-none flex-col gap-1 border-r border-border p-4"
+        className="flex w-[280px] flex-none flex-col gap-1 border-r border-border p-4"
       >
         <div className="flex items-center gap-2.5 px-3 pt-1 pb-4 text-base font-semibold">
           <img src={logoUrl} alt="" width={22} height={22} />
@@ -76,18 +76,20 @@ export default function App(): ReactElement {
           </>
         ) : null}
       </nav>
-      <main className="flex h-screen min-w-0 max-w-[760px] flex-1 flex-col pt-9 pr-10 pb-8 pl-14">
-        {pane === 'account' ? (
-          <AccountPane session={tracker} />
-        ) : pane === 'stats' ? (
-          <StatsPane session={tracker} />
-        ) : (
-          <BlockedCompaniesPane
-            companies={blocklist.companies}
-            failureText={blocklist.failureText}
-            onUnblock={blocklist.unblock}
-          />
-        )}
+      <main className="relative min-w-0 flex-1 overflow-y-auto px-14 pt-9 pb-8">
+        <div className="mx-auto flex min-h-full max-w-[760px] flex-col">
+          {pane === 'account' ? (
+            <AccountPane session={tracker} />
+          ) : pane === 'stats' ? (
+            <StatsPane session={tracker} />
+          ) : (
+            <BlockedCompaniesPane
+              companies={blocklist.companies}
+              failureText={blocklist.failureText}
+              onUnblock={blocklist.unblock}
+            />
+          )}
+        </div>
       </main>
     </div>
   );
