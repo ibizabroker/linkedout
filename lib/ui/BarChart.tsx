@@ -1,11 +1,5 @@
 import { useId, type ReactElement } from 'react';
-
-export type Bar = {
-  readonly label: string;
-  readonly value: number;
-  readonly axisLabel?: string;
-  readonly current?: boolean;
-};
+import type { StatsBar } from '@/lib/stats/bars';
 
 const WIDTH = 640;
 const HEIGHT = 144;
@@ -16,7 +10,7 @@ const VALUE_LABEL_LIMIT = 12;
 export function BarChart(props: {
   readonly title: string;
   readonly unit: string;
-  readonly bars: readonly Bar[];
+  readonly bars: readonly StatsBar[];
 }): ReactElement {
   const { title, unit, bars } = props;
   const titleId = useId();
