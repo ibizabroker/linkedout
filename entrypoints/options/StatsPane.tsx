@@ -1,5 +1,6 @@
 import { useState, type ReactElement, type ReactNode } from 'react';
-import { dailyBars, weeklyBars } from '@/lib/stats/bars';
+import { dailyBars, longDate, shortDate, weeklyBars } from '@/lib/stats/bars';
+import { bests } from '@/lib/stats/series';
 import { summarize } from '@/lib/stats/calendar';
 import type { StatsCache } from '@/lib/stats/cache';
 import { BarChart } from '@/lib/ui/BarChart';
@@ -73,7 +74,53 @@ export function Figures(props: { readonly cache: StatsCache }): ReactElement {
           bars={weeklyBars(props.cache.times, now)}
         />
       </ChartSection>
+      <BestsList times={props.cache.times} now={now} />
     </>
+  );
+}
+
+function BestsList(props: {
+  readonly times: readonly number[];
+  readonly now: number;
+}): ReactElement {
+  const { bestDay, bestWeek, weeklyAverage } = bests(props.times, props.now);
+  return (
+    <dl className="mt-8 border-t border-border">
+      <BestRow
+        label="Best day"
+        value={
+          bestDay === null
+            ? '–'
+            : `${bestDay.count} · ${longDate(bestDay.dayStart)}`
+        }
+      />
+      <BestRow
+        label="Best week"
+        value={
+          bestWeek === null
+            ? '–'
+            : `${bestWeek.count} · week of ${shortDate(bestWeek.weekStart)}`
+        }
+      />
+      <BestRow
+        label="Weekly average"
+        value={String(Math.round(weeklyAverage * 10) / 10)}
+      />
+    </dl>
+  );
+}
+
+function BestRow(props: {
+  readonly label: string;
+  readonly value: string;
+}): ReactElement {
+  return (
+    <div className="flex h-11 items-center gap-3 border-b border-border">
+      <dt className="w-[150px] shrink-0 text-muted-foreground">
+        {props.label}
+      </dt>
+      <dd className="tabular-nums">{props.value}</dd>
+    </div>
   );
 }
 

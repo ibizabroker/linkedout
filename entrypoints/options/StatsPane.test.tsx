@@ -34,3 +34,23 @@ describe('Stats pane', () => {
     );
   });
 });
+
+describe('Stats bests', () => {
+  test('names the best day, the best week and the weekly average', () => {
+    const day = new Date(2026, 10, 24, 9).getTime();
+    const html = renderToStaticMarkup(
+      <Figures cache={{ times: [day, day + 1, day + 2], readAt: day }} />,
+    );
+    expect(html).toContain('Best day');
+    expect(html).toContain('3 · ');
+    expect(html).toContain('Best week');
+    expect(html).toContain('Weekly average');
+  });
+
+  test('shows dashes with no applications', () => {
+    const html = renderToStaticMarkup(
+      <Figures cache={{ times: [], readAt: 0 }} />,
+    );
+    expect(html).toContain('>–<');
+  });
+});
