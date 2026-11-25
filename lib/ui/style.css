@@ -1,4 +1,9 @@
-@import 'tailwindcss';
+@import 'tailwindcss' source(none);
+@source '../../entrypoints';
+@source '../../lib';
+@source '../../components';
+@source '../../site/frames';
+@source not '../../**/*.test.{ts,tsx}';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
