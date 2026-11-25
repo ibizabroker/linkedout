@@ -5,7 +5,7 @@ const WIDTH = 640;
 const HEIGHT = 144;
 const TOP = 16;
 const BOTTOM = 22;
-const VALUE_LABEL_LIMIT = 12;
+const SPARSE_LIMIT = 12;
 
 export function BarChart(props: {
   readonly title: string;
@@ -17,7 +17,7 @@ export function BarChart(props: {
   const peak = Math.max(1, ...bars.map((bar) => bar.value));
   const plotHeight = HEIGHT - TOP - BOTTOM;
   const slot = WIDTH / bars.length;
-  const showValues = bars.length <= VALUE_LABEL_LIMIT;
+  const sparse = bars.length <= SPARSE_LIMIT;
 
   return (
     <figure>
@@ -59,7 +59,7 @@ export function BarChart(props: {
                     : 'fill-muted-foreground'
                 }
               />
-              {showValues ? (
+              {sparse || bar.value > 0 ? (
                 <text
                   x={x + slot / 2}
                   y={HEIGHT - BOTTOM - height - 4}
@@ -71,9 +71,9 @@ export function BarChart(props: {
               ) : null}
               {bar.axisLabel === undefined ? null : (
                 <text
-                  x={x + slot / 2}
+                  x={index === 0 ? x : x + slot / 2}
                   y={HEIGHT - 6}
-                  textAnchor="middle"
+                  textAnchor={index === 0 ? 'start' : 'middle'}
                   className="fill-muted-foreground"
                 >
                   {bar.axisLabel}
