@@ -17,10 +17,13 @@ export type FirefoxTrackerManifest = {
 export type FirefoxBrowserSettings = {
   readonly gecko: {
     readonly id: string;
+    readonly strict_min_version: '140.0';
     readonly data_collection_permissions: {
       readonly required: readonly ['none'];
+      readonly optional: readonly ['browsingActivity'];
     };
   };
+  readonly gecko_android: { readonly strict_min_version: '142.0' };
 };
 
 export function trackerManifest(env: {
@@ -59,9 +62,12 @@ export function firefoxBrowserSettings(env: {
   return {
     gecko: {
       id,
+      strict_min_version: '140.0',
       data_collection_permissions: {
         required: ['none'],
+        optional: ['browsingActivity'],
       },
     },
+    gecko_android: { strict_min_version: '142.0' },
   };
 }
