@@ -7,7 +7,8 @@ const WIDTH = 640;
 const HEIGHT = 190;
 const TOP = 22;
 const BOTTOM = 24;
-const LEFT = 30;
+const LEFT = 58;
+const LABEL_CLEARANCE = 12;
 const RIGHT = 12;
 const CORNER = 3;
 const BAR_SHARE = 0.66;
@@ -30,6 +31,10 @@ export function BarChart(props: {
   const slot = (WIDTH - LEFT - RIGHT) / bars.length;
   const y = (value: number): number =>
     base - (Math.min(value, top) / top) * (base - TOP);
+  const showAverage = average > 0 && average <= top;
+  const shownTicks = ticks.filter(
+    (tick) => !showAverage || Math.abs(y(tick) - y(average)) >= LABEL_CLEARANCE,
+  );
   const tallest = values.indexOf(Math.max(...values));
   const [active, setActive] = useState<number | null>(null);
   const activeBar = active === null ? undefined : bars[active];
@@ -72,24 +77,26 @@ export function BarChart(props: {
           className="block h-auto w-full text-[11px]"
         >
           {ticks.map((tick) => (
-            <g key={tick}>
-              <line
-                x1={LEFT}
-                x2={WIDTH}
-                y1={y(tick) + 0.5}
-                y2={y(tick) + 0.5}
-                strokeDasharray="2 3"
-                className="stroke-border"
-              />
-              <text
-                x={LEFT - 8}
-                y={y(tick) + 4}
-                textAnchor="end"
-                className="fill-muted-foreground tabular-nums"
-              >
-                {tick}
-              </text>
-            </g>
+            <line
+              key={tick}
+              x1={LEFT}
+              x2={WIDTH}
+              y1={y(tick) + 0.5}
+              y2={y(tick) + 0.5}
+              strokeDasharray="2 3"
+              className="stroke-border"
+            />
+          ))}
+          {shownTicks.map((tick) => (
+            <text
+              key={tick}
+              x={LEFT - 8}
+              y={y(tick) + 4}
+              textAnchor="end"
+              className="fill-muted-foreground tabular-nums"
+            >
+              {tick}
+            </text>
           ))}
           <line
             x1={LEFT}
@@ -159,7 +166,7 @@ export function BarChart(props: {
               </g>
             );
           })}
-          {average > 0 && average <= top ? (
+          {showAverage ? (
             <g className="pointer-events-none fill-primary stroke-primary">
               <line
                 x1={LEFT}
@@ -170,11 +177,10 @@ export function BarChart(props: {
                 strokeDasharray="5 4"
               />
               <text
-                x={LEFT + 4}
-                y={y(average) - 5}
-                strokeWidth={3}
-                paintOrder="stroke"
-                className="stroke-background tabular-nums"
+                x={LEFT - 8}
+                y={y(average) + 4}
+                textAnchor="end"
+                className="stroke-none tabular-nums"
               >
                 {`avg ${formatAverage(average)}`}
               </text>
