@@ -431,3 +431,49 @@ describe('tabs and reset', () => {
     expect(store.getState().connection).toBe(null);
   });
 });
+
+describe('stats', () => {
+  const NOW = Date.UTC(2026, 10, 21, 9, 30, 0);
+  const cached = (store: DemoStore): { times: number[]; readAt: number } | undefined =>
+    store.storage().stats as { times: number[]; readAt: number } | undefined;
+
+  test('there is no stats cache until the sheet is connected', async () => {
+    const store = newStore();
+    expect(cached(store)).toBeUndefined();
+    expect(await send(store, { type: TRACKER, action: 'refresh-stats' })).toEqual({
+      status: 'failed',
+    });
+  });
+
+  test('connecting fills the cache with history and refresh-stats replies with it', async () => {
+    const store = newStore();
+    await send(store, { type: TRACKER, action: 'connect' });
+    const stats = cached(store);
+    expect((stats?.times.length ?? 0) > 80).toBe(true);
+    expect(stats?.readAt).toBe(NOW);
+    const reply = (await send(store, { type: TRACKER, action: 'refresh-stats' })) as {
+      status: string;
+      stats: { times: number[] };
+    };
+    expect(reply.status).toBe('done');
+    expect(reply.stats.times).toEqual(stats?.times ?? []);
+  });
+
+  test('applying adds a time so the count grows by one', async () => {
+    const store = newStore();
+    await send(store, { type: TRACKER, action: 'connect' });
+    const before = cached(store)?.times.length ?? 0;
+    store.apply('4108');
+    expect(cached(store)?.times.length).toBe(before + 1);
+    expect(cached(store)?.times.at(-1)).toBe(NOW);
+  });
+
+  test('a new sheet restarts the counts and disconnecting clears the cache', async () => {
+    const store = newStore();
+    await send(store, { type: TRACKER, action: 'connect' });
+    await send(store, { type: TRACKER, action: 'recreate' });
+    expect(cached(store)?.times).toEqual([]);
+    await send(store, { type: TRACKER, action: 'disconnect' });
+    expect(cached(store)).toBeUndefined();
+  });
+});

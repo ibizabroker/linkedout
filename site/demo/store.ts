@@ -2,7 +2,8 @@ import { parseLimitDocument, serializeLimit } from '@/lib/hide/applicants';
 import { parseReplaceDocument, serializeHideSet } from '@/lib/hide/domain';
 import { parsePreviewMessage, serializePageReport } from '@/lib/hide/page-report';
 import type { Status } from '@/lib/tracker/columns';
-import { parseRequest, type ActionReply } from '@/lib/tracker/messages';
+import { serializeStats } from '@/lib/stats/cache';
+import { parseRequest, type ActionReply, type StatsReply } from '@/lib/tracker/messages';
 import {
   initialState,
   pageReport,
@@ -125,11 +126,20 @@ export function createDemoStore(options: StoreOptions = {}): DemoStore {
         if (state.connection === null) {
           return Promise.resolve({ status: 'failed' });
         }
-        commit(withNewSheet(state));
+        commit(withNewSheet(state, now()));
         return Promise.resolve(doneReply());
+      case 'refresh-stats':
+        return Promise.resolve(statsReply());
       default:
         return Promise.resolve({ status: 'ok' });
     }
+  }
+
+  function statsReply(): StatsReply {
+    if (state.stats === null) {
+      return { status: 'failed' };
+    }
+    return { status: 'done', stats: serializeStats(state.stats.times, state.stats.readAt) };
   }
 
   function doneReply(): ActionReply {

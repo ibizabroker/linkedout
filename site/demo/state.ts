@@ -18,6 +18,7 @@ import {
   type HideSet,
   type PageReport,
 } from '@/lib/hide/domain';
+import { serializeStats, withTime } from '@/lib/stats/cache';
 import { COLUMNS, STATUSES, columnIndex, type Status } from '@/lib/tracker/columns';
 import {
   serializeTracker,
@@ -37,6 +38,7 @@ import {
   type SyncState,
 } from '@/lib/tracker/outbox';
 import { buildRow, type SheetRow } from '@/lib/tracker/row';
+import { demoHistory } from './history';
 import { DEMO_JOBS, type DemoJob } from './jobs';
 
 export const DEMO_SPREADSHEET_ID = 'demo';
@@ -59,8 +61,14 @@ export type DemoState = {
   readonly connection: Connection | null;
   readonly sync: SyncState;
   readonly authExpired: boolean;
+  readonly stats: StatsRead | null;
   readonly applied: readonly string[];
   readonly rows: readonly SheetEntry[];
+};
+
+export type StatsRead = {
+  readonly times: readonly number[];
+  readonly readAt: number;
 };
 
 export type JobView = DemoJob & { readonly blocked: boolean; readonly hidden: boolean };
@@ -93,6 +101,7 @@ export function initialState(): DemoState {
     connection: null,
     sync: emptySync(),
     authExpired: false,
+    stats: null,
     applied: DEMO_JOBS.filter((job) => job.applied).map((job) => job.id),
     rows: [],
   };
@@ -193,6 +202,9 @@ export function storageOf(state: DemoState): Record<string, unknown> {
   if (state.authExpired) {
     stored['tracker-auth-expired'] = true;
   }
+  if (state.stats !== null) {
+    stored.stats = serializeStats(state.stats.times, state.stats.readAt);
+  }
   return stored;
 }
 
@@ -226,19 +238,22 @@ export function withConnection(state: DemoState, now: number): DemoState {
     ...state,
     connection: { sheet: sheetFromId(DEMO_SPREADSHEET_ID), connectedAt: now },
     authExpired: false,
+    stats: { times: demoHistory(now), readAt: now },
   };
 }
 
 export function withoutConnection(state: DemoState): DemoState {
-  return { ...state, connection: null, sync: emptySync(), authExpired: false };
+  return { ...state, connection: null, sync: emptySync(), authExpired: false, stats: null };
 }
 
 export function withRenewedSignIn(state: DemoState): DemoState {
   return { ...state, authExpired: false };
 }
 
-export function withNewSheet(state: DemoState): DemoState {
-  return state.connection === null ? state : { ...state, sync: forNewSheet(state.sync) };
+export function withNewSheet(state: DemoState, now: number): DemoState {
+  return state.connection === null
+    ? state
+    : { ...state, sync: forNewSheet(state.sync), stats: { times: [], readAt: now } };
 }
 
 export function withApplication(state: DemoState, jobId: string, now: number): DemoState {
@@ -254,6 +269,10 @@ export function withApplication(state: DemoState, jobId: string, now: number): D
     ...state,
     applied,
     sync: delivered(state.sync, jobId),
+    stats:
+      state.stats === null
+        ? null
+        : { times: withTime(state.stats.times, now), readAt: state.stats.readAt },
     rows: [...state.rows, { jobId, row: buildRow(factsOf(job, now), now, 0) }],
   };
 }
