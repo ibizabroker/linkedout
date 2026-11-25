@@ -56,6 +56,7 @@ export type TrackerEvent =
   | { readonly type: 'checked'; readonly result: CheckResult };
 
 export const CONNECT_FAILED_TEXT = "Couldn't connect to Google. Try again.";
+export const CONSENT_DECLINED_TEXT = 'Allow sending job details to your sheet to connect.';
 
 const SHEET_URL_PREFIX = 'https://docs.google.com/spreadsheets/d/';
 const SPREADSHEET_ID = /^[A-Za-z0-9_-]+$/;

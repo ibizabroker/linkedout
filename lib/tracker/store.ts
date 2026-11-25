@@ -30,6 +30,7 @@ import {
   writeConnection,
   writeSync,
 } from './snapshot.ts';
+import { revokeDataConsent } from './data-consent.ts';
 import { forNewSheet } from './outbox.ts';
 import { FLUSH_ALARM, flush, recordApplication } from './writer.ts';
 
@@ -135,6 +136,7 @@ async function runAction(action: UserAction): Promise<ActionReply> {
   try {
     if (action === 'disconnect') {
       await signOut();
+      await revokeDataConsent().catch(() => undefined);
       await clearStats();
       await clearSync();
       await writeConnection(null);

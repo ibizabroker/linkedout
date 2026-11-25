@@ -1,13 +1,15 @@
 import { useEffect, useReducer, useState } from 'react';
 import {
   CONNECT_FAILED_TEXT,
+  CONSENT_DECLINED_TEXT,
   initialView,
   summarizeSync,
   trackerReducer,
   type SyncSummary,
   type TrackerView,
 } from '@/lib/tracker/domain';
-import type { UserAction } from '@/lib/tracker/messages';
+import type { ActionReply, UserAction } from '@/lib/tracker/messages';
+import { requestDataConsent } from '@/lib/tracker/data-consent';
 import { oauthConfigured, watchTracker } from '@/lib/tracker/snapshot';
 import { requestTrackerAction, requestTrackerCheck } from '@/lib/tracker/store';
 
@@ -54,23 +56,30 @@ export function useTrackerSession(): TrackerSession {
     dispatch({ type: 'started' });
     setPending(action);
     const failure = action === 'disconnect' ? DISCONNECT_FAILED_TEXT : CONNECT_FAILED_TEXT;
-    requestTrackerAction(action).then(
-      (reply) => {
-        setPending(undefined);
-        if (reply.status === 'done') {
-          dispatch({ type: 'succeeded' });
-        } else {
-          dispatch({
-            type: 'failed',
-            error: reply.status === 'failed' ? failure : undefined,
-          });
-        }
-      },
-      () => {
-        setPending(undefined);
-        dispatch({ type: 'failed', error: failure });
-      },
-    );
+    const consent = action === 'disconnect' ? Promise.resolve(true) : requestDataConsent();
+    consent
+      .then((granted): Promise<ActionReply | { readonly status: 'declined' }> =>
+        granted ? requestTrackerAction(action) : Promise.resolve({ status: 'declined' }),
+      )
+      .then(
+        (reply) => {
+          setPending(undefined);
+          if (reply.status === 'done') {
+            dispatch({ type: 'succeeded' });
+          } else if (reply.status === 'declined') {
+            dispatch({ type: 'failed', error: CONSENT_DECLINED_TEXT });
+          } else {
+            dispatch({
+              type: 'failed',
+              error: reply.status === 'failed' ? failure : undefined,
+            });
+          }
+        },
+        () => {
+          setPending(undefined);
+          dispatch({ type: 'failed', error: failure });
+        },
+      );
   };
 
   return { view, act, pending };
