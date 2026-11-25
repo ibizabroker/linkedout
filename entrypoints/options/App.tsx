@@ -1,16 +1,24 @@
 import { useEffect, useState, type ReactElement } from 'react';
 import logoUrl from '@/assets/icon.svg';
 import { AccountPane } from './AccountPane';
+import { StatsPane } from './StatsPane';
 import {
   BlockedCompaniesPane,
   useBlocklistSession,
 } from '@/lib/ui/BlockedCompanies';
 import { accountStatus, useTrackerSession } from '@/lib/ui/tracker-session';
 
-type PaneId = 'blocked' | 'account';
+type PaneId = 'blocked' | 'account' | 'stats';
 
 function paneFromHash(hash: string, accountAvailable: boolean): PaneId {
-  return hash === '#account' && accountAvailable ? 'account' : 'blocked';
+  if (!accountAvailable) {
+    return 'blocked';
+  }
+  return hash === '#account'
+    ? 'account'
+    : hash === '#stats'
+      ? 'stats'
+      : 'blocked';
 }
 
 function useHash(): string {
@@ -51,18 +59,28 @@ export default function App(): ReactElement {
           aside={blocklist.companies?.length?.toString()}
         />
         {accountAvailable ? (
-          <NavItem
-            href="#account"
-            current={pane === 'account'}
-            label="Account"
-            aside={status?.text}
-            alert={status?.needsYou}
-          />
+          <>
+            <NavItem
+              href="#stats"
+              current={pane === 'stats'}
+              label="Stats"
+              aside={undefined}
+            />
+            <NavItem
+              href="#account"
+              current={pane === 'account'}
+              label="Account"
+              aside={status?.text}
+              alert={status?.needsYou}
+            />
+          </>
         ) : null}
       </nav>
       <main className="flex h-screen min-w-0 max-w-[760px] flex-1 flex-col pt-9 pr-10 pb-8 pl-14">
         {pane === 'account' ? (
           <AccountPane session={tracker} />
+        ) : pane === 'stats' ? (
+          <StatsPane session={tracker} />
         ) : (
           <BlockedCompaniesPane
             companies={blocklist.companies}
