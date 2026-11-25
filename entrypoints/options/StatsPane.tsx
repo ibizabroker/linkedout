@@ -1,12 +1,18 @@
 import { useState, type ReactElement, type ReactNode } from 'react';
 import { dailyBars, longDate, shortDate, weeklyBars } from '@/lib/stats/bars';
+import { relativeTime } from '@/lib/stats/relative';
 import { bests } from '@/lib/stats/series';
 import { summarize } from '@/lib/stats/calendar';
 import type { StatsCache } from '@/lib/stats/cache';
 import { BarChart } from '@/lib/ui/BarChart';
 import { ConnectKey } from '@/lib/ui/TrackerKeys';
 import { useStatsCache, useStatsRefresh } from '@/lib/ui/stats-session';
-import { isConnectedView, type TrackerSession } from '@/lib/ui/tracker-session';
+import {
+  isConnectedView,
+  isSignInExpired,
+  type ConnectedView,
+  type TrackerSession,
+} from '@/lib/ui/tracker-session';
 
 export function StatsPane(props: {
   readonly session: TrackerSession;
@@ -20,7 +26,7 @@ export function StatsPane(props: {
         Counted from the Applied on column of your tracker sheet.
       </p>
       {isConnectedView(view) ? (
-        <Connected />
+        <Connected view={view} />
       ) : (
         <div className="flex items-center gap-3 border-t border-border pt-4">
           <p className="flex-1 text-muted-foreground">
@@ -33,27 +39,41 @@ export function StatsPane(props: {
   );
 }
 
-function Connected(): ReactElement | null {
+function Connected(props: {
+  readonly view: ConnectedView;
+}): ReactElement | null {
   const cache = useStatsCache();
-  useStatsRefresh(true);
+  const { failed } = useStatsRefresh(true);
   if (cache === undefined) {
     return null;
   }
-  return <Figures cache={cache} />;
+  const stale =
+    failed && props.view.kind === 'connected' && !isSignInExpired(props.view);
+  return <Figures cache={cache} stale={stale} />;
 }
 
-export function Figures(props: { readonly cache: StatsCache }): ReactElement {
+export function Figures(props: {
+  readonly cache: StatsCache;
+  readonly stale?: boolean;
+}): ReactElement {
   const [now] = useState(Date.now);
   if (props.cache === null) {
     return (
       <p className="border-t border-border pt-4 text-muted-foreground">
-        Reading your sheet…
+        {props.stale === true
+          ? "Couldn't read your sheet."
+          : 'Reading your sheet…'}
       </p>
     );
   }
   const summary = summarize(props.cache.times, now);
   return (
     <>
+      {props.stale === true ? (
+        <p className="mb-3 text-muted-foreground">
+          Last updated {relativeTime(props.cache.readAt, now)}
+        </p>
+      ) : null}
       <dl className="grid grid-cols-4 gap-4 border-t border-border pt-4">
         <Headline label="Today" value={summary.today} />
         <Headline label="This week" value={summary.thisWeek} />

@@ -54,3 +54,24 @@ describe('Stats bests', () => {
     expect(html).toContain('>–<');
   });
 });
+
+describe('Stats last updated', () => {
+  const cache = { times: [], readAt: Date.now() - 2 * 3_600_000 };
+
+  test('says when the numbers were read when the latest read failed', () => {
+    const html = renderToStaticMarkup(<Figures cache={cache} stale />);
+    expect(html).toContain('Last updated 2 hours ago');
+  });
+
+  test('says nothing when the numbers are fresh', () => {
+    expect(renderToStaticMarkup(<Figures cache={cache} />)).not.toContain(
+      'Last updated',
+    );
+  });
+});
+
+test('says the sheet could not be read when there is no cache and the read failed', () => {
+  expect(renderToStaticMarkup(<Figures cache={null} stale />)).toContain(
+    'read your sheet.',
+  );
+});
