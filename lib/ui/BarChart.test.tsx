@@ -27,10 +27,37 @@ describe('Bar chart', () => {
   });
 
   test('marks only the current bar in the foreground colour', () => {
-    expect(html.match(/fill-foreground"/g)?.length).toBe(1);
+    expect(html.match(/<path d="[^"]*" class="fill-foreground"/g)?.length).toBe(
+      1,
+    );
   });
 
-  test('draws a zero bar with no height', () => {
-    expect(html).toContain('height="0"');
+  test('draws no bar for a zero value', () => {
+    expect(
+      html.match(/<path d="[^"]*" class="fill-(foreground|muted-foreground)"/g)
+        ?.length,
+    ).toBe(2);
+  });
+
+  test('labels only the current and tallest bars, not every bar', () => {
+    expect(html.match(/font-semibold/g)?.length).toBe(1);
+  });
+
+  test('draws dashed gridlines at the axis ticks', () => {
+    expect(html).toContain('stroke-dasharray="2 3"');
+  });
+
+  test('draws a bar above the cap to the top of the plot', () => {
+    const spike = renderToStaticMarkup(
+      <BarChart
+        title="t"
+        unit="applications"
+        bars={[
+          ...[2, 1, 3, 2, 1].map((value, i) => ({ label: `d${i}`, value })),
+          { label: 'today', value: 100, current: true },
+        ]}
+      />,
+    );
+    expect(spike).toContain('>100</text>');
   });
 });

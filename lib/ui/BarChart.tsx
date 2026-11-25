@@ -1,11 +1,19 @@
 import { useId, type ReactElement } from 'react';
 import type { StatsBar } from '@/lib/stats/bars';
+import { scaleFor } from '@/lib/stats/scale';
 
 const WIDTH = 640;
-const HEIGHT = 144;
-const TOP = 16;
-const BOTTOM = 22;
-const SPARSE_LIMIT = 12;
+const HEIGHT = 190;
+const TOP = 22;
+const BOTTOM = 24;
+const LEFT = 30;
+const CORNER = 3;
+const BAR_SHARE = 0.66;
+
+function barPath(x: number, width: number, top: number, base: number): string {
+  const radius = Math.min(CORNER, width / 2, base - top);
+  return `M${x},${base} V${top + radius} Q${x},${top} ${x + radius},${top} H${x + width - radius} Q${x + width},${top} ${x + width},${top + radius} V${base} Z`;
+}
 
 export function BarChart(props: {
   readonly title: string;
@@ -14,10 +22,13 @@ export function BarChart(props: {
 }): ReactElement {
   const { title, unit, bars } = props;
   const titleId = useId();
-  const peak = Math.max(1, ...bars.map((bar) => bar.value));
-  const plotHeight = HEIGHT - TOP - BOTTOM;
-  const slot = WIDTH / bars.length;
-  const sparse = bars.length <= SPARSE_LIMIT;
+  const values = bars.map((bar) => bar.value);
+  const { top, capped, ticks } = scaleFor(values);
+  const base = HEIGHT - BOTTOM;
+  const slot = (WIDTH - LEFT) / bars.length;
+  const y = (value: number): number =>
+    base - (Math.min(value, top) / top) * (base - TOP);
+  const tallest = values.indexOf(Math.max(...values));
 
   return (
     <figure>
@@ -28,52 +39,75 @@ export function BarChart(props: {
         className="block h-auto w-full text-[11px]"
       >
         <title id={titleId}>{title}</title>
+        {ticks.map((tick) => (
+          <g key={tick}>
+            <line
+              x1={LEFT}
+              x2={WIDTH}
+              y1={y(tick) + 0.5}
+              y2={y(tick) + 0.5}
+              strokeDasharray="2 3"
+              className="stroke-border"
+            />
+            <text
+              x={LEFT - 8}
+              y={y(tick) + 4}
+              textAnchor="end"
+              className="fill-muted-foreground tabular-nums"
+            >
+              {tick}
+            </text>
+          </g>
+        ))}
         <line
-          x1={0}
+          x1={LEFT}
           x2={WIDTH}
-          y1={HEIGHT - BOTTOM + 0.5}
-          y2={HEIGHT - BOTTOM + 0.5}
+          y1={base + 0.5}
+          y2={base + 0.5}
           className="stroke-border"
         />
         {bars.map((bar, index) => {
-          const height = (bar.value / peak) * plotHeight;
-          const x = index * slot;
+          const x = LEFT + index * slot;
+          const width = slot * BAR_SHARE;
+          const left = x + (slot - width) / 2;
+          const barTop = y(bar.value);
+          const broken = capped && bar.value > top;
+          const labelled = bar.current === true || index === tallest || broken;
           return (
             <g key={bar.label}>
               <title>{`${bar.label}: ${bar.value} ${unit}`}</title>
               <rect
                 x={x}
-                y={0}
+                y={TOP - 10}
                 width={slot}
-                height={HEIGHT - BOTTOM}
+                height={base - TOP + 10}
                 className="fill-transparent"
               />
-              <rect
-                x={x + slot * 0.15}
-                y={HEIGHT - BOTTOM - height}
-                width={slot * 0.7}
-                height={height}
-                className={
-                  bar.current === true
-                    ? 'fill-foreground'
-                    : 'fill-muted-foreground'
-                }
-              />
-              {sparse || bar.value > 0 ? (
+              {bar.value > 0 ? (
+                <path
+                  d={barPath(left, width, barTop, base)}
+                  className={
+                    bar.current === true
+                      ? 'fill-foreground'
+                      : 'fill-muted-foreground'
+                  }
+                />
+              ) : null}
+              {labelled && bar.value > 0 ? (
                 <text
-                  x={x + slot / 2}
-                  y={HEIGHT - BOTTOM - height - 4}
+                  x={left + width / 2}
+                  y={barTop - 6}
                   textAnchor="middle"
-                  className="fill-foreground tabular-nums"
+                  className="fill-foreground text-xs font-semibold tabular-nums"
                 >
                   {bar.value}
                 </text>
               ) : null}
               {bar.axisLabel === undefined ? null : (
                 <text
-                  x={index === 0 ? x : x + slot / 2}
-                  y={HEIGHT - 6}
-                  textAnchor={index === 0 ? 'start' : 'middle'}
+                  x={x + slot / 2}
+                  y={HEIGHT - 7}
+                  textAnchor="middle"
                   className="fill-muted-foreground"
                 >
                   {bar.axisLabel}
