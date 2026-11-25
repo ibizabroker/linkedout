@@ -6,8 +6,10 @@ export type Bests = {
   readonly bestDay: DayCount | null;
   readonly bestWeek: WeekCount | null;
   readonly weeklyAverage: number;
+  readonly dailyAverage: number;
 };
 
+const DAY_MS = 86_400_000;
 const WEEK_MS = 7 * 86_400_000;
 
 export function dailySeries(times: readonly number[], now: number, days = 30): DayCount[] {
@@ -50,9 +52,14 @@ export function bests(times: readonly number[], now: number): Bests {
     first === undefined
       ? 1
       : Math.max(1, Math.round((weekStart(now) - weekStart(first)) / WEEK_MS) + 1);
+  const days =
+    first === undefined
+      ? 1
+      : Math.max(1, Math.round((dayStart(now) - dayStart(first)) / DAY_MS) + 1);
   return {
     bestDay: day === null ? null : { dayStart: day.start, count: day.count },
     bestWeek: week === null ? null : { weekStart: week.start, count: week.count },
     weeklyAverage: times.length / weeks,
+    dailyAverage: times.length / days,
   };
 }

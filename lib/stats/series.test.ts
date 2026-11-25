@@ -41,6 +41,7 @@ describe('bests', () => {
       bestDay: null,
       bestWeek: null,
       weeklyAverage: 0,
+      dailyAverage: 0,
     });
   });
 
@@ -58,5 +59,15 @@ describe('bests', () => {
 
   test('a first row this week counts as one week', () => {
     expect(bests([at(2026, 5, 19)], at(2026, 5, 20)).weeklyAverage).toBe(1);
+  });
+
+  test('averages per day from the first row through today', () => {
+    const times = [at(2026, 5, 17), at(2026, 5, 18), at(2026, 5, 20)];
+    expect(bests(times, at(2026, 5, 20)).dailyAverage).toBe(3 / 4);
+  });
+
+  test('rows all from today average their count per day', () => {
+    const times = [at(2026, 5, 20, 9), at(2026, 5, 20, 10), at(2026, 5, 20, 11)];
+    expect(bests(times, at(2026, 5, 20)).dailyAverage).toBe(3);
   });
 });
