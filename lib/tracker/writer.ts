@@ -1,6 +1,7 @@
 import { browser } from 'wxt/browser';
 import { addAppliedTime } from '../stats/cache.ts';
 import { decideApplication, type Verdict } from './decision.ts';
+import { hasDataConsent } from './data-consent.ts';
 import { flushOutbox } from './flush.ts';
 import { appendRow } from './google.ts';
 import type { JobFacts } from './job-facts.ts';
@@ -33,6 +34,9 @@ export async function flush(): Promise<void> {
   }
   if (sync.outbox.length === 0) {
     await browser.alarms.clear(FLUSH_ALARM);
+    return;
+  }
+  if (!(await hasDataConsent())) {
     return;
   }
   const { state, outcome } = await flushOutbox(sync, {
