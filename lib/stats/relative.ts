@@ -12,5 +12,5 @@ export function relativeTime(time: number, now: number): string {
       return format.format(-Math.floor(elapsed / length), unit);
     }
   }
-  return format.format(0, 'second');
+  return 'just now';
 }

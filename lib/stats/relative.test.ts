@@ -11,6 +11,6 @@ describe('relativeTime', () => {
   });
 
   test('reads under a minute as now', () => {
-    expect(relativeTime(now - 10_000, now)).toBe('now');
+    expect(relativeTime(now - 10_000, now)).toBe('just now');
   });
 });
