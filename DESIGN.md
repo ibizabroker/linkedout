@@ -325,6 +325,8 @@ Height follows content.
 
 The settings page is a separate tab, sized for reading rather than glancing: 15px body text and 20px pane titles. A 280px sidebar runs the full height of the tab's left edge with 16px padding on both sides, and the selected pane is a column capped near 760px, centred in the space to its right with at least 56px on each side. The tab itself never scrolls. The pane area scrolls, and its scrollbar appears only when the content is taller than the window, so the sidebar's hairline always runs top to bottom.
 
+Below 768px the sidebar becomes a strip across the top: the logo and name, then the items in one row (they wrap only if they cannot fit), with a hairline under it. The strip stays put and the pane below takes the full width, with 20px side padding (32px from 640px) and the same scroll rule. Items drop their figure or status below 640px, except `Needs you`, which always shows. In the Stats pane the four figures sit two by two below 640px, the bests' label column is 116px, and each chart is drawn at its real width, so its text stays 11px: the bars narrow and the week labels thin out instead of the text shrinking. In the Account pane, below 640px each label sits above its value and key. Nothing scrolls sideways at any width down to 292px, the width of the demo's frame on a 326px phone.
+
 ### Website
 
 Content is capped at 1440px with a fluid side gutter (16px to 64px). Sections are separated by a hairline and 96px (64px on phones).
