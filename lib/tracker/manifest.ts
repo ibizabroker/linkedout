@@ -44,9 +44,8 @@ export function trackerManifest(env: {
 
 export function firefoxTrackerManifest(env: {
   readonly WXT_FIREFOX_GOOGLE_CLIENT_ID?: string;
-  readonly WXT_GOOGLE_CLIENT_ID?: string;
 }): FirefoxTrackerManifest | undefined {
-  const clientId = env.WXT_FIREFOX_GOOGLE_CLIENT_ID?.trim() || env.WXT_GOOGLE_CLIENT_ID?.trim();
+  const clientId = env.WXT_FIREFOX_GOOGLE_CLIENT_ID?.trim();
   if (!clientId) {
     return undefined;
   }

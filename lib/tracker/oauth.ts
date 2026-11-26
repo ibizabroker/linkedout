@@ -17,18 +17,9 @@ export type RedirectParseResult =
   | { readonly ok: false; readonly failure: SignInFailure; readonly message: string };
 
 export function firefoxGoogleClientId(
-  env: {
-    readonly WXT_FIREFOX_GOOGLE_CLIENT_ID?: unknown;
-    readonly WXT_GOOGLE_CLIENT_ID?: unknown;
-  } = import.meta.env as Record<string, unknown>,
+  clientId: unknown = import.meta.env.WXT_FIREFOX_GOOGLE_CLIENT_ID,
 ): string | undefined {
-  const firefoxId =
-    typeof env.WXT_FIREFOX_GOOGLE_CLIENT_ID === 'string'
-      ? env.WXT_FIREFOX_GOOGLE_CLIENT_ID.trim()
-      : '';
-  const chromeId =
-    typeof env.WXT_GOOGLE_CLIENT_ID === 'string' ? env.WXT_GOOGLE_CLIENT_ID.trim() : '';
-  const value = firefoxId || chromeId;
+  const value = typeof clientId === 'string' ? clientId.trim() : '';
   return value.length > 0 ? value : undefined;
 }
 

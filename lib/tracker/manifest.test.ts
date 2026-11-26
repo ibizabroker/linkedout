@@ -21,13 +21,15 @@ describe('trackerManifest', () => {
 });
 
 describe('firefoxTrackerManifest', () => {
-  test('prefers WXT_FIREFOX_GOOGLE_CLIENT_ID and falls back to WXT_GOOGLE_CLIENT_ID', () => {
+  test('adds the tracker permissions when WXT_FIREFOX_GOOGLE_CLIENT_ID is set', () => {
     expect(firefoxTrackerManifest({ WXT_FIREFOX_GOOGLE_CLIENT_ID: ' ff-id ' })).toEqual({
       permissions: ['identity', 'alarms'],
     });
-    expect(firefoxTrackerManifest({ WXT_GOOGLE_CLIENT_ID: ' id ' })).toEqual({
-      permissions: ['identity', 'alarms'],
-    });
+  });
+
+  test('ignores the Chrome client id', () => {
+    const chromeOnly = { WXT_FIREFOX_GOOGLE_CLIENT_ID: undefined, WXT_GOOGLE_CLIENT_ID: 'id' };
+    expect(firefoxTrackerManifest(chromeOnly)).toBeUndefined();
   });
 
   test('missing or blank client id adds nothing', () => {

@@ -28,7 +28,7 @@ export default defineConfig({
       const tracker = firefoxTrackerManifest(env);
       if (tracker === undefined) {
         console.warn(
-          '[linkedout] WXT_FIREFOX_GOOGLE_CLIENT_ID or WXT_GOOGLE_CLIENT_ID is not set. Building without the Job tracker.',
+          '[linkedout] WXT_FIREFOX_GOOGLE_CLIENT_ID is not set. Building without the Job tracker.',
         );
       }
       return {
