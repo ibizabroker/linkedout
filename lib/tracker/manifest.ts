@@ -1,5 +1,5 @@
 const DRIVE_FILE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
-const DEFAULT_FIREFOX_ID = 'linkedout@ibizabroker.github.io';
+const DEFAULT_FIREFOX_ID = 'linkedout-ext@ibizabroker.github.io';
 
 export type TrackerManifest = {
   readonly key: string;

@@ -42,7 +42,7 @@ describe('firefoxBrowserSettings', () => {
   test('uses default gecko id and requires no data collection and offers browsingActivity as optional', () => {
     expect(firefoxBrowserSettings({})).toEqual({
       gecko: {
-        id: 'linkedout@ibizabroker.github.io',
+        id: 'linkedout-ext@ibizabroker.github.io',
         strict_min_version: '140.0',
         data_collection_permissions: {
           required: ['none'],
